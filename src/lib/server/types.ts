@@ -127,8 +127,10 @@ export interface WebsiteGroup {
 	meetingPlace: string | null;
 	/** 1 = Montag … 7 = Sonntag */
 	meetingWeekday: number | null;
-	/** `HH:MM` */
+	/** Beginn der Gruppenstunde `HH:MM` */
 	meetingTime: string | null;
+	/** Ende der Gruppenstunde `HH:MM` (nur zusammen mit `meetingTime`) */
+	meetingEndTime: string | null;
 	color: string | null;
 	contactEmail: string | null;
 	leaders: { firstName: string }[];

@@ -20,14 +20,15 @@
 		class: className = ''
 	}: Props = $props();
 
+	// Wie der Ferienhinweis der alten Website: Balken links, helle Fläche, eckig
 	const styles = $derived(
 		tone === 'warning'
-			? 'border-warn-200 bg-warn-50 text-warn-800'
-			: 'border-brand-200 bg-brand-50 text-brand-900'
+			? 'border-amber-500 bg-amber-50 text-amber-900'
+			: 'border-blue-500 bg-blue-50 text-gray-800'
 	);
 </script>
 
-<div class="flex gap-3 rounded-card border p-4 sm:p-5 {styles} {className}" role="status">
+<div class="flex gap-3 border-l-4 p-4 sm:p-6 {styles} {className}" role="status">
 	<svg
 		class="mt-0.5 size-5 shrink-0"
 		viewBox="0 0 24 24"
@@ -47,12 +48,12 @@
 			<path stroke-linecap="round" d="M12 11v5m0-8h.01" />
 		{/if}
 	</svg>
-	<div class="text-sm leading-relaxed">
+	<div class="leading-relaxed">
 		{#if title}<p class="font-semibold">{title}</p>{/if}
 		{#if children}
 			{@render children()}
 		{:else if message}
-			<p>{message}</p>
+			<p class={title ? 'mt-1 text-sm' : ''}>{message}</p>
 		{/if}
 	</div>
 </div>

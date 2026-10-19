@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * Teilen: Web Share API, sonst Link in die Zwischenablage. Ohne `url` die aktuelle Seite.
+	 * Teilen: Web Share API (Handy), sonst Link in die Zwischenablage. Ohne `url` die aktuelle Seite.
 	 */
 	import { page } from '$app/state';
 
@@ -8,8 +8,16 @@
 		title,
 		text = '',
 		url = null,
+		variant = 'link',
 		class: className = ''
-	}: { title: string; text?: string; url?: string | null; class?: string } = $props();
+	}: {
+		title: string;
+		text?: string;
+		url?: string | null;
+		/** `link`: blauer Textlink wie auf der alten Website, `button`: Schaltfläche */
+		variant?: 'link' | 'button';
+		class?: string;
+	} = $props();
 
 	let status = $state('');
 	let timer: ReturnType<typeof setTimeout> | undefined;
@@ -47,7 +55,13 @@
 </script>
 
 <div class="inline-flex items-center gap-3 {className}">
-	<button type="button" class="btn btn-secondary" onclick={share}>
+	<button
+		type="button"
+		class={variant === 'link'
+			? 'inline-flex min-h-9 items-center gap-1 text-sm text-blue-600 hover:underline'
+			: 'btn btn-secondary'}
+		onclick={share}
+	>
 		<svg
 			class="size-4"
 			viewBox="0 0 24 24"
@@ -63,5 +77,5 @@
 		</svg>
 		Teilen
 	</button>
-	<span class="text-sm text-brand-800" role="status" aria-live="polite">{status}</span>
+	<span class="text-sm text-gray-600" role="status" aria-live="polite">{status}</span>
 </div>

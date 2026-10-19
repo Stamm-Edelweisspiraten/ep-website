@@ -1,12 +1,16 @@
 <script lang="ts">
+	import { safeColor } from '$lib/format';
+
 	interface Props {
 		email: string;
 		/** Betreff für den Mail-Link */
 		subject?: string;
+		/** Optional Gruppenfarbe `#rrggbb` für „E-Mail senden“ (sonst Indigo wie auf der alten Website) */
+		color?: string | null;
 		class?: string;
 	}
 
-	let { email, subject, class: className = '' }: Props = $props();
+	let { email, subject, color = null, class: className = '' }: Props = $props();
 
 	let status = $state<'idle' | 'copied' | 'failed'>('idle');
 	let timer: ReturnType<typeof setTimeout> | undefined;
@@ -14,6 +18,7 @@
 	const href = $derived(
 		`mailto:${email}${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`
 	);
+	const accent = $derived(safeColor(color));
 
 	async function copy() {
 		try {
@@ -28,7 +33,12 @@
 </script>
 
 <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center {className}">
-	<a {href} class="btn btn-primary">
+	<a
+		{href}
+		class="send inline-flex min-h-11 items-center justify-center gap-2 rounded bg-indigo-600 px-4 py-2 text-white transition-colors hover:bg-indigo-700"
+		style:--accent={accent}
+		class:custom={!!accent}
+	>
 		<svg
 			class="size-5"
 			viewBox="0 0 24 24"
@@ -37,12 +47,16 @@
 			stroke-width="2"
 			aria-hidden="true"
 		>
-			<rect x="3" y="5" width="18" height="14" rx="2" />
-			<path stroke-linecap="round" stroke-linejoin="round" d="m3 7 9 6 9-6" />
+			<path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16v16H4z" />
+			<path stroke-linecap="round" stroke-linejoin="round" d="M22 6 12 13 2 6" />
 		</svg>
 		E-Mail senden
 	</a>
-	<button type="button" class="btn btn-secondary" onclick={copy}>
+	<button
+		type="button"
+		class="inline-flex min-h-11 items-center justify-center gap-2 rounded bg-gray-200 px-4 py-2 text-gray-800 transition-colors hover:bg-gray-300"
+		onclick={copy}
+	>
 		<svg
 			class="size-5"
 			viewBox="0 0 24 24"
@@ -54,8 +68,11 @@
 			{#if status === 'copied'}
 				<path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7" />
 			{:else}
-				<rect x="9" y="9" width="12" height="12" rx="2" />
-				<path stroke-linecap="round" stroke-linejoin="round" d="M5 15V5a2 2 0 0 1 2-2h10" />
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M8 16h8M8 12h8M8 8h8M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"
+				/>
 			{/if}
 		</svg>
 		{status === 'copied' ? 'Kopiert!' : 'E-Mail kopieren'}
@@ -68,6 +85,16 @@
 		{/if}
 	</span>
 	{#if status === 'failed'}
-		<span class="text-sm text-muted select-all">{email}</span>
+		<span class="text-sm text-gray-500 select-all">{email}</span>
 	{/if}
 </div>
+
+<style>
+	/* Gruppenfarbe: etwas abgedunkelt, damit weiße Schrift lesbar bleibt */
+	.send.custom {
+		background-color: color-mix(in srgb, var(--accent) 85%, black);
+	}
+	.send.custom:hover {
+		background-color: color-mix(in srgb, var(--accent) 70%, black);
+	}
+</style>

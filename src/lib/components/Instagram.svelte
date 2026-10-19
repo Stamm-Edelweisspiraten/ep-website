@@ -9,34 +9,16 @@
 </script>
 
 <section class="container-page py-12 {className}" aria-labelledby="instagram-titel">
-	<div
-		class="flex flex-col gap-6 overflow-hidden rounded-card bg-linear-to-br from-brand-700 to-brand-900 p-8 text-white shadow-card sm:flex-row sm:items-center sm:justify-between sm:p-10"
-	>
-		<div class="flex items-start gap-4">
-			<svg
-				class="mt-1 size-8 shrink-0"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="1.8"
-				aria-hidden="true"
-			>
-				<rect x="3" y="3" width="18" height="18" rx="5" />
-				<circle cx="12" cy="12" r="4" />
-				<circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-			</svg>
-			<div>
-				<h2 id="instagram-titel" class="text-2xl text-white">Folge uns auf Instagram!</h2>
-				<p class="mt-1 text-white/85">
-					Erlebe unsere Aktionen, Fahrten und Gruppenstunden mit – auch online.
-				</p>
-			</div>
-		</div>
+	<div class="w-full bg-linear-to-br from-pink-500 to-purple-600 p-8 text-white shadow-md">
+		<h2 id="instagram-titel" class="mb-4 text-2xl font-bold text-white">
+			<span aria-hidden="true">📸</span> Folge uns auf Instagram!
+		</h2>
+		<p class="mb-6">Erlebe unsere Aktionen, Fahrten und Gruppenstunden mit – auch online.</p>
 		<a
 			href="https://instagram.com/{handle}"
 			target="_blank"
 			rel="noopener noreferrer"
-			class="btn shrink-0 bg-white text-brand-800 hover:bg-brand-50 focus-visible:outline-white"
+			class="inline-block rounded-full bg-white px-6 py-2 font-bold text-pink-600 transition-colors hover:bg-gray-100 focus-visible:outline-white"
 		>
 			@{handle}
 		</a>

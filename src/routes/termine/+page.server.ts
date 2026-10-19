@@ -32,7 +32,11 @@ export const load: PageServerLoad = async ({ url }) => {
 	);
 	const byKey = new Map<string, WebsiteEvent>();
 	for (const result of results) {
-		for (const event of result.value) byKey.set(eventKey(event), event);
+		for (const event of result.value) {
+			// Rückblick: nur Termine, die im Jahr beginnen (die API liefert auch solche, die hineinragen)
+			if (range && review && event.startsOn < range.from) continue;
+			byKey.set(eventKey(event), event);
+		}
 	}
 
 	return {

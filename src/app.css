@@ -5,38 +5,40 @@
  * `bg-brand-700`, `text-ink`, `text-muted`, `bg-canvas`, `bg-surface`, `border-line`, `rounded-card`.
  */
 @theme {
+	/* Wie die alte Website: Tailwind-Standardschrift (System-UI) */
 	--font-sans:
-		'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Roboto, Arial,
-		sans-serif;
+		ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
-	/* Akzentfarbe Edelweiß-Grün */
-	--color-brand-50: #f1f8f3;
-	--color-brand-100: #dcefe2;
-	--color-brand-200: #bbdfc7;
-	--color-brand-300: #8ec7a3;
-	--color-brand-400: #5ea87b;
-	--color-brand-500: #3d8c5e;
-	--color-brand-600: #2c7049;
-	--color-brand-700: #24593c;
-	--color-brand-800: #1f4832;
-	--color-brand-900: #1a3b2a;
-	--color-brand-950: #0d2117;
+	/* Akzentfarbe der alten Website: Indigo (Logo-Schriftzug), Hover Blau */
+	--color-brand-50: #eef2ff;
+	--color-brand-100: #e0e7ff;
+	--color-brand-200: #c7d2fe;
+	--color-brand-300: #a5b4fc;
+	--color-brand-400: #818cf8;
+	--color-brand-500: #6366f1;
+	--color-brand-600: #2563eb;
+	--color-brand-700: #1d4ed8;
+	--color-brand-800: #1e40af;
+	--color-brand-900: #312e81;
+	--color-brand-950: #1e1b4b;
 
-	/* Flächen und Text */
-	--color-ink: #1b2420;
-	--color-muted: #5a6560;
-	--color-canvas: #f7f8f5;
+	/* Flächen und Text (alte Website: gray-800 Überschriften, gray-700 Text, gray-300 Rahmen) */
+	--color-ink: #1f2937;
+	--color-muted: #6b7280;
+	--color-canvas: #ffffff;
 	--color-surface: #ffffff;
-	--color-line: #e2e6e1;
+	--color-line: #d1d5db;
+	--color-soft: #f3f4f6;
 
-	/* Hinweise */
-	--color-warn-50: #fff8eb;
-	--color-warn-200: #f7d9a0;
-	--color-warn-800: #7a4a07;
+	/* Hinweise (Ferienhinweis der alten Seite: amber) */
+	--color-warn-50: #fffbeb;
+	--color-warn-200: #fde68a;
+	--color-warn-800: #92400e;
 
-	--radius-card: 1rem;
-	--shadow-card: 0 1px 2px rgb(16 24 20 / 0.05), 0 4px 16px rgb(16 24 20 / 0.06);
-	--shadow-card-hover: 0 2px 4px rgb(16 24 20 / 0.06), 0 10px 28px rgb(16 24 20 / 0.1);
+	/* Karten der alten Website: eckig, Rahmen statt Schatten, Schatten nur beim Hover */
+	--radius-card: 0;
+	--shadow-card: none;
+	--shadow-card-hover: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 @layer base {
@@ -73,17 +75,17 @@
 
 /* Seitenbreite mit Rand: `<div class="container-page">` */
 @utility container-page {
-	@apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+	@apply mx-auto w-full max-w-5xl px-4 sm:px-6;
 }
 
 /* Vertikaler Abstand eines Seitenabschnitts */
 @utility section-y {
-	@apply py-12 sm:py-16;
+	@apply py-12;
 }
 
 /* Kleine Überzeile über Überschriften */
 @utility eyebrow {
-	@apply text-xs font-semibold tracking-widest text-brand-700 uppercase;
+	@apply text-xs font-semibold tracking-wide text-gray-400 uppercase;
 }
 
 /* Fließtext-Link */
@@ -93,24 +95,24 @@
 
 /* Schaltflächen: `btn btn-primary`, `btn btn-secondary`, `btn btn-ghost` */
 @utility btn {
-	@apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+	@apply inline-flex min-h-11 items-center justify-center gap-2 rounded px-4 py-2 text-base font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60;
 }
 
 @utility btn-primary {
-	@apply bg-brand-700 text-white hover:bg-brand-800 active:bg-brand-900;
+	@apply bg-indigo-600 text-white hover:bg-indigo-700;
 }
 
 @utility btn-secondary {
-	@apply border border-line bg-surface text-ink hover:border-brand-300 hover:bg-brand-50;
+	@apply border border-line bg-white text-gray-700 hover:bg-gray-100;
 }
 
 @utility btn-ghost {
-	@apply text-brand-800 hover:bg-brand-50;
+	@apply text-gray-700 hover:bg-gray-100 hover:text-brand-600;
 }
 
 /* Lesetext für längere Inhalte (Beschreibungen aus dem Intern-Bereich, statische Seiten) */
 @utility prose-site {
-	@apply max-w-prose leading-relaxed text-ink/90;
+	@apply max-w-prose leading-relaxed text-gray-700;
 
 	& :where(p, ul, ol) {
 		@apply my-4;

@@ -13,10 +13,7 @@
 <!-- Text unverändert von der alten Website übernommen (Datenschutz-Generator.de); Änderungen nur nach Prüfung. -->
 <div class="container-page section-y">
 	<div class="prose-site datenschutz">
-		<nav
-			aria-labelledby="inhalt-titel"
-			class="rounded-card border border-line bg-surface p-5 shadow-card sm:p-6"
-		>
+		<nav aria-labelledby="inhalt-titel" class="border border-gray-300 bg-white p-5 sm:p-6">
 			<h2 id="inhalt-titel" class="!mt-0 text-xl">Inhaltsübersicht</h2>
 			<ul>
 				<li><a href="#m3">Verantwortlicher</a></li>

@@ -14,7 +14,8 @@
 </script>
 
 {#if groups.length > 0}
-	<ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+	<!-- Wie auf der alten Website: Kacheln untereinander in voller Breite -->
+	<ul class="space-y-6">
 		{#each groups as group (group.id)}
 			<li><GroupCard {group} {heading} /></li>
 		{/each}

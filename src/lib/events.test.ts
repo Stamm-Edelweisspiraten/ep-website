@@ -9,6 +9,10 @@ import {
 	buildSearch,
 	collectGroups,
 	collectTags,
+	contrastText,
+	formatEventDate,
+	galleryDateLabel,
+	quartersFor,
 	eventGroupLinks,
 	eventHref,
 	eventKey,
@@ -296,5 +300,55 @@ describe('Serien', () => {
 			{ from: '2026-01-01', to: '2026-01-01' }
 		]);
 		expect(splitRange('2026-02-01', '2026-01-01')).toEqual([]);
+	});
+});
+
+describe('Darstellung wie die alte Website', () => {
+	it('formatEventDate', () => {
+		expect(formatEventDate(ev({ startsOn: '2026-10-24' }))).toBe('Sa., 24. Oktober 2026');
+		expect(
+			formatEventDate(ev({ startsOn: '2026-10-24', startsTime: '16:30', endsTime: '18:00' }))
+		).toBe('Sa., 24. Oktober 2026, 16:30–18:00 Uhr');
+		expect(formatEventDate(ev({ startsOn: '2026-10-24', startsTime: '16:30' }))).toBe(
+			'Sa., 24. Oktober 2026, 16:30 Uhr'
+		);
+		expect(formatEventDate(ev({ startsOn: '2026-10-24', endsOn: '2026-10-26' }))).toBe(
+			'24.–26. Oktober 2026'
+		);
+		expect(formatEventDate(ev({ startsOn: '2026-09-30', endsOn: '2026-10-02' }))).toBe(
+			'30. September – 2. Oktober 2026'
+		);
+		expect(formatEventDate(ev({ startsOn: '2026-12-30', endsOn: '2027-01-02' }))).toBe(
+			'Mi., 30. Dezember 2026 – Sa., 2. Januar 2027'
+		);
+		expect(
+			formatEventDate(
+				ev({ startsOn: '2026-10-23', startsTime: '16:00', endsOn: '2026-10-25', endsTime: '13:00' })
+			)
+		).toBe('Fr., 23. Oktober 2026, 16:00 Uhr – So., 25. Oktober 2026, 13:00 Uhr');
+		expect(formatEventDate(ev({ startsOn: 'kaputt' }))).toBe('');
+	});
+	it('contrastText', () => {
+		expect(contrastText('#ffffff')).toBe('#111827');
+		expect(contrastText('#1d4ed8')).toBe('#ffffff');
+		expect(contrastText(null)).toBe('#1f2937');
+		expect(contrastText('red')).toBe('#1f2937');
+	});
+	it('galleryDateLabel', () => {
+		const events = [
+			{ id: 'x', title: 'B', startsOn: '2025-08-02', endsOn: null },
+			{ id: 'y', title: 'A', startsOn: '2025-07-01', endsOn: '2025-07-03' }
+		];
+		expect(galleryDateLabel({ events, updatedAt: '2026-01-01T00:00:00Z' })).toBe(
+			'01.07.–03.07.2025'
+		);
+		expect(galleryDateLabel({ events: [], updatedAt: '2026-01-05T10:00:00Z' })).toBe('05.01.2026');
+	});
+	it('quartersFor', () => {
+		expect(quartersFor(['2025-08-02', '2025-07-01', '2026-01-01', 'x'])).toEqual([
+			{ from: '2025-07-01', to: '2025-09-30' },
+			{ from: '2026-01-01', to: '2026-03-31' }
+		]);
+		expect(quartersFor([])).toEqual([]);
 	});
 });

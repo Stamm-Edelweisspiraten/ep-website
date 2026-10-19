@@ -2,7 +2,14 @@
  * Hilfen für Termine und Galerien (Client-sicher, ohne Server-Importe außer Typen).
  */
 import type { WebsiteEvent, WebsiteGallery, WebsiteGroup } from '$lib/server/types';
-import { formatDateRange, formatDateShort, parseDate, todayIso, weekdayAdverb } from './format';
+import {
+	formatDate,
+	formatDateRange,
+	formatDateShort,
+	parseDate,
+	todayIso,
+	weekdayAdverb
+} from './format';
 
 /** Link zur Detailseite; Serien-Vorkommen mit `?am=<Datum>` */
 export function eventHref(
@@ -435,4 +442,93 @@ export function splitRange(from: string, to: string, months = 3): { from: string
 		start = nextIso;
 	}
 	return chunks;
+}
+
+// --- Darstellung wie auf der alten Website -------------------------------------
+
+const WEEKDAYS_SHORT_DE = ['So.', 'Mo.', 'Di.', 'Mi.', 'Do.', 'Fr.', 'Sa.'] as const;
+
+function longDay(date: Date, withWeekday: boolean, withYear: boolean): string {
+	const day = `${date.getUTCDate()}. ${MONTHS_LONG[date.getUTCMonth()]}`;
+	const text = withYear ? `${day} ${date.getUTCFullYear()}` : day;
+	return withWeekday ? `${WEEKDAYS_SHORT_DE[date.getUTCDay()]}, ${text}` : text;
+}
+
+/**
+ * Datum eines Termins ausgeschrieben (wie die alte Website):
+ * - „Sa., 24. Oktober 2026“, mit Uhrzeit „Sa., 24. Oktober 2026, 16:30–18:00 Uhr“
+ * - mehrtägig: „24.–26. Oktober 2026“, „30. September – 2. Oktober 2026“,
+ *   „Mi., 30. Dezember 2026 – Sa., 2. Januar 2027“
+ * - mehrtägig mit Uhrzeiten: „Fr., 23. Oktober 2026, 16:00 Uhr – So., 25. Oktober 2026, 13:00 Uhr“
+ */
+export function formatEventDate(
+	event: Pick<WebsiteEvent, 'startsOn' | 'startsTime' | 'endsOn' | 'endsTime'>
+): string {
+	const start = parseDate(event.startsOn);
+	if (!start) return '';
+	const end = event.endsOn && event.endsOn !== event.startsOn ? parseDate(event.endsOn) : null;
+	const time = (value: string | null) => (value && /^\d{2}:\d{2}$/.test(value) ? value : null);
+	const startTime = time(event.startsTime);
+	const endTime = time(event.endsTime);
+
+	if (!end) {
+		const day = longDay(start, true, true);
+		if (!startTime) return day;
+		if (endTime && endTime !== startTime) return `${day}, ${startTime}–${endTime} Uhr`;
+		return `${day}, ${startTime} Uhr`;
+	}
+	if (startTime || endTime) {
+		const from = `${longDay(start, true, true)}${startTime ? `, ${startTime} Uhr` : ''}`;
+		const to = `${longDay(end, true, true)}${endTime ? `, ${endTime} Uhr` : ''}`;
+		return `${from} – ${to}`;
+	}
+	const sameYear = start.getUTCFullYear() === end.getUTCFullYear();
+	if (sameYear && start.getUTCMonth() === end.getUTCMonth()) {
+		return `${start.getUTCDate()}.–${longDay(end, false, true)}`;
+	}
+	if (sameYear) return `${longDay(start, false, false)} – ${longDay(end, false, true)}`;
+	return `${longDay(start, true, true)} – ${longDay(end, true, true)}`;
+}
+
+/** Lesbare Schriftfarbe auf einer Hintergrundfarbe `#rrggbb` (sonst dunkles Grau). */
+export function contrastText(background: string | null | undefined): string {
+	const m = /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(background ?? '');
+	if (!m) return '#1f2937';
+	const [r, g, b] = [m[1], m[2], m[3]].map((hex) => parseInt(hex ?? '0', 16) / 255) as [
+		number,
+		number,
+		number
+	];
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.6 ? '#111827' : '#ffffff';
+}
+
+/**
+ * Datumszeile einer Galerie: Zeitraum des frühesten verknüpften Termins („24.–26.10.2026“),
+ * sonst Tag der letzten Änderung.
+ */
+export function galleryDateLabel(gallery: Pick<WebsiteGallery, 'events' | 'updatedAt'>): string {
+	const first = [...gallery.events]
+		.filter((e) => isIsoDate(e.startsOn))
+		.sort((a, b) => (a.startsOn < b.startsOn ? -1 : a.startsOn > b.startsOn ? 1 : 0))[0];
+	if (first) return formatDateRange({ startsOn: first.startsOn, endsOn: first.endsOn });
+	return formatDate(galleryDate(gallery));
+}
+
+/**
+ * Kalenderquartale (`from`/`to`), die die angegebenen Daten enthalten – dedupliziert, sortiert.
+ * Gleiche Grenzen wie der Rückblick auf `/termine`, damit sich die Abrufe den Cache teilen.
+ */
+export function quartersFor(dates: readonly string[]): { from: string; to: string }[] {
+	const keys = new Set<string>();
+	for (const date of dates) {
+		if (!isIsoDate(date)) continue;
+		const year = date.slice(0, 4);
+		const q = Math.floor((Number(date.slice(5, 7)) - 1) / 3);
+		keys.add(`${year}-${String(q * 3 + 1).padStart(2, '0')}-01`);
+	}
+	return [...keys].sort().map((from) => {
+		const d = parseDate(from)!;
+		const next = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 3, 1, 12));
+		return { from, to: addDays(next.toISOString().slice(0, 10), -1) };
+	});
 }

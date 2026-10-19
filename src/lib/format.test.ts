@@ -110,6 +110,18 @@ describe('Wochentage', () => {
 		expect(formatMeeting(null, '16:30')).toBe('16:30 Uhr');
 		expect(formatMeeting(null, null)).toBe('');
 	});
+	it('mit Ende der Gruppenstunde', () => {
+		expect(formatMeeting(5, '16:30', '18:00')).toBe('Freitags 16:30 – 18:00 Uhr');
+		expect(formatMeeting(null, '18:00', '19:30')).toBe('18:00 – 19:30 Uhr');
+		expect(formatMeeting(5, '16:30', null)).toBe('Freitags 16:30 Uhr');
+	});
+	it('ignoriert Ende ohne Beginn, Ende ≤ Beginn und ungültige Zeiten', () => {
+		expect(formatMeeting(1, null, '18:00')).toBe('Montags');
+		expect(formatMeeting(1, '18:00', '18:00')).toBe('Montags 18:00 Uhr');
+		expect(formatMeeting(1, '18:00', '17:00')).toBe('Montags 18:00 Uhr');
+		expect(formatMeeting(1, '18:00', '25:00')).toBe('Montags 18:00 Uhr');
+		expect(formatMeeting(1, '8:00', '9:00')).toBe('Montags');
+	});
 });
 
 describe('todayIso', () => {

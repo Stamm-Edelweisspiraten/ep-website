@@ -142,15 +142,20 @@ export function weekdayAdverb(day: number | null | undefined): string {
 }
 
 /**
- * Gruppenstunde: „Freitags 16:30 Uhr“, nur Tag → „Freitags“, nur Zeit → „16:30 Uhr“, nichts → `''`.
+ * Gruppenstunde: „Freitags 16:30 – 18:00 Uhr“, ohne (gültiges) Ende „Freitags 16:30 Uhr“,
+ * nur Tag → „Freitags“, nur Zeit → „16:30 Uhr“, nichts → `''`. Ein Ende ohne Beginn oder
+ * nicht nach dem Beginn wird ignoriert.
  */
 export function formatMeeting(
 	weekday: number | null | undefined,
-	time: string | null | undefined
+	time: string | null | undefined,
+	endTime?: string | null
 ): string {
 	const day = weekdayName(weekday);
 	const dayText = day ? `${day}s` : '';
-	const timeText = formatTime(time);
+	const start = time && TIME_RE.test(time) ? time : null;
+	const end = start && endTime && TIME_RE.test(endTime) && endTime > start ? endTime : null;
+	const timeText = start ? (end ? `${start} – ${end} Uhr` : `${start} Uhr`) : '';
 	return [dayText, timeText].filter(Boolean).join(' ');
 }
 

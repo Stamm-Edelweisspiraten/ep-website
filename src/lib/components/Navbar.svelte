@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
-	import { safeColor } from '$lib/format';
 	import type { GroupType, WebsiteGroup } from '$lib/server/types';
 
 	interface Props {
@@ -11,11 +10,13 @@
 
 	let { groups = [] }: Props = $props();
 
+	/** Reihenfolge wie auf der alten Website (Gruppen-Dropdown steht davor) */
 	const links = [
-		{ href: '/termine', label: 'Termine' },
 		{ href: '/galerie', label: 'Galerie' },
-		{ href: '/kontakt', label: 'Kontakt' },
-		{ href: '/cpd', label: 'CPD' }
+		{ href: '/termine', label: 'Termine' },
+		{ href: '/team', label: 'Team' },
+		{ href: '/cpd', label: 'CPD' },
+		{ href: '/kontakt', label: 'Kontakt' }
 	];
 
 	const TYPE_LABELS: Record<GroupType, string> = { meute: 'Meute', sippe: 'Sippe' };
@@ -30,7 +31,7 @@
 			.filter((s) => s.items.length > 0)
 	);
 
-	/** Als string – die Route-Typen kennen `/gruppen` noch nicht */
+	/** Als string – die Route-Typen kennen nicht jede Seite (z. B. `/team`) */
 	const currentPath: string = $derived(page.url.pathname);
 
 	let mobileOpen = $state(false);
@@ -69,45 +70,32 @@
 		if (next && groupsWrapper && !groupsWrapper.contains(next)) groupsOpen = false;
 	}
 
-	const linkBase =
-		'rounded-full px-3 py-2 text-[0.95rem] font-medium text-ink/80 transition-colors hover:bg-brand-50 hover:text-brand-800';
-	const linkActive = 'bg-brand-50 text-brand-800';
+	const navLink = 'text-lg font-medium text-gray-700 transition-colors hover:text-blue-600';
+	const dropdownLink =
+		'block px-5 py-3 text-base font-medium text-gray-800 transition-colors hover:bg-gray-100';
+	const mobileLink =
+		'block text-lg font-semibold text-gray-700 transition-colors hover:text-blue-600';
 </script>
 
 <svelte:window onclick={onWindowClick} onkeydown={onWindowKeydown} />
 
-<header class="sticky top-0 z-50 border-b border-line bg-surface/90 backdrop-blur">
+<header class="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-md">
 	<nav
-		class="container-page flex h-16 items-center justify-between gap-4"
+		class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
 		aria-label="Hauptnavigation"
 	>
-		<a
-			href="/"
-			class="flex items-center gap-2.5 text-lg font-extrabold tracking-tight text-brand-900"
-		>
-			<img src="/logo.avif" alt="" width="32" height="32" class="h-8 w-auto" />
-			<span>Edelweißpiraten</span>
-		</a>
+		<a href="/" class="text-xl font-extrabold text-indigo-900">Edelweißpiraten</a>
 
 		<!-- Desktop -->
-		<ul class="hidden items-center gap-1 md:flex">
-			<li>
-				<a
-					href="/"
-					class="{linkBase} {isActive('/') ? linkActive : ''}"
-					aria-current={isActive('/') ? 'page' : undefined}
-				>
-					Start
-				</a>
-			</li>
+		<ul class="hidden items-center gap-6 md:flex">
 			<li>
 				{#if sections.length > 0}
 					<div class="relative" bind:this={groupsWrapper} onfocusout={onDropdownFocusout}>
 						<button
 							bind:this={groupsButton}
 							type="button"
-							class="{linkBase} inline-flex items-center gap-1 {isActive('/gruppen')
-								? linkActive
+							class="{navLink} flex items-center gap-2 {isActive('/gruppen')
+								? 'text-blue-600'
 								: ''}"
 							aria-expanded={groupsOpen}
 							aria-controls="nav-gruppen"
@@ -115,7 +103,9 @@
 						>
 							Gruppen
 							<svg
-								class="size-4 transition-transform {groupsOpen ? 'rotate-180' : ''}"
+								class="size-4 transition-transform motion-reduce:transition-none {groupsOpen
+									? 'rotate-180'
+									: ''}"
 								viewBox="0 0 24 24"
 								fill="none"
 								stroke="currentColor"
@@ -128,44 +118,40 @@
 						{#if groupsOpen}
 							<div
 								id="nav-gruppen"
-								class="absolute top-full left-0 mt-2 w-72 rounded-card border border-line bg-surface p-2 shadow-card-hover"
+								class="absolute top-full left-0 z-50 mt-3 w-64 border border-gray-200 bg-white px-4 py-3 shadow-md"
 							>
-								{#each sections as section (section.type)}
-									<p class="eyebrow px-3 pt-2 pb-1 text-muted">{section.label}</p>
+								{#each sections as section, i (section.type)}
+									{#if i > 0}<hr class="my-2 border-gray-200" />{/if}
+									<p class="mb-1 text-xs font-semibold text-gray-400 uppercase">{section.label}</p>
 									<ul>
 										{#each section.items as group (group.id)}
 											<li>
 												<a
 													href="/gruppen/{group.slug}"
-													class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-brand-50 hover:text-brand-800"
+													class="{dropdownLink} pl-4"
 													aria-current={isActive(`/gruppen/${group.slug}`) ? 'page' : undefined}
 												>
-													<span
-														class="size-2.5 shrink-0 rounded-full bg-brand-500"
-														style:background-color={safeColor(group.color)}
-														aria-hidden="true"
-													></span>
 													{group.name}
 												</a>
 											</li>
 										{/each}
 									</ul>
 								{/each}
-								<div class="mt-1 border-t border-line pt-1">
-									<a
-										href="/gruppen"
-										class="block rounded-lg px-3 py-2 text-sm font-medium text-brand-700 hover:bg-brand-50"
-									>
-										Alle Gruppen
-									</a>
-								</div>
+								<hr class="my-2 border-gray-200" />
+								<a
+									href="/gruppen"
+									class="{dropdownLink} text-gray-600"
+									aria-current={currentPath === '/gruppen' ? 'page' : undefined}
+								>
+									Alle Gruppen
+								</a>
 							</div>
 						{/if}
 					</div>
 				{:else}
 					<a
 						href="/gruppen"
-						class="{linkBase} {isActive('/gruppen') ? linkActive : ''}"
+						class={navLink}
 						aria-current={isActive('/gruppen') ? 'page' : undefined}
 					>
 						Gruppen
@@ -176,7 +162,7 @@
 				<li>
 					<a
 						href={link.href}
-						class="{linkBase} {isActive(link.href) ? linkActive : ''}"
+						class={navLink}
 						aria-current={isActive(link.href) ? 'page' : undefined}
 					>
 						{link.label}
@@ -188,7 +174,7 @@
 		<!-- Mobil -->
 		<button
 			type="button"
-			class="inline-flex size-11 items-center justify-center rounded-full text-ink hover:bg-brand-50 md:hidden"
+			class="-mr-2 inline-flex size-11 items-center justify-center text-gray-700 md:hidden"
 			aria-expanded={mobileOpen}
 			aria-controls="nav-mobil"
 			aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
@@ -212,52 +198,42 @@
 	</nav>
 
 	{#if mobileOpen}
-		<div id="nav-mobil" class="border-t border-line bg-surface md:hidden">
-			<ul class="container-page space-y-1 py-4">
-				<li>
-					<a
-						href="/"
-						class="block rounded-lg px-3 py-3 text-lg font-semibold hover:bg-brand-50"
-						aria-current={isActive('/') ? 'page' : undefined}
-					>
-						Start
-					</a>
-				</li>
-				<li>
-					<a
-						href="/gruppen"
-						class="block rounded-lg px-3 py-3 text-lg font-semibold hover:bg-brand-50"
-						aria-current={currentPath === '/gruppen' ? 'page' : undefined}
-					>
-						Gruppen
-					</a>
-					{#each sections as section (section.type)}
-						<p class="eyebrow mt-2 px-6 text-muted">{section.label}</p>
-						<ul>
-							{#each section.items as group (group.id)}
-								<li>
-									<a
-										href="/gruppen/{group.slug}"
-										class="flex items-center gap-2 rounded-lg py-2.5 pr-3 pl-6 text-base font-medium hover:bg-brand-50"
-										aria-current={isActive(`/gruppen/${group.slug}`) ? 'page' : undefined}
-									>
-										<span
-											class="size-2.5 shrink-0 rounded-full bg-brand-500"
-											style:background-color={safeColor(group.color)}
-											aria-hidden="true"
-										></span>
-										{group.name}
-									</a>
-								</li>
-							{/each}
-						</ul>
-					{/each}
-				</li>
+		<div id="nav-mobil" class="border-t border-gray-200 bg-white px-4 pb-4 md:hidden">
+			<p class="mt-4 text-sm font-semibold tracking-wide text-gray-500 uppercase">Gruppen</p>
+			<div class="ml-2">
+				{#each sections as section (section.type)}
+					<p class="mt-3 text-xs font-semibold text-gray-400 uppercase">{section.label}</p>
+					<ul>
+						{#each section.items as group (group.id)}
+							<li>
+								<a
+									href="/gruppen/{group.slug}"
+									class="{mobileLink} py-2"
+									aria-current={isActive(`/gruppen/${group.slug}`) ? 'page' : undefined}
+								>
+									{group.name}
+								</a>
+							</li>
+						{/each}
+					</ul>
+				{/each}
+				<a
+					href="/gruppen"
+					class="{mobileLink} {sections.length > 0 ? 'mt-2' : 'mt-1'} py-2"
+					aria-current={currentPath === '/gruppen' ? 'page' : undefined}
+				>
+					Alle Gruppen
+				</a>
+			</div>
+
+			<hr class="my-4 border-gray-300" />
+
+			<ul class="space-y-3">
 				{#each links as link (link.href)}
 					<li>
 						<a
 							href={link.href}
-							class="block rounded-lg px-3 py-3 text-lg font-semibold hover:bg-brand-50"
+							class={mobileLink}
 							aria-current={isActive(link.href) ? 'page' : undefined}
 						>
 							{link.label}
@@ -271,6 +247,6 @@
 
 <style>
 	a[aria-current='page'] {
-		color: var(--color-brand-800);
+		color: var(--color-blue-600);
 	}
 </style>

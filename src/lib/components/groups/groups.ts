@@ -1,6 +1,7 @@
 /**
  * Hilfen für Gruppenseiten und -karten (Client-sicher, nur Typen aus `$lib/server`).
  */
+import { safeColor } from '$lib/format';
 import { groupImageUrl } from '$lib/images';
 import type { GroupType, WebsiteGroup } from '$lib/server/types';
 
@@ -10,6 +11,21 @@ export const GROUP_TYPE_LEADS: Record<GroupType, string> = {
 	meute: 'Spielen, Basteln und kleine Abenteuer in der Gruppe erleben.',
 	sippe: 'Zeltlager, Fahrten und echte Gemeinschaft mit Gleichaltrigen.'
 };
+
+/** Gruppenfarbe ohne Angabe: Indigo wie der Schriftzug der alten Website */
+export const GROUP_FALLBACK_COLOR = '#4338ca';
+
+/** Gruppenfarbe `#rrggbb` (nur geprüfte Werte, sonst Indigo) – für `style:` */
+export function groupColor(group: Pick<WebsiteGroup, 'color'>): string {
+	return safeColor(group.color) ?? GROUP_FALLBACK_COLOR;
+}
+
+/** Überschrift wie auf der alten Website: „Meute (6 bis 10 Jahre)“ bzw. „Sippe“ */
+export function groupTitle(group: Pick<WebsiteGroup, 'type' | 'ageRange'>): string {
+	const label = GROUP_TYPE_LABELS[group.type] ?? 'Gruppe';
+	const age = group.ageRange?.trim();
+	return age ? `${label} (${age})` : label;
+}
 
 /** Reihenfolge der Abschnitte: erst Meute, dann Sippen */
 export const GROUP_TYPE_ORDER: readonly GroupType[] = ['meute', 'sippe'];

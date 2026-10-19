@@ -20,16 +20,14 @@
 	const site = $derived((env.PUBLIC_SITE_URL || FALLBACK_SITE).replace(/\/+$/, ''));
 	const nextUrl = $derived(`${site}/kontakt?success=1#kontaktformular`);
 
+	// Felder wie auf der alten Kontaktseite: grauer Rahmen, leicht gerundet, grauer Fokusring
 	const input =
-		'w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-base text-ink placeholder:text-muted/70 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 focus:outline-none';
-	const labelClass = 'mb-1.5 block text-sm font-medium text-ink';
+		'w-full rounded border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 focus:ring-2 focus:ring-gray-400 focus:outline-none';
+	const labelClass = 'mb-1 block text-sm font-medium text-gray-700';
 </script>
 
 {#if success}
-	<div
-		class="mb-6 rounded-card border border-brand-200 bg-brand-50 p-4 text-brand-900 sm:p-5"
-		role="status"
-	>
+	<div class="mb-6 rounded border border-green-300 bg-green-50 p-4 text-green-800" role="status">
 		<p>
 			<strong>Danke!</strong> Deine Nachricht wurde erfolgreich versendet. Wir melden uns so schnell wie
 			möglich.
@@ -40,7 +38,7 @@
 <form
 	action="https://formsubmit.co/{FORM_RECIPIENT}"
 	method="POST"
-	class="space-y-5 rounded-card border border-line bg-surface p-6 shadow-card sm:p-8"
+	class="space-y-4 rounded border border-gray-300 bg-white p-6 md:p-8"
 >
 	<!-- FormSubmit-Optionen -->
 	<input type="hidden" name="_subject" value="Neue Nachricht – Stamm Edelweißpiraten" />
@@ -59,11 +57,11 @@
 		<input id="kontakt-honey" type="text" name="_honey" tabindex="-1" autocomplete="off" />
 	</div>
 
-	<p class="text-sm text-muted">
+	<p class="text-sm text-gray-500">
 		Mit <span aria-hidden="true">*</span> markierte Felder sind Pflichtfelder.
 	</p>
 
-	<div class="grid gap-5 md:grid-cols-2">
+	<div class="grid gap-4 md:grid-cols-2">
 		<div>
 			<label for="kontakt-name" class={labelClass}>Name <span aria-hidden="true">*</span></label>
 			<input
@@ -91,7 +89,7 @@
 		</div>
 		<div class="md:col-span-2">
 			<label for="kontakt-telefon" class={labelClass}>
-				Telefon <span class="font-normal text-muted">(optional)</span>
+				Telefon <span class="font-normal text-gray-500">(optional)</span>
 			</label>
 			<input
 				id="kontakt-telefon"
@@ -119,9 +117,9 @@
 				id="kontakt-einwilligung"
 				type="checkbox"
 				required
-				class="mt-1 size-5 shrink-0 accent-brand-700"
+				class="mt-1 size-5 shrink-0 accent-gray-900"
 			/>
-			<label for="kontakt-einwilligung" class="text-sm leading-relaxed text-ink/85">
+			<label for="kontakt-einwilligung" class="text-sm leading-relaxed text-gray-700">
 				Ich habe die <a class="link" href="/datenschutz">Hinweise zum Datenschutz</a> gelesen und
 				bin einverstanden, dass meine Angaben zur Kontaktaufnahme verarbeitet werden.
 				<span aria-hidden="true">*</span>
@@ -129,12 +127,15 @@
 		</div>
 	</div>
 
-	<p class="text-xs leading-relaxed text-muted">
+	<p class="text-xs leading-relaxed text-gray-500">
 		Das Formular wird über den Dienst formsubmit.co versendet. Deine Angaben nutzen wir nur, um
 		deine Anfrage zu beantworten.
 	</p>
 
-	<button type="submit" class="btn btn-primary">
+	<button
+		type="submit"
+		class="inline-flex min-h-11 items-center gap-2 rounded bg-gray-900 px-5 py-2.5 font-medium text-white transition-colors hover:bg-gray-800"
+	>
 		Nachricht senden
 		<svg
 			class="size-4"

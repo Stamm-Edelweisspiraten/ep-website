@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import type { WebsiteGroup } from '$lib/server/types';
-import { groupImage, groupSections, joinNames, leaderText } from './groups';
+import {
+	GROUP_FALLBACK_COLOR,
+	groupColor,
+	groupImage,
+	groupSections,
+	groupTitle,
+	joinNames,
+	leaderText
+} from './groups';
 
 function group(partial: Partial<WebsiteGroup>): WebsiteGroup {
 	return {
@@ -13,6 +21,7 @@ function group(partial: Partial<WebsiteGroup>): WebsiteGroup {
 		meetingPlace: null,
 		meetingWeekday: null,
 		meetingTime: null,
+		meetingEndTime: null,
 		color: null,
 		contactEmail: null,
 		leaders: [],
@@ -65,5 +74,23 @@ describe('groupSections', () => {
 		expect(sections.map((s) => s.label)).toEqual(['Meute', 'Sippe']);
 		expect(sections[1]!.groups.map((g) => g.id)).toEqual(['a', 'c']);
 		expect(groupSections([group({ type: 'sippe' })]).map((s) => s.type)).toEqual(['sippe']);
+	});
+});
+
+describe('groupColor', () => {
+	it('nimmt nur gültige Hex-Farben, sonst Indigo', () => {
+		expect(groupColor({ color: '#c05621' })).toBe('#c05621');
+		expect(groupColor({ color: null })).toBe(GROUP_FALLBACK_COLOR);
+		expect(groupColor({ color: 'red;background:url(x)' })).toBe(GROUP_FALLBACK_COLOR);
+	});
+});
+
+describe('groupTitle', () => {
+	it('Typ mit Alter in Klammern', () => {
+		expect(groupTitle({ type: 'meute', ageRange: '6 bis 10 Jahre' })).toBe(
+			'Meute (6 bis 10 Jahre)'
+		);
+		expect(groupTitle({ type: 'sippe', ageRange: null })).toBe('Sippe');
+		expect(groupTitle({ type: 'sippe', ageRange: '  ' })).toBe('Sippe');
 	});
 });

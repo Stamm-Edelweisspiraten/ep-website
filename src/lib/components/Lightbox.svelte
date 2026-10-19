@@ -126,7 +126,7 @@
 
 <div
 	bind:this={dialog}
-	class="fixed inset-0 z-[70] flex flex-col bg-black/95 text-white"
+	class="fixed inset-0 z-[70] flex items-center justify-center bg-black text-white"
 	role="dialog"
 	tabindex="-1"
 	aria-modal="true"
@@ -135,87 +135,61 @@
 	{ontouchstart}
 	{ontouchend}
 >
-	<div class="flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
-		<p class="text-sm font-medium tabular-nums text-white/80" aria-live="polite">
-			{index + 1} / {count}
-		</p>
+	{#if image}
+		{#key image.id}
+			<img
+				src={image.src}
+				alt={image.alt}
+				width={image.width}
+				height={image.height}
+				class="h-auto max-h-[90vh] w-auto max-w-[90vw] rounded object-contain select-none"
+				draggable="false"
+			/>
+		{/key}
+	{/if}
+
+	<p
+		class="absolute top-5 left-5 text-sm font-medium text-white/70 tabular-nums"
+		aria-live="polite"
+	>
+		{index + 1} / {count}
+	</p>
+
+	{#if count > 1}
 		<button
-			bind:this={closeButton}
 			type="button"
-			class="inline-flex size-11 items-center justify-center rounded-full text-white hover:bg-white/10 focus-visible:outline-white"
-			onclick={onclose}
+			class="absolute top-1/2 left-2 size-12 -translate-y-1/2 text-4xl sm:left-4 sm:text-5xl md:text-6xl"
+			onclick={() => go(-1)}
 		>
-			<svg
-				class="size-6"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				aria-hidden="true"
-			>
-				<path stroke-linecap="round" d="M6 6l12 12M18 6 6 18" />
-			</svg>
-			<span class="sr-only">Schließen</span>
+			<span aria-hidden="true">‹</span>
+			<span class="sr-only">Vorheriges Bild</span>
 		</button>
-	</div>
+		<button
+			type="button"
+			class="absolute top-1/2 right-2 size-12 -translate-y-1/2 text-4xl sm:right-4 sm:text-5xl md:text-6xl"
+			onclick={() => go(1)}
+		>
+			<span aria-hidden="true">›</span>
+			<span class="sr-only">Nächstes Bild</span>
+		</button>
+	{/if}
 
-	<div class="relative flex min-h-0 flex-1 items-center justify-center px-2 sm:px-16">
-		{#if image}
-			{#key image.id}
-				<img
-					src={image.src}
-					alt={image.alt}
-					width={image.width}
-					height={image.height}
-					class="h-auto max-h-full w-auto max-w-full object-contain select-none"
-					draggable="false"
-				/>
-			{/key}
-		{/if}
+	{#if image?.description}
+		<p
+			id={descriptionId}
+			class="absolute inset-x-0 bottom-0 bg-black/60 px-4 py-3 text-center text-sm leading-relaxed text-white/90"
+		>
+			{image.description}
+		</p>
+	{/if}
 
-		{#if count > 1}
-			<button
-				type="button"
-				class="absolute top-1/2 left-2 inline-flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white hover:bg-white/15 focus-visible:outline-white sm:left-4"
-				onclick={() => go(-1)}
-			>
-				<svg
-					class="size-7"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					aria-hidden="true"
-				>
-					<path stroke-linecap="round" stroke-linejoin="round" d="m15 6-6 6 6 6" />
-				</svg>
-				<span class="sr-only">Vorheriges Bild</span>
-			</button>
-			<button
-				type="button"
-				class="absolute top-1/2 right-2 inline-flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white hover:bg-white/15 focus-visible:outline-white sm:right-4"
-				onclick={() => go(1)}
-			>
-				<svg
-					class="size-7"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					aria-hidden="true"
-				>
-					<path stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6" />
-				</svg>
-				<span class="sr-only">Nächstes Bild</span>
-			</button>
-		{/if}
-	</div>
-
-	<div class="min-h-14 px-4 py-3 text-center sm:px-6">
-		{#if image?.description}
-			<p id={descriptionId} class="mx-auto max-w-3xl text-sm leading-relaxed text-white/90">
-				{image.description}
-			</p>
-		{/if}
-	</div>
+	<button
+		bind:this={closeButton}
+		type="button"
+		class="absolute top-3 right-4 size-12 text-4xl font-bold sm:right-6 sm:text-5xl md:text-6xl"
+		onclick={onclose}
+	>
+		<span aria-hidden="true">×</span>
+		<span class="sr-only">Schließen</span>
+	</button>
 </div>

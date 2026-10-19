@@ -3,16 +3,15 @@
 	import { page } from '$app/state';
 	import ShareButton from '$lib/components/events/ShareButton.svelte';
 	import Lightbox, { type LightboxImage } from '$lib/components/Lightbox.svelte';
-	import Notice from '$lib/components/Notice.svelte';
 	import Seo from '$lib/components/Seo.svelte';
-	import { buildSearch, galleryDate, imageCountLabel } from '$lib/events';
-	import { formatDate, formatDateRange } from '$lib/format';
+	import { buildSearch, galleryDateLabel, imageCountLabel } from '$lib/events';
+	import { formatDateRange } from '$lib/format';
 	import { galleryImageUrl } from '$lib/images';
 
 	let { data } = $props();
 
 	const gallery = $derived(data.gallery);
-	const date = $derived(galleryDate(gallery));
+	const dateLabel = $derived(galleryDateLabel(gallery));
 
 	const images: LightboxImage[] = $derived(
 		gallery.images.map((image, i) => ({
@@ -68,76 +67,54 @@
 	image={cover ? galleryImageUrl(gallery.id, cover.imageId, 'web') : undefined}
 />
 
-<header class="border-b border-line bg-surface">
-	<div class="container-page py-8 sm:py-12">
-		<a href="/galerie" class="link inline-flex items-center gap-1 text-sm">
-			<svg
-				class="size-4"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				aria-hidden="true"
-			>
-				<path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m6 6-6-6 6-6" />
+<section class="mx-auto max-w-5xl space-y-6 px-4 py-12 sm:px-6">
+	<div class="flex items-center justify-between gap-3">
+		<a
+			href="/galerie"
+			class="inline-flex min-h-9 items-center gap-1 text-sm text-blue-600 hover:underline"
+		>
+			<svg class="size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+				<path
+					fill-rule="evenodd"
+					d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
+				/>
 			</svg>
 			Zurück zur Galerie
 		</a>
-		<div class="mt-6 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-			<div class="max-w-3xl">
-				<p class="eyebrow mb-2">
-					{[date ? formatDate(date) : '', imageCountLabel(gallery.imageCount)]
-						.filter(Boolean)
-						.join(' · ')}
-				</p>
-				<h1 class="text-3xl sm:text-4xl">{gallery.title}</h1>
-				{#if gallery.description}
-					<p class="mt-3 text-lg leading-relaxed whitespace-pre-line text-muted">
-						{gallery.description}
-					</p>
-				{/if}
-				{#if gallery.events.length > 0}
-					<ul class="mt-4 flex flex-wrap gap-2" aria-label="Zugehörige Termine">
-						{#each gallery.events as event (event.id)}
-							<li>
-								<a
-									href="/termine/{encodeURIComponent(event.id)}"
-									class="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-900 hover:bg-brand-100"
-								>
-									<svg
-										class="size-4"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										aria-hidden="true"
-									>
-										<rect x="3" y="5" width="18" height="16" rx="2" />
-										<path stroke-linecap="round" d="M3 10h18M8 3v4m8-4v4" />
-									</svg>
-									{event.title}
-									<span class="font-normal text-muted">({formatDateRange(event)})</span>
-								</a>
-							</li>
-						{/each}
-					</ul>
-				{/if}
-			</div>
-			<ShareButton title={gallery.title} class="shrink-0" />
-		</div>
+		<ShareButton title={`Bilder von ${gallery.title}`} />
 	</div>
-</header>
 
-<div class="container-page section-y">
+	<div>
+		<h1 class="mb-2 text-2xl font-bold sm:text-3xl">{gallery.title}</h1>
+		<p class="text-gray-500">
+			{[dateLabel, imageCountLabel(gallery.imageCount)].filter(Boolean).join(' · ')}
+		</p>
+		{#if gallery.description}
+			<p class="mt-4 leading-relaxed whitespace-pre-line text-gray-800">{gallery.description}</p>
+		{/if}
+		{#if gallery.events.length > 0}
+			<ul class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm" aria-label="Zugehörige Termine">
+				{#each gallery.events as event (event.id)}
+					<li>
+						<a href="/termine/{encodeURIComponent(event.id)}" class="text-blue-600 hover:underline">
+							Zum Termin: {event.title}
+						</a>
+						<span class="text-gray-500">({formatDateRange(event)})</span>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+	</div>
+
 	{#if gallery.images.length === 0}
-		<Notice tone="info" title="" message="In dieser Galerie sind noch keine Bilder." />
+		<p class="text-gray-500">In dieser Galerie sind noch keine Bilder.</p>
 	{:else}
-		<ul class="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
+		<ul class="grid grid-cols-2 gap-4 md:grid-cols-3">
 			{#each gallery.images as image, i (image.id)}
 				<li>
 					<a
 						href={urlFor(i)}
-						class="group block overflow-hidden rounded-lg bg-brand-50 focus-visible:outline-offset-2"
+						class="group block cursor-zoom-in overflow-hidden border border-gray-200 bg-gray-100"
 						onclick={(event) => open(i, event)}
 						aria-label="{images[i]?.alt ?? `Bild ${i + 1}`} – vergrößern"
 					>
@@ -146,16 +123,16 @@
 							alt=""
 							width={image.width}
 							height={image.height}
-							loading={i < 8 ? 'eager' : 'lazy'}
+							loading={i < 9 ? 'eager' : 'lazy'}
 							decoding="async"
-							class="aspect-square h-auto w-full object-cover transition duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+							class="h-40 w-full object-cover transition duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100 md:h-48"
 						/>
 					</a>
 				</li>
 			{/each}
 		</ul>
 	{/if}
-</div>
+</section>
 
 {#if openIndex !== null && images.length > 0}
 	<Lightbox
