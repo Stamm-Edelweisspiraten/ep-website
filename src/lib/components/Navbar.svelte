@@ -70,33 +70,45 @@
 		if (next && groupsWrapper && !groupsWrapper.contains(next)) groupsOpen = false;
 	}
 
-	const navLink = 'text-lg font-medium text-gray-700 transition-colors hover:text-blue-600';
+	const navLink =
+		'nav-link rounded-full px-3.5 py-2 text-[0.95rem] font-semibold text-ink/80 transition-colors hover:bg-brand-50 hover:text-brand-800';
 	const dropdownLink =
-		'block px-5 py-3 text-base font-medium text-gray-800 transition-colors hover:bg-gray-100';
+		'block rounded-lg px-3 py-2.5 text-base font-medium text-ink transition-colors hover:bg-brand-50 hover:text-brand-800';
 	const mobileLink =
-		'block text-lg font-semibold text-gray-700 transition-colors hover:text-blue-600';
+		'block rounded-lg px-3 text-lg font-semibold text-ink transition-colors hover:bg-brand-50 hover:text-brand-800';
 </script>
 
 <svelte:window onclick={onWindowClick} onkeydown={onWindowKeydown} />
 
-<header class="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-md">
+<header
+	class="sticky top-0 z-50 border-b border-line/80 bg-white/90 backdrop-blur-md supports-[backdrop-filter]:bg-white/80"
+>
 	<nav
-		class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
+		class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
 		aria-label="Hauptnavigation"
 	>
-		<a href="/" class="text-xl font-extrabold text-indigo-900">Edelweißpiraten</a>
+		<a href="/" class="flex items-center gap-2.5" aria-label="Edelweißpiraten – Startseite">
+			<img src="/logo.avif" alt="" width="36" height="36" class="size-9" />
+			<span class="leading-none">
+				<span class="block text-[0.7rem] font-semibold tracking-[0.16em] text-muted uppercase"
+					>Stamm</span
+				>
+				<span class="block text-lg font-extrabold tracking-tight text-brand-800"
+					>Edelweißpiraten</span
+				>
+			</span>
+		</a>
 
 		<!-- Desktop -->
-		<ul class="hidden items-center gap-6 md:flex">
+		<ul class="hidden items-center gap-1 md:flex">
 			<li>
 				{#if sections.length > 0}
 					<div class="relative" bind:this={groupsWrapper} onfocusout={onDropdownFocusout}>
 						<button
 							bind:this={groupsButton}
 							type="button"
-							class="{navLink} flex items-center gap-2 {isActive('/gruppen')
-								? 'text-blue-600'
-								: ''}"
+							class="{navLink} flex items-center gap-1.5"
+							data-active={isActive('/gruppen') ? '' : undefined}
 							aria-expanded={groupsOpen}
 							aria-controls="nav-gruppen"
 							onclick={() => (groupsOpen = !groupsOpen)}
@@ -118,17 +130,17 @@
 						{#if groupsOpen}
 							<div
 								id="nav-gruppen"
-								class="absolute top-full left-0 z-50 mt-3 w-64 border border-gray-200 bg-white px-4 py-3 shadow-md"
+								class="absolute top-full left-0 z-50 mt-2 w-64 rounded-2xl border border-line bg-white p-2 shadow-card-hover"
 							>
 								{#each sections as section, i (section.type)}
-									{#if i > 0}<hr class="my-2 border-gray-200" />{/if}
-									<p class="mb-1 text-xs font-semibold text-gray-400 uppercase">{section.label}</p>
+									{#if i > 0}<hr class="my-2 border-line" />{/if}
+									<p class="eyebrow px-3 pt-2 pb-1 text-muted">{section.label}</p>
 									<ul>
 										{#each section.items as group (group.id)}
 											<li>
 												<a
 													href="/gruppen/{group.slug}"
-													class="{dropdownLink} pl-4"
+													class={dropdownLink}
 													aria-current={isActive(`/gruppen/${group.slug}`) ? 'page' : undefined}
 												>
 													{group.name}
@@ -137,10 +149,10 @@
 										{/each}
 									</ul>
 								{/each}
-								<hr class="my-2 border-gray-200" />
+								<hr class="my-2 border-line" />
 								<a
 									href="/gruppen"
-									class="{dropdownLink} text-gray-600"
+									class="{dropdownLink} text-muted"
 									aria-current={currentPath === '/gruppen' ? 'page' : undefined}
 								>
 									Alle Gruppen
@@ -174,7 +186,7 @@
 		<!-- Mobil -->
 		<button
 			type="button"
-			class="-mr-2 inline-flex size-11 items-center justify-center text-gray-700 md:hidden"
+			class="-mr-2 inline-flex size-11 items-center justify-center rounded-full text-ink hover:bg-brand-50 md:hidden"
 			aria-expanded={mobileOpen}
 			aria-controls="nav-mobil"
 			aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
@@ -198,11 +210,11 @@
 	</nav>
 
 	{#if mobileOpen}
-		<div id="nav-mobil" class="border-t border-gray-200 bg-white px-4 pb-4 md:hidden">
-			<p class="mt-4 text-sm font-semibold tracking-wide text-gray-500 uppercase">Gruppen</p>
-			<div class="ml-2">
+		<div id="nav-mobil" class="border-t border-line bg-white px-4 pb-6 md:hidden">
+			<p class="eyebrow mt-5 px-3">Gruppen</p>
+			<div>
 				{#each sections as section (section.type)}
-					<p class="mt-3 text-xs font-semibold text-gray-400 uppercase">{section.label}</p>
+					<p class="mt-3 px-3 text-xs font-semibold text-muted uppercase">{section.label}</p>
 					<ul>
 						{#each section.items as group (group.id)}
 							<li>
@@ -226,14 +238,14 @@
 				</a>
 			</div>
 
-			<hr class="my-4 border-gray-300" />
+			<hr class="my-4 border-line" />
 
-			<ul class="space-y-3">
+			<ul class="space-y-1">
 				{#each links as link (link.href)}
 					<li>
 						<a
 							href={link.href}
-							class={mobileLink}
+							class="{mobileLink} py-2"
 							aria-current={isActive(link.href) ? 'page' : undefined}
 						>
 							{link.label}
@@ -246,7 +258,9 @@
 </header>
 
 <style>
-	a[aria-current='page'] {
-		color: var(--color-blue-600);
+	a[aria-current='page'],
+	[data-active] {
+		background-color: var(--color-brand-50);
+		color: var(--color-brand-800);
 	}
 </style>

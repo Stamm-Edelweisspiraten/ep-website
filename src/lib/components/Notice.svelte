@@ -20,15 +20,14 @@
 		class: className = ''
 	}: Props = $props();
 
-	// Wie der Ferienhinweis der alten Website: Balken links, helle Fläche, eckig
 	const styles = $derived(
 		tone === 'warning'
-			? 'border-amber-500 bg-amber-50 text-amber-900'
-			: 'border-blue-500 bg-blue-50 text-gray-800'
+			? 'border-amber-200 bg-amber-50 text-amber-900'
+			: 'border-brand-100 bg-brand-50 text-ink'
 	);
 </script>
 
-<div class="flex gap-3 border-l-4 p-4 sm:p-6 {styles} {className}" role="status">
+<div class="flex gap-3 rounded-card border p-4 sm:p-5 {styles} {className}" role="status">
 	<svg
 		class="mt-0.5 size-5 shrink-0"
 		viewBox="0 0 24 24"

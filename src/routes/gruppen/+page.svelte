@@ -23,21 +23,24 @@
 />
 
 <PageHeader
+	eyebrow="Mitmachen"
 	title="Unsere Gruppen"
 	lead="Jede Woche treffen sich unsere Gruppen zur Gruppenstunde. Such dir die passende aus und komm einfach vorbei – Schnuppern ist jederzeit möglich."
 />
 
-<div class="container-page section-y space-y-12">
+<div class="container-page section-y space-y-14">
 	{#if sections.length === 0}
 		<GroupGrid groups={[]} error={data.groupsError} heading="h2" />
 	{:else}
 		{#each sections as section (section.type)}
 			<section aria-labelledby="abschnitt-{section.type}">
-				<h2 id="abschnitt-{section.type}" class="text-2xl font-bold text-gray-800">
+				<h2 id="abschnitt-{section.type}" class="section-title">
 					{section.label}
 				</h2>
 				{#if SECTION_LEADS[section.type]}
-					<p class="mt-2 mb-6 leading-relaxed text-gray-700">{SECTION_LEADS[section.type]}</p>
+					<p class="mt-2 mb-6 max-w-2xl leading-relaxed text-muted">
+						{SECTION_LEADS[section.type]}
+					</p>
 				{/if}
 				<GroupGrid groups={section.groups} />
 			</section>

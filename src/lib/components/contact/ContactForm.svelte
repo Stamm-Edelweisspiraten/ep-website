@@ -20,14 +20,16 @@
 	const site = $derived((env.PUBLIC_SITE_URL || FALLBACK_SITE).replace(/\/+$/, ''));
 	const nextUrl = $derived(`${site}/kontakt?success=1#kontaktformular`);
 
-	// Felder wie auf der alten Kontaktseite: grauer Rahmen, leicht gerundet, grauer Fokusring
 	const input =
-		'w-full rounded border border-gray-300 bg-white px-3 py-2 text-base text-gray-900 focus:ring-2 focus:ring-gray-400 focus:outline-none';
-	const labelClass = 'mb-1 block text-sm font-medium text-gray-700';
+		'w-full rounded-xl border border-line bg-canvas/60 px-3.5 py-2.5 text-base text-ink transition-colors placeholder:text-muted focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-100 focus:outline-none';
+	const labelClass = 'mb-1.5 block text-sm font-semibold text-ink';
 </script>
 
 {#if success}
-	<div class="mb-6 rounded border border-green-300 bg-green-50 p-4 text-green-800" role="status">
+	<div
+		class="mb-6 rounded-card border border-green-200 bg-green-50 p-4 text-green-800"
+		role="status"
+	>
 		<p>
 			<strong>Danke!</strong> Deine Nachricht wurde erfolgreich versendet. Wir melden uns so schnell wie
 			möglich.
@@ -38,7 +40,7 @@
 <form
 	action="https://formsubmit.co/{FORM_RECIPIENT}"
 	method="POST"
-	class="space-y-4 rounded border border-gray-300 bg-white p-6 md:p-8"
+	class="card space-y-5 p-6 md:p-8"
 >
 	<!-- FormSubmit-Optionen -->
 	<input type="hidden" name="_subject" value="Neue Nachricht – Stamm Edelweißpiraten" />
@@ -57,7 +59,7 @@
 		<input id="kontakt-honey" type="text" name="_honey" tabindex="-1" autocomplete="off" />
 	</div>
 
-	<p class="text-sm text-gray-500">
+	<p class="text-sm text-muted">
 		Mit <span aria-hidden="true">*</span> markierte Felder sind Pflichtfelder.
 	</p>
 
@@ -89,7 +91,7 @@
 		</div>
 		<div class="md:col-span-2">
 			<label for="kontakt-telefon" class={labelClass}>
-				Telefon <span class="font-normal text-gray-500">(optional)</span>
+				Telefon <span class="font-normal text-muted">(optional)</span>
 			</label>
 			<input
 				id="kontakt-telefon"
@@ -117,9 +119,9 @@
 				id="kontakt-einwilligung"
 				type="checkbox"
 				required
-				class="mt-1 size-5 shrink-0 accent-gray-900"
+				class="mt-1 size-5 shrink-0 accent-brand-700"
 			/>
-			<label for="kontakt-einwilligung" class="text-sm leading-relaxed text-gray-700">
+			<label for="kontakt-einwilligung" class="text-sm leading-relaxed text-muted">
 				Ich habe die <a class="link" href="/datenschutz">Hinweise zum Datenschutz</a> gelesen und
 				bin einverstanden, dass meine Angaben zur Kontaktaufnahme verarbeitet werden.
 				<span aria-hidden="true">*</span>
@@ -127,15 +129,12 @@
 		</div>
 	</div>
 
-	<p class="text-xs leading-relaxed text-gray-500">
+	<p class="text-xs leading-relaxed text-muted">
 		Das Formular wird über den Dienst formsubmit.co versendet. Deine Angaben nutzen wir nur, um
 		deine Anfrage zu beantworten.
 	</p>
 
-	<button
-		type="submit"
-		class="inline-flex min-h-11 items-center gap-2 rounded bg-gray-900 px-5 py-2.5 font-medium text-white transition-colors hover:bg-gray-800"
-	>
+	<button type="submit" class="btn btn-primary">
 		Nachricht senden
 		<svg
 			class="size-4"

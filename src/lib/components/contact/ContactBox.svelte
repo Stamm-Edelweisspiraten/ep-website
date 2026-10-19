@@ -1,14 +1,14 @@
 <script lang="ts">
 	/**
-	 * Kontaktkasten wie auf der alten Website: Balken links (`border-l-4`) und helle Fläche in der
-	 * Gruppen- bzw. Amtsfarbe, Überschrift in kräftiger Variante derselben Farbe.
+	 * Kontaktkasten: Karte mit Farbbalken links und sehr heller Fläche in der Gruppen- bzw. Amtsfarbe,
+	 * Überschrift in kräftiger Variante derselben Farbe.
 	 */
 	import type { Snippet } from 'svelte';
 	import { safeColor } from '$lib/format';
 
 	interface Props {
 		title: string;
-		/** `#rrggbb`; ungültig/leer → Indigo wie der Schriftzug der alten Website */
+		/** `#rrggbb`; ungültig/leer → Wappenblau */
 		color?: string | null;
 		heading?: 'h2' | 'h3';
 		/** Kleiner Zusatz unter der Überschrift (z. B. Gruppenname als Link) */
@@ -26,10 +26,13 @@
 		class: className = ''
 	}: Props = $props();
 
-	const accent = $derived(safeColor(color) ?? '#4338ca');
+	const accent = $derived(safeColor(color) ?? '#3f42a6');
 </script>
 
-<div class="contact-box border-l-4 p-4 sm:p-5 {className}" style:--box-color={accent}>
+<div
+	class="contact-box rounded-card border border-l-[6px] p-5 shadow-card sm:p-6 {className}"
+	style:--box-color={accent}
+>
 	<svelte:element this={heading} class="box-title text-xl font-bold">{title}</svelte:element>
 	{#if subtitle}{@render subtitle()}{/if}
 	<div class="text-gray-700">
@@ -38,10 +41,11 @@
 </div>
 
 <style>
-	/* Helle Varianten der Farbe wie border-green-400 / bg-green-50 / text-green-700 */
+	/* Helle Varianten der Farbe */
 	.contact-box {
-		border-left-color: color-mix(in srgb, var(--box-color) 65%, white);
-		background-color: color-mix(in srgb, var(--box-color) 7%, white);
+		border-color: var(--color-line);
+		border-left-color: var(--box-color);
+		background-color: color-mix(in srgb, var(--box-color) 4%, white);
 	}
 	.box-title {
 		color: color-mix(in srgb, var(--box-color) 80%, black);

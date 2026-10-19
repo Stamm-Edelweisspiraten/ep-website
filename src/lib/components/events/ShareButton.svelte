@@ -14,7 +14,7 @@
 		title: string;
 		text?: string;
 		url?: string | null;
-		/** `link`: blauer Textlink wie auf der alten Website, `button`: Schaltfläche */
+		/** `link`: kleine Pille, `button`: Schaltfläche */
 		variant?: 'link' | 'button';
 		class?: string;
 	} = $props();
@@ -58,7 +58,7 @@
 	<button
 		type="button"
 		class={variant === 'link'
-			? 'inline-flex min-h-9 items-center gap-1 text-sm text-blue-600 hover:underline'
+			? 'inline-flex min-h-9 items-center gap-1.5 rounded-full border border-line bg-white px-3.5 text-sm font-semibold text-ink transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-800'
 			: 'btn btn-secondary'}
 		onclick={share}
 	>
@@ -77,5 +77,5 @@
 		</svg>
 		Teilen
 	</button>
-	<span class="text-sm text-gray-600" role="status" aria-live="polite">{status}</span>
+	<span class="text-sm text-muted" role="status" aria-live="polite">{status}</span>
 </div>

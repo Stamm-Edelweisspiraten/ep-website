@@ -4,6 +4,7 @@
 	import SeriesCard from '$lib/components/events/SeriesCard.svelte';
 	import FilterChip from '$lib/components/gallery/FilterChip.svelte';
 	import Notice from '$lib/components/Notice.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Seo from '$lib/components/Seo.svelte';
 	import {
 		buildSearch,
@@ -79,17 +80,20 @@
 	description="Kommende Termine des Stammes Edelweißpiraten: Gruppenstunden, Fahrten, Lager und Aktionen."
 />
 
-<section class="mx-auto max-w-6xl space-y-6 px-4 py-12 sm:px-6">
-	<header class="space-y-4">
-		<div class="flex flex-wrap items-end justify-between gap-3">
-			<div>
-				<h1 class="text-3xl font-bold">{data.review ? `Rückblick ${data.review}` : 'Termine'}</h1>
-				<p class="mt-1 text-gray-600">{lead}</p>
-			</div>
+<PageHeader
+	eyebrow={data.review ? 'Rückblick' : 'Kalender'}
+	title={data.review ? `Rückblick ${data.review}` : 'Termine'}
+	{lead}
+/>
+
+<section class="container-page section-y space-y-10">
+	<header class="card space-y-3 p-4 sm:p-5">
+		<div class="flex flex-wrap items-center justify-between gap-2">
+			<h2 class="text-sm font-bold text-ink">Filter</h2>
 			{#if hasFilter}
 				<a
 					href={href({ tag: null, gruppe: null })}
-					class="text-sm text-gray-600 underline hover:text-blue-800"
+					class="text-sm font-medium text-brand-700 underline underline-offset-4 hover:text-brand-900"
 					data-sveltekit-noscroll
 					data-sveltekit-keepfocus
 					data-sveltekit-replacestate
@@ -101,7 +105,7 @@
 
 		<div class="space-y-3">
 			<div class="flex flex-col gap-2 sm:flex-row sm:items-baseline">
-				<span class="w-20 shrink-0 text-sm font-semibold text-gray-500">Zeitraum</span>
+				<span class="w-20 shrink-0 text-sm font-semibold text-muted">Zeitraum</span>
 				<ul class="flex flex-wrap gap-2" aria-label="Zeitraum">
 					<li>
 						<FilterChip
@@ -138,7 +142,7 @@
 			{/if}
 			{#if hasSeries}
 				<div class="flex flex-col gap-2 sm:flex-row sm:items-baseline">
-					<span class="w-20 shrink-0 text-sm font-semibold text-gray-500">Serien</span>
+					<span class="w-20 shrink-0 text-sm font-semibold text-muted">Serien</span>
 					<ul class="flex flex-wrap gap-2" aria-label="Darstellung der Serien">
 						<li>
 							<FilterChip href={href({ serien: null })} active={!allOccurrences}>
@@ -186,10 +190,10 @@
 		{#if series.length > 0}
 			<section aria-labelledby="regelmaessig" class="space-y-4">
 				<div class="flex flex-wrap items-baseline justify-between gap-3">
-					<h2 id="regelmaessig" class="text-2xl font-bold">Regelmäßige Termine</h2>
+					<h2 id="regelmaessig" class="section-title">Regelmäßige Termine</h2>
 					<a
 						href={href({ serien: 'alle' })}
-						class="text-sm text-blue-600 hover:underline"
+						class="link-more text-sm"
 						data-sveltekit-noscroll
 						data-sveltekit-keepfocus
 						data-sveltekit-replacestate
@@ -197,7 +201,7 @@
 						Alle Vorkommen anzeigen
 					</a>
 				</div>
-				<ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+				<ul class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 					{#each series as item (item.id)}
 						<li><SeriesCard series={item} review={data.review !== null} /></li>
 					{/each}
@@ -208,13 +212,11 @@
 		{#if months.length > 0}
 			{#each months as month (month.key)}
 				<section aria-labelledby="monat-{month.key}" class="space-y-4">
-					<h2
-						id="monat-{month.key}"
-						class="border-b border-gray-200 pb-2 text-xl font-semibold text-gray-800"
-					>
+					<h2 id="monat-{month.key}" class="flex items-center gap-4 text-xl font-bold">
 						{month.label}
+						<span class="h-px flex-1 bg-line" aria-hidden="true"></span>
 					</h2>
-					<ul class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+					<ul class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{#each month.events as event (eventKey(event))}
 							<li><EventCard {event} /></li>
 						{/each}
@@ -222,7 +224,7 @@
 				</section>
 			{/each}
 		{:else if series.length > 0}
-			<p class="text-gray-500">
+			<p class="text-muted">
 				{data.review
 					? `Außer den regelmäßigen Terminen gab es ${data.review} keine weiteren.`
 					: 'Außer den regelmäßigen Terminen steht gerade nichts an.'}
@@ -230,7 +232,7 @@
 		{/if}
 
 		{#if data.truncated}
-			<p class="text-sm text-gray-500">
+			<p class="text-sm text-muted">
 				Es werden möglicherweise nicht alle Termine angezeigt. Mit den Filtern findest du gezielt
 				weitere.
 			</p>
@@ -245,7 +247,7 @@
 	params: (value: string) => { tag?: string | null; gruppe?: string | null }
 )}
 	<div class="flex flex-col gap-2 sm:flex-row sm:items-baseline">
-		<span class="w-20 shrink-0 text-sm font-semibold text-gray-500">{label}</span>
+		<span class="w-20 shrink-0 text-sm font-semibold text-muted">{label}</span>
 		<ul class="flex flex-wrap gap-2" aria-label="Nach {label} filtern">
 			{#each options as option (option.value)}
 				<li>

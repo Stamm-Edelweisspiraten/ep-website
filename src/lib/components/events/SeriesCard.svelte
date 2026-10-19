@@ -1,7 +1,7 @@
 <script lang="ts">
 	/**
-	 * Karte einer Terminserie im Stil der alten Website: Titel, Rhythmus, nächster (bzw. im
-	 * Rückblick letzter) Termin, Ort und Gruppen; Link auf dieses Vorkommen.
+	 * Karte einer Terminserie: Titel, Rhythmus, nächster (bzw. im Rückblick letzter) Termin,
+	 * Ort und Gruppen; Link auf dieses Vorkommen.
 	 */
 	import type { EventSeries } from '$lib/events';
 	import { contrastText, eventHref } from '$lib/events';
@@ -18,23 +18,39 @@
 
 <a
 	href={eventHref(event)}
-	class="group flex h-full flex-col border border-gray-200 bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+	class="card card-hover group relative flex h-full flex-col overflow-hidden p-5 pl-6"
+	style:--series-color={color ?? 'var(--color-brand-600)'}
 >
-	<h3 class="text-lg leading-snug font-semibold text-gray-900 group-hover:text-blue-700">
+	<span class="series-bar absolute inset-y-0 left-0 w-1.5" aria-hidden="true"></span>
+	<p class="flex items-center gap-1.5 text-sm font-semibold text-brand-700 first-letter:uppercase">
+		<svg
+			class="size-4 shrink-0"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			aria-hidden="true"
+		>
+			<path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 14-5.3M20 4v4h-4" />
+			<path stroke-linecap="round" stroke-linejoin="round" d="M20 12a8 8 0 0 1-14 5.3M4 20v-4h4" />
+		</svg>
+		<span>{series.rhythm}</span>
+	</p>
+	<h3
+		class="mt-2 text-lg leading-snug font-bold text-ink transition-colors group-hover:text-brand-700"
+	>
 		{event.title}
 	</h3>
-	<p class="mt-0.5 text-sm font-medium text-gray-700 first-letter:uppercase">{series.rhythm}</p>
-	<p class="mb-2 text-sm text-gray-500">
+	<p class="mt-1 mb-3 text-sm text-muted">
 		{dateLabel}{#if event.location}<span>&nbsp;· {event.location}</span>{/if}
 	</p>
 	{#if event.groups.length > 0}
-		<ul class="mt-auto flex flex-wrap gap-2 pt-1" aria-label="Gruppen">
+		<ul class="mt-auto flex flex-wrap gap-1.5" aria-label="Gruppen">
 			{#each event.groups as group, i (`${event.groupIds[i] ?? group}:${i}`)}
 				<li
-					class="inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium"
-					style:background-color={color ?? '#e5e7eb'}
-					style:border-color={color ?? '#e5e7eb'}
-					style:color={contrastText(color ?? '#e5e7eb')}
+					class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+					style:background-color={color ?? 'var(--color-soft)'}
+					style:color={color ? contrastText(color) : 'var(--color-ink)'}
 				>
 					{group}
 				</li>
@@ -42,3 +58,9 @@
 		</ul>
 	{/if}
 </a>
+
+<style>
+	.series-bar {
+		background-color: var(--series-color);
+	}
+</style>

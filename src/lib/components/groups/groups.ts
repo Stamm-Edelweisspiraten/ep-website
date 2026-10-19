@@ -12,10 +12,10 @@ export const GROUP_TYPE_LEADS: Record<GroupType, string> = {
 	sippe: 'Zeltlager, Fahrten und echte Gemeinschaft mit Gleichaltrigen.'
 };
 
-/** Gruppenfarbe ohne Angabe: Indigo wie der Schriftzug der alten Website */
-export const GROUP_FALLBACK_COLOR = '#4338ca';
+/** Gruppenfarbe ohne Angabe: Wappenblau (`brand-600`) */
+export const GROUP_FALLBACK_COLOR = '#3f42a6';
 
-/** Gruppenfarbe `#rrggbb` (nur geprüfte Werte, sonst Indigo) – für `style:` */
+/** Gruppenfarbe `#rrggbb` (nur geprüfte Werte, sonst Wappenblau) – für `style:` */
 export function groupColor(group: Pick<WebsiteGroup, 'color'>): string {
 	return safeColor(group.color) ?? GROUP_FALLBACK_COLOR;
 }

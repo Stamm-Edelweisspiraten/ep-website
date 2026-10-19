@@ -8,11 +8,11 @@
 
 <Seo {title} />
 
-<section class="container-page py-12">
-	<div class="border border-gray-300 bg-white p-8 text-center">
+<section class="container-page section-y">
+	<div class="card mx-auto max-w-2xl p-8 text-center sm:p-12">
 		<img src="/kreuzlilie.avif" alt="" width="96" height="96" class="mx-auto mb-6 h-24 w-auto" />
 		<p class="eyebrow">Fehler {page.status}</p>
-		<h1 class="mt-2 text-3xl font-bold text-gray-800">{title}</h1>
+		<h1 class="mt-2 text-3xl font-extrabold">{title}</h1>
 		<p class="mx-auto mt-4 max-w-xl text-gray-700">
 			{#if notFound}
 				Diese Seite gibt es nicht (mehr). Vielleicht hat sich die Adresse geändert – schau dich gern

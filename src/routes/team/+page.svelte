@@ -25,6 +25,7 @@
 />
 
 <PageHeader
+	eyebrow="Team"
 	title="Unser Team"
 	lead="Hinter dem Stamm stehen viele Ehrenamtliche. Hier stellen sich die Menschen vor, die bei uns ein Amt übernommen haben, und die Leitungen unserer Gruppen."
 />
@@ -32,7 +33,7 @@
 <div class="container-page section-y space-y-14">
 	<!-- Ämter -->
 	<section aria-labelledby="aemter-titel" class="space-y-6">
-		<h2 id="aemter-titel" class="text-2xl font-bold text-gray-800">Ämter</h2>
+		<h2 id="aemter-titel" class="section-title">Ämter</h2>
 		{#if members.length > 0}
 			<ul class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				{#each members as member (member.id)}
@@ -54,7 +55,7 @@
 			</Notice>
 		{/if}
 		{#if vacant.length > 0 && members.length > 0}
-			<p class="text-sm text-gray-500">
+			<p class="text-sm text-muted">
 				Derzeit nicht besetzt: {vacant.map((o) => o.name).join(', ')}. Du hast Lust, mitzumachen?
 				<a class="link" href="/kontakt">Sprich uns an</a>.
 			</p>
@@ -63,18 +64,15 @@
 
 	<!-- Gruppenleitungen -->
 	<section aria-labelledby="leitungen-titel" class="space-y-6">
-		<h2 id="leitungen-titel" class="text-2xl font-bold text-gray-800">Gruppenleitungen</h2>
+		<h2 id="leitungen-titel" class="section-title">Gruppenleitungen</h2>
 		{#if groups.length > 0}
 			<ul class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				{#each groups as group (group.id)}
 					<li class="h-full">
 						<ContactBox title={groupTitle(group)} color={group.color} class="h-full">
 							{#snippet subtitle()}
-								<p class="text-sm text-gray-600">
-									<a
-										class="underline underline-offset-4 hover:text-gray-900"
-										href="/gruppen/{group.slug}">{group.name}</a
-									>
+								<p class="text-sm">
+									<a class="link" href="/gruppen/{group.slug}">{group.name}</a>
 								</p>
 							{/snippet}
 							<ul class="mt-4 flex flex-wrap gap-3" aria-label="Leitung der Gruppe {group.name}">
@@ -87,7 +85,7 @@
 										>
 											{initials(leader.firstName)}
 										</span>
-										<span class="font-medium text-gray-800">{leader.firstName}</span>
+										<span class="font-semibold text-ink">{leader.firstName}</span>
 									</li>
 								{/each}
 							</ul>

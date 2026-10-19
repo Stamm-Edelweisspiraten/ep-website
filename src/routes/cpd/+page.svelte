@@ -170,12 +170,12 @@
 <div class="container-page section-y space-y-12">
 	<section aria-labelledby="bund">
 		<h2 id="bund" class="sr-only">Der Bund</h2>
-		<div
-			class="flex flex-col items-center gap-8 border border-gray-300 bg-white p-6 sm:flex-row sm:p-8"
-		>
+		<div class="card flex flex-col items-center gap-8 p-6 sm:flex-row sm:p-8">
 			<dl class="grow">
-				<dt class="font-semibold text-gray-700">Name</dt>
-				<dd class="mt-1 text-gray-600">Christliche Pfadfinderschaft Deutschlands e.V. (CPD)</dd>
+				<dt class="text-xs font-semibold tracking-wide text-muted uppercase">Name</dt>
+				<dd class="mt-1 text-xl font-bold text-ink">
+					Christliche Pfadfinderschaft Deutschlands e.V. (CPD)
+				</dd>
 			</dl>
 			<img
 				src="/kreuzlilie.avif"
@@ -188,20 +188,20 @@
 	</section>
 
 	<section aria-labelledby="geschichte">
-		<h2 id="geschichte" class="text-2xl font-bold text-gray-800">Geschichte der CPD – Überblick</h2>
-		<p class="mt-2 text-sm text-gray-600">
+		<h2 id="geschichte" class="section-title">Geschichte der CPD – Überblick</h2>
+		<p class="mt-2 text-muted">
 			Ein Auszug wichtiger Stationen des Bundes, nach Epochen gegliedert.
 		</p>
 
 		<div class="mt-8 space-y-3">
 			{#each epochs as epoch (epoch.title)}
-				<details class="group border border-gray-300 bg-white" open={epoch.open}>
+				<details class="card group overflow-hidden" open={epoch.open}>
 					<summary
-						class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-lg font-semibold select-none hover:text-blue-600 sm:px-6 [&::-webkit-details-marker]:hidden"
+						class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-lg font-semibold select-none hover:text-brand-700 sm:px-6 [&::-webkit-details-marker]:hidden"
 					>
 						{epoch.title}
 						<svg
-							class="size-5 shrink-0 text-gray-500 transition-transform group-open:rotate-180 motion-reduce:transition-none"
+							class="size-5 shrink-0 text-muted transition-transform group-open:rotate-180 motion-reduce:transition-none"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
@@ -211,13 +211,19 @@
 							<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
 						</svg>
 					</summary>
-					<div class="space-y-5 border-t border-gray-300 px-5 py-5 sm:px-6">
+					<div class="space-y-5 border-t border-line px-5 py-5 sm:px-6">
 						{#each epoch.stations as station, i (i)}
 							<div>
 								{#if station.year}
-									<h3 class="mb-2 text-base font-semibold text-gray-800">{station.year}</h3>
+									<h3
+										class="mb-2 inline-flex rounded-full bg-brand-50 px-3 py-0.5 text-sm font-bold text-brand-800"
+									>
+										{station.year}
+									</h3>
 								{/if}
-								<ul class="list-disc space-y-1.5 pl-6 leading-relaxed text-gray-800">
+								<ul
+									class="list-disc space-y-1.5 pl-6 leading-relaxed text-gray-700 marker:text-brand-300"
+								>
 									{#each station.items as item, j (j)}
 										<li>{item}</li>
 									{/each}

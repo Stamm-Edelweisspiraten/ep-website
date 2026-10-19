@@ -23,18 +23,11 @@
 		children
 	}: Props = $props();
 
-	// Alte Website: eckig, grauer Rahmen, kein Schatten (nur beim Hover)
-	const base = $derived(
-		`block overflow-hidden border border-gray-300 bg-white ${padded ? 'p-6 sm:p-8' : ''} ${className}`
-	);
+	const base = $derived(`card block overflow-hidden ${padded ? 'p-6 sm:p-8' : ''} ${className}`);
 </script>
 
 {#if href}
-	<a
-		{href}
-		aria-label={label}
-		class="{base} transition-shadow hover:shadow-md motion-reduce:transition-none"
-	>
+	<a {href} aria-label={label} class="{base} card-hover">
 		{@render children()}
 	</a>
 {:else}

@@ -62,14 +62,14 @@
 	);
 </script>
 
-<div class="overflow-hidden border border-gray-300 bg-white">
+<div class="card overflow-hidden">
 	<div
 		bind:this={container}
-		class="relative z-0 w-full bg-gray-100 {className}"
+		class="relative z-0 w-full bg-soft {className}"
 		role="region"
 		aria-label="Karte: {label}"
 	></div>
-	<p class="border-t border-gray-300 px-4 py-2 text-xs text-gray-500">
+	<p class="border-t border-line px-4 py-2.5 text-xs text-muted">
 		<a class="link" href={osmLink} target="_blank" rel="noopener noreferrer">
 			Größere Karte bei OpenStreetMap öffnen
 		</a>

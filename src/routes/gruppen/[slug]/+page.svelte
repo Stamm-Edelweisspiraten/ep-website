@@ -1,8 +1,7 @@
 <script lang="ts">
 	/**
-	 * Steckbrief einer Gruppe – aufgebaut wie die Meute-/Sippe-Seiten der alten Website:
-	 * Typ-Überschrift in Gruppenfarbe, umrahmte Steckbrief-Karte mit Bild rechts, „Das sind wir“,
-	 * „Treffpunkt“ mit Karte, Kontaktkasten und darunter die nächsten Termine.
+	 * Steckbrief einer Gruppe: Kopf in Gruppenfarbe (Typ, Name, Eckdaten, Bild), „Das sind wir“,
+	 * „Treffpunkt“ mit Karte, Kontaktkasten daneben und darunter die nächsten Termine.
 	 */
 	import ContactBox from '$lib/components/contact/ContactBox.svelte';
 	import EmailButtons from '$lib/components/EmailButtons.svelte';
@@ -11,7 +10,6 @@
 		GROUP_TYPE_LABELS,
 		groupColor,
 		groupImage,
-		groupTitle,
 		leaderText
 	} from '$lib/components/groups/groups';
 	import Map from '$lib/components/Map.svelte';
@@ -32,7 +30,6 @@
 
 	const facts = $derived(
 		[
-			{ label: 'Gruppenname', value: group.name },
 			{ label: 'Gruppenleitung', value: leaders },
 			{ label: 'Uhrzeit', value: meeting },
 			{ label: 'Ort', value: group.meetingPlace ?? '' },
@@ -53,94 +50,129 @@
 
 <Seo title={group.name} description={seoDescription} image={image ?? undefined} />
 
-<section class="container-page section-y space-y-6" style:--group-color={color}>
-	<h1 class="group-heading text-2xl font-bold">
-		{typeLabel}<span class="sr-only">: {group.name}</span>
-	</h1>
-
-	<!-- Steckbrief -->
-	<div
-		class="flex w-full flex-col items-start gap-6 border border-gray-300 bg-white p-8 md:flex-row"
-	>
-		<dl class="flex-1 space-y-2">
-			{#each facts as fact (fact.label)}
+<div style:--group-color={color}>
+	<!-- Kopf in Gruppenfarbe: Typ, Name, Eckdaten und Bild -->
+	<header class="group-hero border-b border-line">
+		<div class="container-page py-10 sm:py-14">
+			<a href="/gruppen" class="link-more mb-6 text-sm">
+				<span aria-hidden="true">←</span> Alle Gruppen
+			</a>
+			<div class="grid items-center gap-8 md:grid-cols-[1.4fr_1fr]">
 				<div>
-					<dt class="text-gray-700">{fact.label}</dt>
-					<dd class="text-sm text-gray-500">{fact.value}</dd>
+					<p class="group-heading text-xs font-bold tracking-[0.14em] uppercase">
+						{typeLabel}{#if group.ageRange}&nbsp;· {group.ageRange}{/if}
+					</p>
+					<h1 class="mt-2 text-3xl font-extrabold sm:text-5xl">
+						<span class="sr-only">{typeLabel}: </span>{group.name}
+					</h1>
+					<dl class="mt-8 grid gap-3 sm:grid-cols-2">
+						{#each facts as fact (fact.label)}
+							<div class="rounded-xl border border-white bg-white/80 px-4 py-3 shadow-sm">
+								<dt class="text-xs font-semibold tracking-wide text-muted uppercase">
+									{fact.label}
+								</dt>
+								<dd class="mt-0.5 font-semibold text-ink">{fact.value}</dd>
+							</div>
+						{/each}
+					</dl>
 				</div>
-			{/each}
-		</dl>
-		{#if image}
-			<div class="w-full shrink-0 md:w-1/3">
-				<img
-					src={image}
-					alt="Gruppenbild {group.name}"
-					class="h-auto w-full rounded object-cover"
-					decoding="async"
-				/>
+				{#if image}
+					<div class="flex justify-center">
+						<img
+							src={image}
+							alt="Gruppenbild {group.name}"
+							class="h-auto max-h-80 w-full max-w-sm object-contain drop-shadow-xl"
+							decoding="async"
+						/>
+					</div>
+				{/if}
 			</div>
-		{/if}
+		</div>
+	</header>
+
+	<div class="container-page section-y">
+		<div class="grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-12">
+			<!-- Beschreibung und Treffpunkt -->
+			<div class="space-y-10">
+				<section aria-labelledby="das-sind-wir">
+					<h2 id="das-sind-wir" class="section-title">Das sind wir</h2>
+					{#if group.description}
+						<p class="mt-4 text-lg leading-relaxed whitespace-pre-line text-gray-700">
+							{group.description}
+						</p>
+					{:else}
+						<p class="mt-4 text-lg leading-relaxed text-gray-700">
+							Die Gruppe „{group.name}“ stellt sich hier bald ausführlicher vor. Schau gern einfach
+							in einer Gruppenstunde vorbei!
+						</p>
+					{/if}
+				</section>
+
+				<section aria-labelledby="treffpunkt" class="space-y-4">
+					<h2 id="treffpunkt" class="section-title">Treffpunkt</h2>
+					{#if group.meetingPlace}
+						<p class="text-gray-700">{group.meetingPlace}</p>
+					{/if}
+					<Map class="h-[320px]" />
+				</section>
+			</div>
+
+			<!-- Kontakt -->
+			<aside class="lg:sticky lg:top-24 lg:self-start">
+				<ContactBox title="Kontakt" color={group.color} heading="h2">
+					{#if leaders}
+						<p class="mt-3">
+							<span class="block text-xs font-semibold tracking-wide text-muted uppercase"
+								>Ansprechpartner*innen</span
+							>
+							<span class="font-semibold text-ink">{leaders}</span>
+						</p>
+					{/if}
+					{#if group.contactEmail}
+						<p class="mt-3">
+							<span class="block text-xs font-semibold tracking-wide text-muted uppercase"
+								>E-Mail</span
+							>
+							<span class="break-all text-ink">{group.contactEmail}</span>
+						</p>
+						<EmailButtons
+							email={group.contactEmail}
+							subject="Anfrage zur Gruppe {group.name}"
+							color={group.color}
+							class="mt-5"
+						/>
+					{:else}
+						<p class="mt-3">
+							Schreib uns gern über die <a class="link" href="/kontakt">Kontaktseite</a>.
+						</p>
+					{/if}
+				</ContactBox>
+			</aside>
+		</div>
+
+		<!-- Termine -->
+		<UpcomingEvents
+			class="mt-16"
+			events={data.events}
+			error={data.eventsError}
+			title="Nächste Termine"
+			moreHref="/termine?gruppe={encodeURIComponent(group.slug)}"
+			emptyText="Für diese Gruppe stehen gerade keine besonderen Termine an – die Gruppenstunde findet wie gewohnt statt."
+		/>
 	</div>
-
-	<!-- Beschreibung -->
-	<h2 class="group-heading mb-2 text-2xl font-bold">Das sind wir</h2>
-	{#if group.description}
-		<p class="leading-relaxed whitespace-pre-line text-gray-700 sm:text-justify">
-			{group.description}
-		</p>
-	{:else}
-		<p class="leading-relaxed text-gray-700">
-			Die Gruppe „{group.name}“ stellt sich hier bald ausführlicher vor. Schau gern einfach in einer
-			Gruppenstunde vorbei!
-		</p>
-	{/if}
-
-	<!-- Treffpunkt -->
-	<h2 class="group-heading mb-2 text-2xl font-bold">Treffpunkt</h2>
-	{#if group.meetingPlace}
-		<p class="text-gray-700">{group.meetingPlace}</p>
-	{/if}
-	<Map />
-
-	<!-- Kontakt -->
-	<div class="my-12 sm:my-20">
-		<ContactBox title={groupTitle(group)} color={group.color}>
-			{#if leaders}
-				<p class="mt-1"><span class="font-bold">Ansprechpartner*innen</span><br />{leaders}</p>
-			{/if}
-			{#if group.contactEmail}
-				<p class="mt-1">
-					<span class="font-bold">E-Mail</span><br /><span class="break-all"
-						>{group.contactEmail}</span
-					>
-				</p>
-				<EmailButtons
-					email={group.contactEmail}
-					subject="Anfrage zur Gruppe {group.name}"
-					color={group.color}
-					class="mt-6"
-				/>
-			{:else}
-				<p class="mt-1">
-					Schreib uns gern über die <a class="link" href="/kontakt">Kontaktseite</a>.
-				</p>
-			{/if}
-		</ContactBox>
-	</div>
-
-	<!-- Termine -->
-	<UpcomingEvents
-		events={data.events}
-		error={data.eventsError}
-		title="Nächste Termine"
-		moreHref="/termine?gruppe={encodeURIComponent(group.slug)}"
-		emptyText="Für diese Gruppe stehen gerade keine besonderen Termine an – die Gruppenstunde findet wie gewohnt statt."
-	/>
-</section>
+</div>
 
 <style>
-	/* Überschriften in Gruppenfarbe (wie text-green-700 auf der alten Website) */
+	.group-hero {
+		background:
+			radial-gradient(
+				50rem 20rem at 90% 10%,
+				color-mix(in srgb, var(--group-color) 22%, transparent),
+				transparent 70%
+			),
+			color-mix(in srgb, var(--group-color) 8%, white);
+	}
 	.group-heading {
-		color: color-mix(in srgb, var(--group-color) 80%, black);
+		color: color-mix(in srgb, var(--group-color) 75%, black);
 	}
 </style>

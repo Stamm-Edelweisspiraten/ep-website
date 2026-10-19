@@ -5,7 +5,7 @@
 		email: string;
 		/** Betreff für den Mail-Link */
 		subject?: string;
-		/** Optional Gruppenfarbe `#rrggbb` für „E-Mail senden“ (sonst Indigo wie auf der alten Website) */
+		/** Optional Gruppenfarbe `#rrggbb` für „E-Mail senden“ (sonst Wappenblau) */
 		color?: string | null;
 		class?: string;
 	}
@@ -33,12 +33,7 @@
 </script>
 
 <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center {className}">
-	<a
-		{href}
-		class="send inline-flex min-h-11 items-center justify-center gap-2 rounded bg-indigo-600 px-4 py-2 text-white transition-colors hover:bg-indigo-700"
-		style:--accent={accent}
-		class:custom={!!accent}
-	>
+	<a {href} class="send btn btn-primary" style:--accent={accent} class:custom={!!accent}>
 		<svg
 			class="size-5"
 			viewBox="0 0 24 24"
@@ -52,11 +47,7 @@
 		</svg>
 		E-Mail senden
 	</a>
-	<button
-		type="button"
-		class="inline-flex min-h-11 items-center justify-center gap-2 rounded bg-gray-200 px-4 py-2 text-gray-800 transition-colors hover:bg-gray-300"
-		onclick={copy}
-	>
+	<button type="button" class="btn btn-secondary" onclick={copy}>
 		<svg
 			class="size-5"
 			viewBox="0 0 24 24"
@@ -85,7 +76,7 @@
 		{/if}
 	</span>
 	{#if status === 'failed'}
-		<span class="text-sm text-gray-500 select-all">{email}</span>
+		<span class="text-sm text-muted select-all">{email}</span>
 	{/if}
 </div>
 

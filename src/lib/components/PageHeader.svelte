@@ -15,16 +15,34 @@
 	let { title, lead = null, eyebrow = null, children, class: className = '' }: Props = $props();
 </script>
 
-<!-- Wie die alte Website: schlichte Überschrift oben im Inhalt, kein farbiges Band -->
-<header class="container-page pt-12 {className}">
-	<div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-		<div class="max-w-3xl">
-			{#if eyebrow}<p class="eyebrow mb-2">{eyebrow}</p>{/if}
-			<h1 class="text-3xl font-bold text-gray-800">{title}</h1>
-			{#if lead}<p class="mt-3 text-lg leading-relaxed text-gray-700">{lead}</p>{/if}
+<!-- Seitenkopf aller Unterseiten: helles Band mit sanftem Verlauf in Wappenfarben -->
+<header class="page-header relative overflow-hidden border-b border-line bg-white {className}">
+	<div class="container-page relative py-10 sm:py-14">
+		<div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+			<div class="max-w-3xl">
+				{#if eyebrow}<p class="eyebrow mb-3">{eyebrow}</p>{/if}
+				<h1 class="text-3xl font-extrabold sm:text-4xl">{title}</h1>
+				{#if lead}<p class="mt-4 text-lg leading-relaxed text-muted">{lead}</p>{/if}
+			</div>
+			{#if children}
+				<div class="shrink-0">{@render children()}</div>
+			{/if}
 		</div>
-		{#if children}
-			<div class="shrink-0">{@render children()}</div>
-		{/if}
 	</div>
 </header>
+
+<style>
+	.page-header {
+		background-image:
+			radial-gradient(
+				60rem 18rem at 100% 0%,
+				color-mix(in srgb, var(--color-brand-100) 70%, transparent),
+				transparent 70%
+			),
+			radial-gradient(
+				30rem 12rem at 0% 100%,
+				color-mix(in srgb, var(--color-sun-300) 25%, transparent),
+				transparent 70%
+			);
+	}
+</style>

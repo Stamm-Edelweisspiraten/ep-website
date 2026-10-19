@@ -10,10 +10,7 @@
 	const headingId = $derived(`person-${member.id}`);
 </script>
 
-<article
-	class="flex h-full gap-4 border border-gray-300 bg-white p-6 sm:gap-5"
-	aria-labelledby={headingId}
->
+<article class="card flex h-full gap-4 p-6 sm:gap-5" aria-labelledby={headingId}>
 	{#if avatar}
 		<img
 			src={avatar}
@@ -22,29 +19,31 @@
 			height="80"
 			loading="lazy"
 			decoding="async"
-			class="size-16 shrink-0 rounded-full border border-gray-200 bg-gray-100 object-cover sm:size-20"
+			class="size-16 shrink-0 rounded-full bg-soft object-cover ring-4 ring-brand-50 sm:size-20"
 		/>
 	{:else}
 		<span
-			class="flex size-16 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xl font-bold text-brand-900 sm:size-20"
+			class="flex size-16 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-brand-100 to-brand-200 text-xl font-bold text-brand-800 ring-4 ring-brand-50 sm:size-20"
 			aria-hidden="true"
 		>
 			{initials(member.name)}
 		</span>
 	{/if}
 	<div class="min-w-0 flex-1">
-		<h3 id={headingId} class="text-lg font-bold text-gray-800">{member.name}</h3>
-		<ul class="mt-1 space-y-0.5">
+		<h3 id={headingId} class="text-lg font-bold">{member.name}</h3>
+		<ul class="mt-2 flex flex-wrap gap-1.5">
 			{#each member.offices as office (office.id)}
 				{@const year = sinceYear(office.since)}
-				<li class="text-sm">
-					<span class="font-medium text-gray-700">{office.name}</span>
-					{#if year}<span class="text-gray-500"> · seit {year}</span>{/if}
+				<li
+					class="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-800"
+				>
+					{office.name}
+					{#if year}<span class="font-normal text-brand-600">&nbsp;· seit {year}</span>{/if}
 				</li>
 			{/each}
 		</ul>
 		{#if member.bio}
-			<ExpandableText text={member.bio} class="mt-3 text-sm leading-relaxed text-gray-700" />
+			<ExpandableText text={member.bio} class="mt-3 text-sm leading-relaxed text-muted" />
 		{/if}
 	</div>
 </article>

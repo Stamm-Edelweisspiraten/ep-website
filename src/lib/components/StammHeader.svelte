@@ -7,8 +7,8 @@
 
 	let { tone = 'light', class: className = '' }: Props = $props();
 
-	const text = $derived(tone === 'light' ? 'text-white' : 'text-indigo-900');
-	const bar = $derived(tone === 'light' ? 'bg-white' : 'bg-indigo-900');
+	const text = $derived(tone === 'light' ? 'text-white' : 'text-brand-900');
+	const bar = $derived(tone === 'light' ? 'bg-sun-400' : 'bg-brand-900');
 </script>
 
 <!-- Wie auf der alten Website; die Seite setzt eine (ggf. unsichtbare) h1 selbst -->

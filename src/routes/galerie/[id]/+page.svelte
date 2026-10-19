@@ -67,39 +67,36 @@
 	image={cover ? galleryImageUrl(gallery.id, cover.imageId, 'web') : undefined}
 />
 
-<section class="mx-auto max-w-5xl space-y-6 px-4 py-12 sm:px-6">
+<section class="container-page space-y-8 py-10 sm:py-14">
 	<div class="flex items-center justify-between gap-3">
-		<a
-			href="/galerie"
-			class="inline-flex min-h-9 items-center gap-1 text-sm text-blue-600 hover:underline"
-		>
-			<svg class="size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-				<path
-					fill-rule="evenodd"
-					d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
-				/>
-			</svg>
-			Zurück zur Galerie
+		<a href="/galerie" class="link-more text-sm">
+			<span aria-hidden="true">←</span> Zurück zur Galerie
 		</a>
 		<ShareButton title={`Bilder von ${gallery.title}`} />
 	</div>
 
-	<div>
-		<h1 class="mb-2 text-2xl font-bold sm:text-3xl">{gallery.title}</h1>
-		<p class="text-gray-500">
+	<div class="max-w-3xl">
+		<p class="eyebrow mb-2">Galerie</p>
+		<h1 class="text-3xl font-extrabold sm:text-4xl">{gallery.title}</h1>
+		<p class="mt-2 font-medium text-muted">
 			{[dateLabel, imageCountLabel(gallery.imageCount)].filter(Boolean).join(' · ')}
 		</p>
 		{#if gallery.description}
-			<p class="mt-4 leading-relaxed whitespace-pre-line text-gray-800">{gallery.description}</p>
+			<p class="mt-4 text-lg leading-relaxed whitespace-pre-line text-gray-700">
+				{gallery.description}
+			</p>
 		{/if}
 		{#if gallery.events.length > 0}
-			<ul class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm" aria-label="Zugehörige Termine">
+			<ul class="mt-4 flex flex-wrap gap-2 text-sm" aria-label="Zugehörige Termine">
 				{#each gallery.events as event (event.id)}
 					<li>
-						<a href="/termine/{encodeURIComponent(event.id)}" class="text-blue-600 hover:underline">
+						<a
+							href="/termine/{encodeURIComponent(event.id)}"
+							class="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1 font-medium text-ink transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-800"
+						>
 							Zum Termin: {event.title}
+							<span class="text-muted">({formatDateRange(event)})</span>
 						</a>
-						<span class="text-gray-500">({formatDateRange(event)})</span>
 					</li>
 				{/each}
 			</ul>
@@ -107,14 +104,14 @@
 	</div>
 
 	{#if gallery.images.length === 0}
-		<p class="text-gray-500">In dieser Galerie sind noch keine Bilder.</p>
+		<p class="text-muted">In dieser Galerie sind noch keine Bilder.</p>
 	{:else}
-		<ul class="grid grid-cols-2 gap-4 md:grid-cols-3">
+		<ul class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
 			{#each gallery.images as image, i (image.id)}
 				<li>
 					<a
 						href={urlFor(i)}
-						class="group block cursor-zoom-in overflow-hidden border border-gray-200 bg-gray-100"
+						class="group block cursor-zoom-in overflow-hidden rounded-xl bg-soft shadow-card"
 						onclick={(event) => open(i, event)}
 						aria-label="{images[i]?.alt ?? `Bild ${i + 1}`} – vergrößern"
 					>
@@ -125,7 +122,7 @@
 							height={image.height}
 							loading={i < 9 ? 'eager' : 'lazy'}
 							decoding="async"
-							class="h-40 w-full object-cover transition duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100 md:h-48"
+							class="aspect-square h-auto w-full object-cover transition duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
 						/>
 					</a>
 				</li>

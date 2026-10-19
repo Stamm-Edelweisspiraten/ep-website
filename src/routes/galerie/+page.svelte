@@ -3,6 +3,7 @@
 	import FilterChip from '$lib/components/gallery/FilterChip.svelte';
 	import GalleryCard from '$lib/components/gallery/GalleryCard.svelte';
 	import Notice from '$lib/components/Notice.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Seo from '$lib/components/Seo.svelte';
 	import {
 		buildSearch,
@@ -78,16 +79,17 @@
 	description="Bilder von Fahrten, Lagern und Aktionen des Stammes Edelweißpiraten."
 />
 
-<section class="mx-auto max-w-6xl space-y-8 px-4 py-12 sm:px-6">
-	<header class="space-y-2 text-center">
-		<h1 class="text-3xl font-bold tracking-tight">Bildergalerie</h1>
-		<p class="text-sm text-gray-600">Einblicke in unsere Aktionen und Termine</p>
-	</header>
+<PageHeader
+	eyebrow="Galerie"
+	title="Bildergalerie"
+	lead="Einblicke in unsere Fahrten, Lager, Aktionen und Gruppenstunden."
+/>
 
+<section class="container-page section-y space-y-8">
 	{#if years.length > 1 || year !== null || groupOptions.length > 0}
-		<div class="space-y-3">
+		<div class="card space-y-3 p-4 sm:p-5">
 			{#if years.length > 1 || year !== null}
-				<ul class="flex flex-wrap justify-center gap-2" aria-label="Nach Jahr filtern">
+				<ul class="flex flex-wrap gap-2" aria-label="Nach Jahr filtern">
 					<li>
 						<FilterChip href={href({ jahr: null, seite: null })} active={year === null}>
 							Alle Jahre
@@ -103,7 +105,7 @@
 				</ul>
 			{/if}
 			{#if groupOptions.length > 0}
-				<ul class="flex flex-wrap justify-center gap-2" aria-label="Nach Gruppe filtern">
+				<ul class="flex flex-wrap gap-2" aria-label="Nach Gruppe filtern">
 					<li>
 						<FilterChip href={href({ gruppe: null, seite: null })} active={group === null}>
 							Alle Gruppen
@@ -122,10 +124,10 @@
 				</ul>
 			{/if}
 			{#if hasFilter}
-				<p class="text-center">
+				<p>
 					<a
 						href={href({ jahr: null, gruppe: null, seite: null })}
-						class="text-sm text-gray-600 underline hover:text-blue-700"
+						class="text-sm font-medium text-brand-700 underline underline-offset-4 hover:text-brand-900"
 						data-sveltekit-noscroll
 						data-sveltekit-keepfocus
 						data-sveltekit-replacestate
@@ -144,19 +146,18 @@
 	{#if data.galleriesError}
 		<Notice title="Galerien konnten gerade nicht geladen werden" />
 	{:else if visible.length === 0}
-		<p class="text-center text-gray-500">
-			{#if hasFilter}
-				Keine Einträge gefunden.
-				<a
-					href={href({ jahr: null, gruppe: null, seite: null })}
-					class="text-blue-600 hover:underline"
-				>
-					Filter zurücksetzen
-				</a>
-			{:else}
-				Noch sind keine Bilder online. Schau bald wieder vorbei!
-			{/if}
-		</p>
+		<Notice tone="info" title="">
+			<p>
+				{#if hasFilter}
+					Keine Einträge gefunden.
+					<a href={href({ jahr: null, gruppe: null, seite: null })} class="link">
+						Filter zurücksetzen
+					</a>
+				{:else}
+					Noch sind keine Bilder online. Schau bald wieder vorbei!
+				{/if}
+			</p>
+		</Notice>
 	{:else}
 		<ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{#each visible as gallery (gallery.id)}
@@ -169,7 +170,7 @@
 				{#if current > 1}
 					<a
 						href={href({ seite: current - 1 })}
-						class="inline-flex min-h-9 items-center border border-gray-300 bg-white px-3 py-1 text-sm hover:bg-gray-50"
+						class="inline-flex min-h-9 items-center rounded-full border border-line bg-white px-3 py-1 text-sm hover:bg-brand-50"
 						rel="prev"
 					>
 						<span aria-hidden="true">◀</span><span class="sr-only">Vorherige Seite</span>
@@ -195,7 +196,7 @@
 				{#if current < pageCount}
 					<a
 						href={href({ seite: current + 1 })}
-						class="inline-flex min-h-9 items-center border border-gray-300 bg-white px-3 py-1 text-sm hover:bg-gray-50"
+						class="inline-flex min-h-9 items-center rounded-full border border-line bg-white px-3 py-1 text-sm hover:bg-brand-50"
 						rel="next"
 					>
 						<span aria-hidden="true">▶</span><span class="sr-only">Nächste Seite</span>

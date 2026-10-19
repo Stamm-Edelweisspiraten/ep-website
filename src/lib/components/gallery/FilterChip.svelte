@@ -39,13 +39,15 @@
 	data-sveltekit-noscroll={keepPosition ? '' : 'off'}
 	data-sveltekit-keepfocus={keepPosition ? '' : 'off'}
 	data-sveltekit-replacestate={replaceState ? '' : 'off'}
-	class="inline-flex min-h-9 items-center justify-center gap-1.5 border px-3 py-1.5 text-sm transition-colors {active
-		? 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
-		: 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50'} {className}"
+	class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors {active
+		? 'border-brand-700 bg-brand-700 text-white hover:bg-brand-800'
+		: 'border-line bg-white text-ink hover:border-brand-200 hover:bg-brand-50 hover:text-brand-800'} {className}"
 >
 	{@render children()}
 	{#if count !== null && count > 0}
-		<span class="px-1 text-xs {active ? 'text-white/80' : 'text-gray-500'}">
+		<span
+			class="rounded-full px-1.5 text-xs {active ? 'bg-white/20 text-white' : 'bg-soft text-muted'}"
+		>
 			{count}
 		</span>
 	{/if}
