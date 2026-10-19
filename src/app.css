@@ -1,0 +1,133 @@
+@import 'tailwindcss';
+
+/*
+ * Designtokens der Stammeswebsite. Tailwind erzeugt daraus Klassen wie
+ * `bg-brand-700`, `text-ink`, `text-muted`, `bg-canvas`, `bg-surface`, `border-line`, `rounded-card`.
+ */
+@theme {
+	--font-sans:
+		'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Roboto, Arial,
+		sans-serif;
+
+	/* Akzentfarbe Edelweiß-Grün */
+	--color-brand-50: #f1f8f3;
+	--color-brand-100: #dcefe2;
+	--color-brand-200: #bbdfc7;
+	--color-brand-300: #8ec7a3;
+	--color-brand-400: #5ea87b;
+	--color-brand-500: #3d8c5e;
+	--color-brand-600: #2c7049;
+	--color-brand-700: #24593c;
+	--color-brand-800: #1f4832;
+	--color-brand-900: #1a3b2a;
+	--color-brand-950: #0d2117;
+
+	/* Flächen und Text */
+	--color-ink: #1b2420;
+	--color-muted: #5a6560;
+	--color-canvas: #f7f8f5;
+	--color-surface: #ffffff;
+	--color-line: #e2e6e1;
+
+	/* Hinweise */
+	--color-warn-50: #fff8eb;
+	--color-warn-200: #f7d9a0;
+	--color-warn-800: #7a4a07;
+
+	--radius-card: 1rem;
+	--shadow-card: 0 1px 2px rgb(16 24 20 / 0.05), 0 4px 16px rgb(16 24 20 / 0.06);
+	--shadow-card-hover: 0 2px 4px rgb(16 24 20 / 0.06), 0 10px 28px rgb(16 24 20 / 0.1);
+}
+
+@layer base {
+	html {
+		-webkit-text-size-adjust: 100%;
+		scroll-behavior: smooth;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+	}
+
+	body {
+		@apply bg-canvas font-sans text-ink antialiased;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4 {
+		@apply font-bold tracking-tight text-balance text-ink;
+	}
+
+	:focus-visible {
+		@apply rounded-sm outline-2 outline-offset-2 outline-brand-600;
+	}
+
+	::selection {
+		@apply bg-brand-200 text-brand-950;
+	}
+}
+
+/* Seitenbreite mit Rand: `<div class="container-page">` */
+@utility container-page {
+	@apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+}
+
+/* Vertikaler Abstand eines Seitenabschnitts */
+@utility section-y {
+	@apply py-12 sm:py-16;
+}
+
+/* Kleine Überzeile über Überschriften */
+@utility eyebrow {
+	@apply text-xs font-semibold tracking-widest text-brand-700 uppercase;
+}
+
+/* Fließtext-Link */
+@utility link {
+	@apply font-medium text-brand-700 underline decoration-brand-300 underline-offset-4 transition-colors hover:text-brand-800 hover:decoration-brand-600;
+}
+
+/* Schaltflächen: `btn btn-primary`, `btn btn-secondary`, `btn btn-ghost` */
+@utility btn {
+	@apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+@utility btn-primary {
+	@apply bg-brand-700 text-white hover:bg-brand-800 active:bg-brand-900;
+}
+
+@utility btn-secondary {
+	@apply border border-line bg-surface text-ink hover:border-brand-300 hover:bg-brand-50;
+}
+
+@utility btn-ghost {
+	@apply text-brand-800 hover:bg-brand-50;
+}
+
+/* Lesetext für längere Inhalte (Beschreibungen aus dem Intern-Bereich, statische Seiten) */
+@utility prose-site {
+	@apply max-w-prose leading-relaxed text-ink/90;
+
+	& :where(p, ul, ol) {
+		@apply my-4;
+	}
+	& :where(h2) {
+		@apply mt-10 mb-3 text-2xl;
+	}
+	& :where(h3) {
+		@apply mt-8 mb-2 text-xl;
+	}
+	& :where(ul) {
+		@apply list-disc pl-6;
+	}
+	& :where(ol) {
+		@apply list-decimal pl-6;
+	}
+	& :where(a) {
+		@apply font-medium text-brand-700 underline decoration-brand-300 underline-offset-4 hover:text-brand-800;
+	}
+}
