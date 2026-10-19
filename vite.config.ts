@@ -1,13 +1,10 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-	plugins: [tailwindcss(), sveltekit()],
-	server: { port: 3001 },
-	preview: { port: 3001 },
-	test: {
-		include: ['src/**/*.test.ts'],
-		environment: 'node'
-	}
+	plugins: [
+		sveltekit(),
+		tailwindcss(),
+	]
 });

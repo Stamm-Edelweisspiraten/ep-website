@@ -1,116 +1,134 @@
-<script lang="ts">
-	/**
-	 * Kontaktseite: Kontaktformular neben Treffpunkt mit Karte, darunter die Ansprechpartner*innen als
-	 * farbige Kästen (Gruppen in Gruppenfarbe, danach die Ämter).
-	 */
-	import ContactBox from '$lib/components/contact/ContactBox.svelte';
-	import ContactForm from '$lib/components/contact/ContactForm.svelte';
-	import { sortOffices } from '$lib/components/contact/contact';
-	import OfficeCard from '$lib/components/contact/OfficeCard.svelte';
-	import EmailButtons from '$lib/components/EmailButtons.svelte';
-	import { groupTitle, leaderText } from '$lib/components/groups/groups';
-	import Map from '$lib/components/Map.svelte';
-	import Notice from '$lib/components/Notice.svelte';
-	import PageHeader from '$lib/components/PageHeader.svelte';
-	import Seo from '$lib/components/Seo.svelte';
-	import type { PageData } from './$types';
+<svelte:head>
+    <title>Stamm Edelweißpiraten – Kontakt</title>
+    <meta name="description"
+          content="Nimm Kontakt mit dem Stamm Edelweißpiraten auf. Hier findest du unser Formular, E-Mail-Adresse und Standort in Bremen-Hastedt."/>
+</svelte:head>
 
-	let { data }: { data: PageData } = $props();
+<script>
+    import { page } from '$app/stores';
+    import Map from '$lib/components/Map.svelte';
+    import EmailButtons from '$lib/components/EmailButtons.svelte';
 
-	const offices = $derived(sortOffices(data.offices));
-	const groups = $derived(data.groups);
-	const hasContacts = $derived(groups.length > 0 || offices.length > 0);
+    export let data;
 </script>
 
-<Seo
-	title="Kontakt"
-	description="Nimm Kontakt mit dem Stamm Edelweißpiraten auf. Hier findest du unser Formular, unsere Ansprechpartner*innen und unseren Treffpunkt in Bremen-Hastedt."
-/>
+<section class="max-w-5xl mx-auto px-6 py-12 space-y-10">
 
-<PageHeader
-	eyebrow="Kontakt"
-	title="Schreib uns!"
-	lead="Du hast Fragen oder möchtest bei uns reinschnuppern? Melde dich gerne bei unseren Ansprechpartner*innen oder komm direkt zu einer Gruppenstunde vorbei."
-/>
+    <!-- Intro -->
+    <h1 class="text-3xl font-bold text-gray-800">Kontakt</h1>
+    <p class="text-gray-700 leading-relaxed">
+        Du hast Fragen oder möchtest bei uns reinschnuppern? Melde dich gerne bei unseren Ansprechpartnern oder komm
+        direkt zu einer Gruppenstunde vorbei.
+    </p>
 
-<div class="container-page section-y space-y-16">
-	<div class="grid gap-10 lg:grid-cols-[1.5fr_1fr]">
-		<!-- Kontaktformular -->
-		<section id="kontaktformular" aria-labelledby="formular-titel" class="scroll-mt-24">
-			<h2 id="formular-titel" class="section-title mb-6">Nachricht senden</h2>
-			<ContactForm success={data.success} />
-		</section>
+    <!-- Adresse -->
+    <div class="space-y-2">
+        <h2 class="text-2xl font-semibold text-gray-800">Unser Treffpunkt</h2>
+        <p class="text-gray-600">
+            Ev. Kirchengemeinde Bremen-Hastedt<br/>
+            Stamm Edelweißpiraten<br/>
+            Drakenburger Str. 42<br/>
+            28207 Bremen
+        </p>
+        <div class="mt-4">
+            <Map/>
+        </div>
+    </div>
 
-		<!-- Treffpunkt -->
-		<section id="treffpunkt" aria-labelledby="treffpunkt-titel" class="scroll-mt-24">
-			<h2 id="treffpunkt-titel" class="section-title mb-6">Unser Treffpunkt</h2>
-			<address class="card mb-4 p-5 leading-relaxed text-gray-700 not-italic">
-				<span class="font-semibold text-ink">Ev. Kirchengemeinde Bremen-Hastedt</span><br />
-				Stamm Edelweißpiraten<br />
-				Drakenburger Str. 42<br />
-				28207 Bremen
-			</address>
-			<Map class="h-[320px]" />
-		</section>
-	</div>
+    <!-- KONTAKT -->
+    <section id="kontakt" class="mx-auto">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Kontakt</h2>
 
-	<!-- Ansprechpartner*innen -->
-	<section aria-labelledby="ansprechpartner-titel" class="space-y-6">
-		<div class="flex flex-wrap items-end justify-between gap-3">
-			<h2 id="ansprechpartner-titel" class="section-title">Ansprechpartner*innen</h2>
-			<a href="/team" class="link-more">Ganzes Team ansehen <span aria-hidden="true">→</span></a>
-		</div>
+        {#if $page?.url?.searchParams?.get('success') === '1'}
+            <div class="mb-6 border border-green-300 bg-green-50 text-green-800 p-4 rounded">
+                <strong>Danke!</strong> Deine Nachricht wurde erfolgreich versendet. Wir melden uns so schnell wie möglich.
+            </div>
+        {/if}
 
-		<ul class="grid gap-6 md:grid-cols-2">
-			{#each groups as group (group.id)}
-				{@const leaders = leaderText(group)}
-				<li>
-					<ContactBox title={groupTitle(group)} color={group.color} class="h-full">
-						{#snippet subtitle()}
-							<p class="text-sm">
-								<a class="link" href="/gruppen/{group.slug}">{group.name}</a>
-							</p>
-						{/snippet}
-						{#if leaders}
-							<p class="mt-3">
-								<span class="block text-xs font-semibold tracking-wide text-muted uppercase"
-									>Ansprechpartner*innen</span
-								>
-								<span class="font-semibold text-ink">{leaders}</span>
-							</p>
-						{/if}
-						{#if group.contactEmail}
-							<p class="mt-3">
-								<span class="block text-xs font-semibold tracking-wide text-muted uppercase"
-									>E-Mail</span
-								>
-								<span class="break-all text-ink">{group.contactEmail}</span>
-							</p>
-							<EmailButtons
-								email={group.contactEmail}
-								subject="Anfrage zur Gruppe {group.name}"
-								color={group.color}
-								class="mt-5"
-							/>
-						{/if}
-					</ContactBox>
-				</li>
-			{/each}
+        <form
+                action="https://formsubmit.co/kotakt@edelweisspiraten-bremen.de"
+        method="POST"
+        class="bg-white border border-gray-300 p-6 md:p-8 rounded space-y-4"
+        >
+        <!-- FormSubmit-Optionen -->
+        <input type="hidden" name="_subject" value="Neue Nachricht – Stamm Edelweißpiraten">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="https://edelweisspiraten-bremen.de/kontakt/?success=1#kontakt">
 
-			{#each offices as office (office.id)}
-				<li><OfficeCard {office} /></li>
-			{/each}
-		</ul>
+        <!-- Honeypot (Anti-Spam) -->
+        <input type="text" name="_honey" class="hidden" tabindex="-1" autocomplete="off">
+        <input type="hidden" name="_autoresponse" value="Danke für deine Nachricht an den Stamm Edelweißpiraten. Wir melden uns zeitnah zurück.">
 
-		{#if data.officesError || data.groupsError}
-			<Notice
-				title="Nicht alle Ansprechpartner*innen konnten gerade geladen werden"
-				message="Nutze bis dahin gern das Kontaktformular – wir leiten deine Nachricht weiter."
-			/>
-		{:else if !hasContacts}
-			<Notice tone="info" title="">
-				<p>Schreib uns gern über das Kontaktformular – wir leiten deine Nachricht weiter.</p>
-			</Notice>
-		{/if}
-	</section>
-</div>
+        <div class="grid md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <input name="name" type="text" required
+                       class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">E-Mail *</label>
+                <input name="email" type="email" required
+                       class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400" />
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Telefon (optional)</label>
+                <input name="phone" type="tel"
+                       class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400" />
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nachricht *</label>
+                <textarea name="message" rows="6" required
+                          class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-400"></textarea>
+            </div>
+            <div class="md:col-span-2 flex items-start gap-2">
+                <input id="consent" type="checkbox" required class="mt-1">
+                <label for="consent" class="text-sm text-gray-700">
+                    Ich habe die Hinweise zum Datenschutz gelesen und bin einverstanden, dass meine Angaben zur Kontaktaufnahme verarbeitet werden.
+                </label>
+            </div>
+        </div>
+
+        <button type="submit"
+                class="mt-4 inline-flex items-center px-5 py-2.5 bg-gray-900 text-white font-medium rounded hover:bg-gray-800 transition">
+            Nachricht senden →
+        </button>
+        </form>
+    </section>
+
+    <!-- Ansprechpartner -->
+    <div class="space-y-6">
+        <h2 class="text-2xl font-semibold text-gray-800">Ansprechpartner</h2>
+
+        <!-- Gruppen (aus dem Intern-Bereich) -->
+        {#each data.groups as group (group.slug)}
+            {@const dark = `color-mix(in srgb, ${group.color} 78%, black)`}
+            <div
+                    class="border-l-4 p-4"
+                    style:border-color={group.color}
+                    style:background-color={`color-mix(in srgb, ${group.color} 8%, white)`}
+            >
+                <h3 class="text-xl font-bold" style:color={dark}>
+                    <a href={group.href} class="hover:underline">{group.title}</a>
+                </h3>
+                {#if group.leaders}
+                    <p class="text-gray-700 mt-1"><span class="font-bold">Ansprechpartner</span><br>{group.leaders}</p>
+                {/if}
+                {#if group.contactEmail}
+                    <p class="text-gray-700 mt-1"><span class="font-bold">E-Mail</span><br>{group.contactEmail}</p>
+                    <EmailButtons email={group.contactEmail} color={group.color}/>
+                {/if}
+            </div>
+        {/each}
+
+        <!-- Stammesführung -->
+        <div class="border-l-4 border-red-400 bg-red-50 p-4">
+            <h3 class="text-xl font-bold text-red-700">Stammesführung</h3>
+            <p class="text-gray-700 mt-1"><span class="font-bold">Ansprechpartner</span><br>Larissa, Lina und Matilda</p>
+            <p class="text-gray-700 mt-1"><span class="font-bold">E-Mail</span><br>stafues@edelweisspiraten-bremen.de
+            </p>
+            <EmailButtons email="stafues@edelweisspiraten-bremen.de" color="red"/>
+        </div>
+    </div>
+
+</section>

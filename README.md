@@ -1,38 +1,38 @@
-# Stammeswebsite Edelweißpiraten
+# sv
 
-Öffentliche Website des Stammes (SvelteKit 2, Svelte 5, Tailwind 4, adapter-node). Eigenständige App
-in diesem Repo – sie importiert nichts aus dem Intern-Bereich (`../src`), sondern holt Termine,
-Galerien, Ämter und Gruppen **serverseitig** über dessen Website-API
-(`/api/v1/modules/<modul>/website/…`) mit einem API-Key.
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-## Start
+## Creating a project
+
+If you're seeing this, you've probably already done this step. Congrats!
 
 ```bash
-cp .env.example .env   # INTERN_API_URL, INTERN_API_KEY, PUBLIC_SITE_URL, ORIGIN setzen
-npm install
-npm run dev            # http://localhost:3001
+# create a new project in the current directory
+npx sv create
+
+# create a new project in my-app
+npx sv create my-app
 ```
 
-API-Key im Intern-Bereich unter **Administration → API-Keys** anlegen, Scopes:
-`events.website.read galleries.website.read offices.website.read members.website.read`.
-Ohne Konfiguration startet die Seite trotzdem und zeigt Hinweise statt Inhalten.
+## Developing
 
-## Befehle
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-| Befehl          | Zweck                                  |
-| --------------- | -------------------------------------- |
-| `npm run check` | `svelte-kit sync` + `svelte-check`     |
-| `npm run lint`  | ESLint + Prettier-Prüfung              |
-| `npm test`      | Unit-Tests (vitest)                    |
-| `npm run build` | Produktions-Build nach `build/`        |
-| `npm start`     | Build starten (`PORT=3001 node build`) |
+```bash
+npm run dev
 
-## Aufbau
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
 
-- `src/lib/server/intern.ts` – API-Client (Cache 60 s, Stale-on-Error, Zusammenlegung) und
-  typisierte Abfragen; `types.ts` – Datenverträge (aus dem Intern-Bereich dupliziert).
-- `src/routes/bilder/…` – Bild-Proxys (der API-Key bleibt auf dem Server).
-- `src/lib/components/` – Layout und Bausteine, `src/lib/format.ts` – Datumsformate,
-  `src/lib/images.ts` – Bild-URLs.
+## Building
 
-Deployment: siehe `docs/deployment.md` → „Stammeswebsite“ und `Dockerfile`.
+To create a production version of your app:
+
+```bash
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.

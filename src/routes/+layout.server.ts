@@ -1,7 +1,8 @@
-import { listGroups, safe } from '$lib/server/intern';
+import { fetchGroups } from '$lib/server/backend';
 import type { LayoutServerLoad } from './$types';
 
+// Gruppen aus dem Intern-Bereich für Navigation, Startseite und Kontakt (ohne Backend: leere Liste)
 export const load: LayoutServerLoad = async () => {
-	const groups = await safe(listGroups(), []);
-	return { groups: groups.value, groupsError: groups.error };
+    const groups = await fetchGroups().catch(() => []);
+    return { groups };
 };

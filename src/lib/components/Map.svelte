@@ -1,77 +1,27 @@
-<script lang="ts">
-	import 'leaflet/dist/leaflet.css';
-	import { onMount } from 'svelte';
+<script>
+    import { onMount } from 'svelte';
 
-	interface Props {
-		/** Standard: Ev. Auferstehungsgemeinde Bremen-Hastedt */
-		lat?: number;
-		lng?: number;
-		zoom?: number;
-		/** Text im Marker-Popup und Name der Karte für Screenreader */
-		label?: string;
-		/** Höhe der Karte über Klassen (Standard `h-[400px]`) */
-		class?: string;
-	}
+    let map;
+    const lat = 53.064289;
+    const lng = 8.868496;
+    const zoom = 16;
 
-	let {
-		lat = 53.064289,
-		lng = 8.868496,
-		zoom = 16,
-		label = 'Ev. Auferstehungsgemeinde Bremen-Hastedt',
-		class: className = 'h-[400px]'
-	}: Props = $props();
+    onMount(async () => {
+        const L = await import('leaflet');
 
-	let container: HTMLDivElement;
+        map = L.map('map').setView([lat, lng], zoom);
 
-	onMount(() => {
-		let map: import('leaflet').Map | undefined;
-		let cancelled = false;
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-		(async () => {
-			// Leaflet braucht `window` – nur im Browser laden
-			const L = (await import('leaflet')).default;
-			if (cancelled) return;
-			const icon = L.icon({
-				iconUrl: '/marker-icon.png',
-				iconRetinaUrl: '/marker-icon-2x.png',
-				shadowUrl: '/marker-shadow.png',
-				iconSize: [25, 41],
-				iconAnchor: [12, 41],
-				popupAnchor: [1, -34],
-				shadowSize: [41, 41]
-			});
-			map = L.map(container, { scrollWheelZoom: false }).setView([lat, lng], zoom);
-			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				maxZoom: 19,
-				attribution:
-					'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende'
-			}).addTo(map);
-			const popup = document.createElement('span');
-			popup.textContent = label;
-			L.marker([lat, lng], { icon, alt: label }).addTo(map).bindPopup(popup).openPopup();
-		})();
-
-		return () => {
-			cancelled = true;
-			map?.remove();
-		};
-	});
-
-	const osmLink = $derived(
-		`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=${zoom}/${lat}/${lng}`
-	);
+        L.marker([lat, lng])
+            .addTo(map)
+            .bindPopup('Ev. Auferstehungsgemeinde Bremen-Hastedt')
+            .openPopup();
+    });
 </script>
 
-<div class="card overflow-hidden">
-	<div
-		bind:this={container}
-		class="relative z-0 w-full bg-soft {className}"
-		role="region"
-		aria-label="Karte: {label}"
-	></div>
-	<p class="border-t border-line px-4 py-2.5 text-xs text-muted">
-		<a class="link" href={osmLink} target="_blank" rel="noopener noreferrer">
-			Größere Karte bei OpenStreetMap öffnen
-		</a>
-	</p>
-</div>
+<!-- Karte -->
+<div id="map" class="relative z-0 w-full h-[400px] rounded shadow"></div>

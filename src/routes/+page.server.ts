@@ -1,7 +1,12 @@
-import { listEvents, safe } from '$lib/server/intern';
 import type { PageServerLoad } from './$types';
+import { faqs as records } from '$lib/faqs';
 
 export const load: PageServerLoad = async () => {
-	const events = await safe(listEvents({ limit: 3 }), []);
-	return { events: events.value, eventsError: events.error };
+    // Optional: Standardzustand `open = false` ergänzen
+    const faqs = records.map((faq) => ({
+        ...faq,
+        open: false
+    }));
+
+    return { faqs };
 };

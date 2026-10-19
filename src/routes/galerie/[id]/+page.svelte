@@ -1,141 +1,96 @@
 <script lang="ts">
-	import { afterNavigate, replaceState } from '$app/navigation';
-	import { page } from '$app/state';
-	import ShareButton from '$lib/components/events/ShareButton.svelte';
-	import Lightbox, { type LightboxImage } from '$lib/components/Lightbox.svelte';
-	import Seo from '$lib/components/Seo.svelte';
-	import { buildSearch, galleryDateLabel, imageCountLabel } from '$lib/events';
-	import { formatDateRange } from '$lib/format';
-	import { galleryImageUrl } from '$lib/images';
+    import Lightbox from '$lib/components/Lightbox.svelte';
+    import Share from '$lib/components/Share.svelte';
+    import { page as pageStore } from '$app/stores';
 
-	let { data } = $props();
+    export let data: {
+        appointment: any;
+        firstImage: string | null;
+        pageUrl: string;
+    };
 
-	const gallery = $derived(data.gallery);
-	const dateLabel = $derived(galleryDateLabel(gallery));
+    const { appointment, firstImage, pageUrl } = data;
 
-	const images: LightboxImage[] = $derived(
-		gallery.images.map((image, i) => ({
-			id: image.id,
-			src: galleryImageUrl(gallery.id, image.id, 'web'),
-			alt: image.description?.trim() || `Bild ${i + 1} aus ${gallery.title}`,
-			description: image.description?.trim() || null,
-			width: image.width,
-			height: image.height
-		}))
-	);
+    let selectedIndex: number | null = null;
+    let shareOpen = false;
 
-	function indexFromUrl(url: URL): number | null {
-		const id = url.searchParams.get('bild');
-		if (!id) return null;
-		const i = gallery.images.findIndex((image) => image.id === id);
-		return i >= 0 ? i : null;
-	}
-
-	// Offenes Bild: `?bild=<imageId>` (Deep-Link); beim Blättern wird die URL ersetzt.
-	let openIndex: number | null = $state(indexFromUrl(page.url));
-	afterNavigate(({ to }) => {
-		if (to?.url) openIndex = indexFromUrl(to.url);
-	});
-
-	function urlFor(index: number | null): string {
-		const url = new URL(page.url);
-		const id = index === null ? null : gallery.images[index]?.id;
-		const params = Object.fromEntries(url.searchParams);
-		delete params.bild;
-		return `${url.pathname}${buildSearch({ ...params, bild: id ?? null })}`;
-	}
-
-	/** Nur aus Nutzeraktionen aufrufen (Router muss bereit sein). */
-	function setOpen(index: number | null) {
-		openIndex = index;
-		replaceState(urlFor(index), {});
-	}
-
-	function open(index: number, event: MouseEvent) {
-		if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
-		event.preventDefault();
-		setOpen(index);
-	}
-
-	const cover = $derived(gallery.cover);
 </script>
 
-<Seo
-	title={gallery.title}
-	description={gallery.description?.replace(/\s+/g, ' ').trim().slice(0, 200) ||
-		`${imageCountLabel(gallery.imageCount)} aus der Galerie „${gallery.title}“.`}
-	image={cover ? galleryImageUrl(gallery.id, cover.imageId, 'web') : undefined}
-/>
+<svelte:head>
+    <!-- Grundlegendes -->
+    <title>{appointment?.title ?? 'Galerie'}</title>
+    <meta name="description" content={appointment?.description ?? 'Bildergalerie'} />
 
-<section class="container-page space-y-8 py-10 sm:py-14">
-	<div class="flex items-center justify-between gap-3">
-		<a href="/galerie" class="link-more text-sm">
-			<span aria-hidden="true">←</span> Zurück zur Galerie
-		</a>
-		<ShareButton title={`Bilder von ${gallery.title}`} />
-	</div>
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={`Bilder von ${appointment?.title ?? 'unserer Aktion'}`} />
+    <meta property="og:description" content={appointment?.description ?? ''} />
+    <meta property="og:url" content={pageUrl} />
+    {#if firstImage}
+        <meta property="og:image" content={firstImage} />
+        <meta property="og:image:alt" content={`Vorschaubild: ${appointment.title}`} />
+    {/if}
 
-	<div class="max-w-3xl">
-		<p class="eyebrow mb-2">Galerie</p>
-		<h1 class="text-3xl font-extrabold sm:text-4xl">{gallery.title}</h1>
-		<p class="mt-2 font-medium text-muted">
-			{[dateLabel, imageCountLabel(gallery.imageCount)].filter(Boolean).join(' · ')}
-		</p>
-		{#if gallery.description}
-			<p class="mt-4 text-lg leading-relaxed whitespace-pre-line text-gray-700">
-				{gallery.description}
-			</p>
-		{/if}
-		{#if gallery.events.length > 0}
-			<ul class="mt-4 flex flex-wrap gap-2 text-sm" aria-label="Zugehörige Termine">
-				{#each gallery.events as event (event.id)}
-					<li>
-						<a
-							href="/termine/{encodeURIComponent(event.id)}"
-							class="inline-flex items-center gap-1.5 rounded-full border border-line bg-white px-3 py-1 font-medium text-ink transition-colors hover:border-brand-200 hover:bg-brand-50 hover:text-brand-800"
-						>
-							Zum Termin: {event.title}
-							<span class="text-muted">({formatDateRange(event)})</span>
-						</a>
-					</li>
-				{/each}
-			</ul>
-		{/if}
-	</div>
+    <meta name="twitter:card" content={firstImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={`Bilder von ${appointment?.title ?? 'unserer Aktion'}`} />
+    <meta name="twitter:description" content={appointment?.description ?? ''} />
+    {#if firstImage}
+        <meta name="twitter:image" content={firstImage} />
+    {/if}
+</svelte:head>
 
-	{#if gallery.images.length === 0}
-		<p class="text-muted">In dieser Galerie sind noch keine Bilder.</p>
-	{:else}
-		<ul class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-			{#each gallery.images as image, i (image.id)}
-				<li>
-					<a
-						href={urlFor(i)}
-						class="group block cursor-zoom-in overflow-hidden rounded-xl bg-soft shadow-card"
-						onclick={(event) => open(i, event)}
-						aria-label="{images[i]?.alt ?? `Bild ${i + 1}`} – vergrößern"
-					>
-						<img
-							src={galleryImageUrl(gallery.id, image.id, 'thumb')}
-							alt=""
-							width={image.width}
-							height={image.height}
-							loading={i < 9 ? 'eager' : 'lazy'}
-							decoding="async"
-							class="aspect-square h-auto w-full object-cover transition duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-						/>
-					</a>
-				</li>
-			{/each}
-		</ul>
-	{/if}
+<section class="max-w-5xl mx-auto px-6 py-12 space-y-6">
+    {#if appointment}
+        <div class="flex items-center justify-between">
+            <a href="/galerie" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                </svg>
+                Zurück
+            </a>
+
+            <button class="text-sm text-blue-600 hover:underline flex items-center gap-1" on:click={() => shareOpen = true}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">
+                    <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"/>
+                </svg>
+                Teilen
+            </button>
+        </div>
+
+        <h1 class="text-2xl font-bold mb-2">{appointment.title}</h1>
+        <p class="text-gray-500 mb-4">
+            {new Date(appointment.date).toLocaleDateString()}
+            {#if appointment.end_date}
+                – {new Date(appointment.end_date).toLocaleDateString()}
+            {/if}
+        </p>
+        <p class="mb-6">{appointment.description}</p>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {#each appointment.pictures as pic, i}
+                <img
+                        src={pic}
+                        alt="Bild"
+                        class="rounded shadow cursor-zoom-in object-cover h-48 w-full"
+                        on:click={() => selectedIndex = i}
+                />
+            {/each}
+        </div>
+
+        {#if selectedIndex !== null}
+            <Lightbox
+                    images={appointment.pictures}
+                    index={selectedIndex}
+                    on:close={() => selectedIndex = null}
+            />
+        {/if}
+
+        <Share
+                url={pageUrl}
+                title={`Bilder von ${appointment.title}`}
+                whatsappMessage={`Schau dir die Bilder von der Aktion ${appointment.title} an: ${pageUrl}`}
+                open={shareOpen}
+                onClose={() => shareOpen = false}
+        />
+    {/if}
 </section>
-
-{#if openIndex !== null && images.length > 0}
-	<Lightbox
-		{images}
-		bind:index={() => openIndex ?? 0, (index) => setOpen(index)}
-		title={gallery.title}
-		onclose={() => setOpen(null)}
-	/>
-{/if}

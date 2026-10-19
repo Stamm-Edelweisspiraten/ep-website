@@ -1,265 +1,427 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import EventCard from '$lib/components/events/EventCard.svelte';
-	import SeriesCard from '$lib/components/events/SeriesCard.svelte';
-	import FilterChip from '$lib/components/gallery/FilterChip.svelte';
-	import Notice from '$lib/components/Notice.svelte';
-	import PageHeader from '$lib/components/PageHeader.svelte';
-	import Seo from '$lib/components/Seo.svelte';
-	import {
-		buildSearch,
-		collapseSeries,
-		collectGroups,
-		collectTags,
-		eventKey,
-		filterEvents,
-		groupByMonth,
-		groupParamValue,
-		resolveGroupParam,
-		type FilterOption
-	} from '$lib/events';
+    import { page } from '$app/stores';
+    import { onMount } from 'svelte';
+    import { browser } from '$app/environment';
 
-	let { data } = $props();
+    export let data;
+    const usedTagIds = new Set(data.appointments.flatMap(a => a.tags));
 
-	const tag = $derived(page.url.searchParams.get('tag') || null);
-	const groupParam = $derived(page.url.searchParams.get('gruppe') || null);
-	const group = $derived(resolveGroupParam(groupParam, data.groups));
-	/** `?serien=alle`: jedes Vorkommen einzeln statt „Regelmäßige Termine“ */
-	const allOccurrences = $derived(page.url.searchParams.get('serien') === 'alle');
+    let selectedYear = '';
+    let selectedTags: string[] = [];
+    let dropdownOpen = false;
 
-	// Ohne `?serien=alle` zählt jede Serie in den Filter-Chips nur einmal.
-	const collapsedAll = $derived(collapseSeries(data.events));
-	const units = $derived(
-		allOccurrences
-			? data.events
-			: [...collapsedAll.singles, ...collapsedAll.series.map((s) => s.event)]
-	);
-	const tagOptions = $derived(withActive(collectTags(units), tag));
-	const groupOptions = $derived(withActive(collectGroups(units), group, groupParam));
+    let currentPage = 1;
+    let itemsPerPage = 12;
+    let columns = 3;
+    let filtersInitialized = false;
+    let selectedAppointment: any = null;
 
-	const filtered = $derived(filterEvents(data.events, { tag, group }));
-	const collapsed = $derived(collapseSeries(filtered));
-	const series = $derived(allOccurrences ? [] : collapsed.series);
-	const listed = $derived(allOccurrences ? filtered : collapsed.singles);
-	const months = $derived(groupByMonth(listed));
-	const hasFilter = $derived(Boolean(tag || group));
-	const hasSeries = $derived(collapsedAll.series.length > 0);
-	const resultCount = $derived(series.length + listed.length);
+    let lightboxOpen = false;
+    let lightboxImageIndex = 0;
 
-	/** Aktiver Filter, der im Zeitraum nicht vorkommt, bleibt als Chip sichtbar (zum Abwählen). */
-	function withActive(options: FilterOption[], active: string | null, label?: string | null) {
-		if (!active || options.some((o) => o.value === active)) return options;
-		return [...options, { value: active, label: label ?? active, count: 0 }];
-	}
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-	function href(params: {
-		rueckblick?: number | null;
-		tag?: string | null;
-		gruppe?: string | null;
-		serien?: string | null;
-	}) {
-		const next = {
-			rueckblick: data.review,
-			tag,
-			gruppe: group ? groupParamValue(group, data.groups) : null,
-			serien: allOccurrences ? 'alle' : null,
-			...params
-		};
-		return `/termine${buildSearch(next)}`;
-	}
+    let goto: typeof import('$app/navigation').goto;
 
-	const lead = $derived(
-		data.review
-			? `Was wir ${data.review} unternommen haben.`
-			: 'Gruppenstunden, Fahrten, Lager und alles, was im Stamm ansteht.'
-	);
+    if (browser) {
+        import('$app/navigation').then(mod => {
+            goto = mod.goto;
+        });
+    }
+
+    // --- Helpers ---
+    function fmtDateRange(startStr: string, endStr?: string | null) {
+        const s = new Date(startStr);
+        const e = endStr ? new Date(endStr) : null;
+
+        const full = new Intl.DateTimeFormat('de-DE', {
+            weekday: 'short', day: '2-digit', month: 'long', year: 'numeric'
+        });
+        const shortDMY = new Intl.DateTimeFormat('de-DE', {
+            day: '2-digit', month: 'long', year: 'numeric'
+        });
+
+        if (e) {
+            if (s.toDateString() === e.toDateString()) return full.format(s);
+            if (s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) {
+                const d = String(s.getDate()).padStart(2, '0');
+                return `${d}.–${shortDMY.format(e)}`;
+            }
+            return `${full.format(s)} – ${full.format(e)}`;
+        }
+        return full.format(s);
+    }
+
+    function getTextColor(bg?: string | null) {
+        if (!bg) return '#1f2937';
+        const m = bg.trim().match(/^#?([\da-f]{6})$/i);
+        if (!m) return '#1f2937';
+        const hex = m[1];
+        const r = parseInt(hex.slice(0,2),16)/255;
+        const g = parseInt(hex.slice(2,4),16)/255;
+        const b = parseInt(hex.slice(4,6),16)/255;
+        const lum = 0.2126*r + 0.7152*g + 0.0722*b;
+        return lum > 0.6 ? '#111827' : '#ffffff';
+    }
+
+    $: if (!filtersInitialized && data?.tags && browser) {
+        const url = $page.url;
+        const yearParam = url.searchParams.get('year');
+        const tagParam = url.searchParams.getAll('tags');
+
+        if (yearParam) selectedYear = yearParam;
+        else selectedYear = new Date().getFullYear().toString();
+
+        if (tagParam.length > 0) {
+            const lowerParam = tagParam.map(t => t.toLowerCase());
+            selectedTags = data.tags
+                .filter(t => lowerParam.includes(t.name.toLowerCase()))
+                .map(t => t.id);
+        }
+
+        filtersInitialized = true;
+    }
+
+    function updateUrl() {
+        if (!browser || !goto) return;
+        const params = new URLSearchParams();
+
+        if (selectedYear) params.set('year', selectedYear);
+
+        for (const id of selectedTags) {
+            const tag = data.tags.find(t => t.id === id);
+            if (tag) params.append('tags', tag.name);
+        }
+
+        const query = params.toString();
+        goto(`/termine${query ? '?' + query : ''}`, {
+            replaceState: true,
+            keepfocus: true,
+            noscroll: true
+        });
+    }
+
+    function toggleTag(id: string) {
+        if (selectedTags.includes(id)) {
+            selectedTags = selectedTags.filter(t => t !== id);
+        } else {
+            selectedTags = [...selectedTags, id];
+        }
+        currentPage = 1;
+        updateUrl();
+    }
+
+    $: if (filtersInitialized && browser) updateUrl();
+
+    function resetFilters() {
+        selectedTags = [];
+        selectedYear = '';
+        currentPage = 1;
+        updateUrl();
+    }
+
+    function closeDropdown() {
+        dropdownOpen = false;
+    }
+
+    function handleClickOutside(event: MouseEvent) {
+        const dropdown = document.getElementById('tag-dropdown');
+        if (dropdown && !dropdown.contains(event.target as Node)) {
+            closeDropdown();
+        }
+    }
+
+    function openAppointmentDetails(appointment: any) {
+        selectedAppointment = appointment;
+    }
+
+    function closeDetailsPopup() {
+        selectedAppointment = null;
+        lightboxOpen = false;
+    }
+
+    function handleOverlayClick(event: MouseEvent) {
+        const modal = document.getElementById('appointment-popup');
+        if (modal && !modal.contains(event.target as Node)) {
+            closeDetailsPopup();
+        }
+    }
+
+    function openLightbox(index: number) {
+        lightboxImageIndex = index;
+        lightboxOpen = true;
+    }
+
+    function closeLightbox() {
+        lightboxOpen = false;
+    }
+
+    function nextImage() {
+        if (!selectedAppointment?.pictures?.length) return;
+        lightboxImageIndex = (lightboxImageIndex + 1) % selectedAppointment.pictures.length;
+    }
+
+    function prevImage() {
+        if (!selectedAppointment?.pictures?.length) return;
+        lightboxImageIndex = (lightboxImageIndex - 1 + selectedAppointment.pictures.length) % selectedAppointment.pictures.length;
+    }
+
+    function handleKeydown(event: KeyboardEvent) {
+        if (event.key === 'Escape') {
+            closeLightbox();
+            closeDetailsPopup();
+            closeDropdown();
+        }
+        if (!lightboxOpen) return;
+        if (event.key === 'ArrowLeft') prevImage();
+        if (event.key === 'ArrowRight') nextImage();
+    }
+
+    function handleTouchStart(event: TouchEvent) {
+        touchStartX = event.changedTouches[0].screenX;
+    }
+
+    function handleTouchEnd(event: TouchEvent) {
+        touchEndX = event.changedTouches[0].screenX;
+        handleSwipe();
+    }
+
+    function handleSwipe() {
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) {
+            if (diff > 0) nextImage();
+            else prevImage();
+        }
+    }
+
+    function scrollToNextUpcoming() {
+        const cards = document.querySelectorAll('[data-date]');
+        const now = new Date();
+        for (const el of cards) {
+            const date = new Date(el.getAttribute('data-date') || '');
+            if (date >= now) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                break;
+            }
+        }
+    }
+
+    function findPageOfNextAppointment() {
+        const now = new Date();
+        const index = filteredAppointments.findIndex(a => new Date(a.date) >= now);
+        if (index >= 0) {
+            currentPage = Math.floor(index / itemsPerPage) + 1;
+        }
+    }
+
+    function updateColumns() {
+        const width = window.innerWidth;
+        columns = width >= 1024 ? 3 : width >= 768 ? 2 : 1;
+        itemsPerPage = columns * 4;
+    }
+
+    $: filteredAppointments = data.appointments.filter(a =>
+        (selectedTags.length === 0 || selectedTags.some(t => a.tags.includes(t))) &&
+        (!selectedYear || new Date(a.date).getFullYear().toString() === selectedYear)
+    );
+
+    $: totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
+    $: paginatedAppointments = filteredAppointments.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    onMount(() => {
+        document.addEventListener('click', handleClickOutside);
+        document.addEventListener('keydown', handleKeydown);
+        updateColumns();
+        window.addEventListener('resize', updateColumns);
+        findPageOfNextAppointment();
+        setTimeout(scrollToNextUpcoming, 500);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+            document.removeEventListener('keydown', handleKeydown);
+            window.removeEventListener('resize', updateColumns);
+        };
+    });
 </script>
 
-<Seo
-	title={data.review ? `Termine ${data.review}` : 'Termine'}
-	description="Kommende Termine des Stammes Edelweißpiraten: Gruppenstunden, Fahrten, Lager und Aktionen."
-/>
+<section class="max-w-6xl mx-auto px-6 py-12 space-y-6">
+    <header class="flex items-center justify-between gap-3 flex-wrap">
+        <h1 class="text-2xl font-bold">Termine</h1>
 
-<PageHeader
-	eyebrow={data.review ? 'Rückblick' : 'Kalender'}
-	title={data.review ? `Rückblick ${data.review}` : 'Termine'}
-	{lead}
-/>
+        <!-- Filter -->
+        <div class="flex flex-wrap gap-3 items-center">
+            <select bind:value={selectedYear} class="border border-gray-300 px-3 py-2 text-sm">
+                <option value="">Alle Jahre</option>
+                {#each data.years as year}
+                    <option value={year.toString()}>{year}</option>
+                {/each}
+            </select>
 
-<section class="container-page section-y space-y-10">
-	<header class="card space-y-3 p-4 sm:p-5">
-		<div class="flex flex-wrap items-center justify-between gap-2">
-			<h2 class="text-sm font-bold text-ink">Filter</h2>
-			{#if hasFilter}
-				<a
-					href={href({ tag: null, gruppe: null })}
-					class="text-sm font-medium text-brand-700 underline underline-offset-4 hover:text-brand-900"
-					data-sveltekit-noscroll
-					data-sveltekit-keepfocus
-					data-sveltekit-replacestate
-				>
-					Filter zurücksetzen
-				</a>
-			{/if}
-		</div>
+            <div class="relative inline-block" id="tag-dropdown">
+                <button
+                        class="border border-gray-300 px-3 py-2 text-sm bg-white"
+                        aria-haspopup="listbox"
+                        aria-expanded={dropdownOpen}
+                        on:click={() => dropdownOpen = !dropdownOpen}
+                >
+                    {selectedTags.length > 0 ? `${selectedTags.length} Gruppe(n)` : 'Gruppen auswählen'}
+                </button>
 
-		<div class="space-y-3">
-			<div class="flex flex-col gap-2 sm:flex-row sm:items-baseline">
-				<span class="w-20 shrink-0 text-sm font-semibold text-muted">Zeitraum</span>
-				<ul class="flex flex-wrap gap-2" aria-label="Zeitraum">
-					<li>
-						<FilterChip
-							href={href({ rueckblick: null })}
-							active={data.review === null}
-							replaceState={false}
-						>
-							Kommende
-						</FilterChip>
-					</li>
-					{#each data.years as year (year)}
-						<li>
-							<FilterChip
-								href={href({ rueckblick: year })}
-								active={data.review === year}
-								replaceState={false}
-								label="Rückblick {year}"
-							>
-								{year}
-							</FilterChip>
-						</li>
-					{/each}
-				</ul>
-			</div>
-			{#if groupOptions.length > 0}
-				{@render chipRow('Gruppe', groupOptions, group, (value) => ({
-					gruppe: value === group ? null : groupParamValue(value, data.groups)
-				}))}
-			{/if}
-			{#if tagOptions.length > 0}
-				{@render chipRow('Thema', tagOptions, tag, (value) => ({
-					tag: value === tag ? null : value
-				}))}
-			{/if}
-			{#if hasSeries}
-				<div class="flex flex-col gap-2 sm:flex-row sm:items-baseline">
-					<span class="w-20 shrink-0 text-sm font-semibold text-muted">Serien</span>
-					<ul class="flex flex-wrap gap-2" aria-label="Darstellung der Serien">
-						<li>
-							<FilterChip href={href({ serien: null })} active={!allOccurrences}>
-								Zusammengefasst
-							</FilterChip>
-						</li>
-						<li>
-							<FilterChip href={href({ serien: 'alle' })} active={allOccurrences}>
-								Alle Vorkommen
-							</FilterChip>
-						</li>
-					</ul>
-				</div>
-			{/if}
-		</div>
-	</header>
+                {#if dropdownOpen}
+                    <div
+                            class="absolute right-0 z-10 mt-2 w-56 bg-white border border-gray-300 shadow-md max-h-60 overflow-auto"
+                            role="listbox"
+                    >
+                        {#each data.tags.filter(tag => usedTagIds.has(tag.id)) as tag}
+                            <label class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm">
+                                <input
+                                        type="checkbox"
+                                        class="mr-2"
+                                        checked={selectedTags.includes(tag.id)}
+                                        on:change={() => toggleTag(tag.id)}
+                                />
+                                <span>{tag.name}</span>
+                            </label>
+                        {/each}
+                    </div>
+                {/if}
+            </div>
 
-	<div aria-live="polite" class="sr-only">
-		{resultCount === 1 ? '1 Eintrag' : `${resultCount} Einträge`}
-	</div>
+            <button class="text-sm underline text-gray-600 hover:text-blue-800"
+                    on:click={resetFilters}>
+                Filter zurücksetzen
+            </button>
+        </div>
+    </header>
 
-	{#if data.eventsError}
-		<Notice title="Termine konnten gerade nicht geladen werden" />
-	{:else if resultCount === 0}
-		<Notice tone="info" title={hasFilter ? 'Keine passenden Termine' : ''}>
-			<p>
-				{#if hasFilter}
-					Für diese Auswahl gibt es {data.review ? `${data.review} keine` : 'gerade keine'} Termine.
-					<a href={href({ tag: null, gruppe: null })} class="link">Filter zurücksetzen</a>
-				{:else if data.review}
-					Für {data.review} sind keine Termine eingetragen.
-				{:else}
-					Gerade stehen keine Termine an. Schau bald wieder vorbei!
-				{/if}
-			</p>
-		</Notice>
-	{:else}
-		{#if data.partialError}
-			<Notice
-				title="Nicht alle Termine konnten geladen werden"
-				message="Ein Teil der Termine fehlt gerade. Bitte versuche es in ein paar Minuten noch einmal."
-			/>
-		{/if}
+    <!-- Termin-Karten -->
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {#each paginatedAppointments as appointment}
+            <div
+                    data-date={appointment.date}
+                    class="bg-white border border-gray-200 p-4 transition hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+                    class:opacity-50={new Date(appointment.date) < new Date()}
+                    on:click={() => openAppointmentDetails(appointment)}
+            >
+                <h2 class="text-lg font-semibold text-gray-900">{appointment.title}</h2>
+                <p class="text-sm text-gray-500 mb-2">
+                    {fmtDateRange(appointment.date, appointment.end_date)}
+                </p>
+                {#if appointment.description}
+                    <p class="mb-2 text-gray-700 line-clamp-3">{appointment.description}</p>
+                {/if}
+                <div class="flex flex-wrap gap-2 mt-2">
+                    {#each appointment.expand?.tags as tag}
+                        <span
+                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                                style="background-color: {tag.color || '#e5e7eb'}; color: {getTextColor(tag.color)}; border: 1px solid {tag.color || '#e5e7eb'};"
+                                title={tag.name}
+                        >
+                            {tag.name}
+                        </span>
+                    {/each}
+                </div>
+            </div>
+        {/each}
+    </div>
 
-		{#if series.length > 0}
-			<section aria-labelledby="regelmaessig" class="space-y-4">
-				<div class="flex flex-wrap items-baseline justify-between gap-3">
-					<h2 id="regelmaessig" class="section-title">Regelmäßige Termine</h2>
-					<a
-						href={href({ serien: 'alle' })}
-						class="link-more text-sm"
-						data-sveltekit-noscroll
-						data-sveltekit-keepfocus
-						data-sveltekit-replacestate
-					>
-						Alle Vorkommen anzeigen
-					</a>
-				</div>
-				<ul class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-					{#each series as item (item.id)}
-						<li><SeriesCard series={item} review={data.review !== null} /></li>
-					{/each}
-				</ul>
-			</section>
-		{/if}
+    <!-- Termin-Detail-Popup -->
+    {#if selectedAppointment}
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm" on:click={handleOverlayClick}>
+            <div id="appointment-popup" class="bg-white w-[95%] max-w-2xl max-h-[90vh] overflow-y-auto p-6 border border-gray-200 relative" on:click|stopPropagation>
+                <button class="absolute top-3 right-4 text-gray-700 hover:text-red-600 text-3xl font-bold" on:click={closeDetailsPopup}>×</button>
 
-		{#if months.length > 0}
-			{#each months as month (month.key)}
-				<section aria-labelledby="monat-{month.key}" class="space-y-4">
-					<h2 id="monat-{month.key}" class="flex items-center gap-4 text-xl font-bold">
-						{month.label}
-						<span class="h-px flex-1 bg-line" aria-hidden="true"></span>
-					</h2>
-					<ul class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-						{#each month.events as event (eventKey(event))}
-							<li><EventCard {event} /></li>
-						{/each}
-					</ul>
-				</section>
-			{/each}
-		{:else if series.length > 0}
-			<p class="text-muted">
-				{data.review
-					? `Außer den regelmäßigen Terminen gab es ${data.review} keine weiteren.`
-					: 'Außer den regelmäßigen Terminen steht gerade nichts an.'}
-			</p>
-		{/if}
+                <h2 class="text-2xl font-bold mb-2">{selectedAppointment.title}</h2>
+                <p class="text-sm text-gray-500 mb-3">
+                    {fmtDateRange(selectedAppointment.date, selectedAppointment.end_date)}
+                </p>
 
-		{#if data.truncated}
-			<p class="text-sm text-muted">
-				Es werden möglicherweise nicht alle Termine angezeigt. Mit den Filtern findest du gezielt
-				weitere.
-			</p>
-		{/if}
-	{/if}
+                {#if selectedAppointment.expand?.tags?.length}
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        {#each selectedAppointment.expand.tags as tag}
+                            <span
+                                    class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                                    style="background-color: {tag.color || '#e5e7eb'}; color: {getTextColor(tag.color)}; border: 1px solid {tag.color || '#e5e7eb'};"
+                            >
+                                {tag.name}
+                            </span>
+                        {/each}
+                    </div>
+                {/if}
+
+                {#if selectedAppointment.description}
+                    <p class="mb-4 text-gray-800 whitespace-pre-line">{selectedAppointment.description}</p>
+                {/if}
+
+                {#if selectedAppointment.pictures?.length}
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {#each selectedAppointment.pictures as pic, i}
+                            <img
+                                    src={pic}
+                                    alt="Bild"
+                                    class="border border-gray-200 object-cover w-full h-48 cursor-zoom-in"
+                                    on:click={() => openLightbox(i)}
+                            />
+                        {/each}
+                    </div>
+                {/if}
+            </div>
+        </div>
+    {/if}
+
+    <!-- Lightbox mit Pfeilen + Touch -->
+    {#if lightboxOpen}
+        <div
+                class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-60"
+                on:touchstart={handleTouchStart}
+                on:touchend={handleTouchEnd}
+        >
+            <button
+                    class="absolute top-4 right-6 text-white font-bold text-4xl sm:text-5xl md:text-6xl"
+                    on:click={closeLightbox}
+            >×</button>
+
+            <button
+                    class="absolute left-4 text-white text-4xl sm:text-5xl md:text-6xl"
+                    on:click={prevImage}
+            >‹</button>
+
+            <img
+                    src={selectedAppointment.pictures[lightboxImageIndex]}
+                    class="max-w-[90vw] max-h-[90vh] object-contain"
+                    alt="Bild groß"
+            />
+
+            <button
+                    class="absolute right-4 text-white text-4xl sm:text-5xl md:text-6xl"
+                    on:click={nextImage}
+            >›</button>
+        </div>
+    {/if}
+
+    <!-- Pagination -->
+    {#if totalPages > 1}
+        <div class="flex justify-center gap-2 mt-6">
+            <button on:click={() => currentPage = Math.max(currentPage - 1, 1)} class="px-3 py-1 border text-sm" disabled={currentPage === 1}>◀</button>
+            {#each Array(totalPages).fill(0).map((_, i) => i + 1) as page}
+                <button
+                        on:click={() => currentPage = page}
+                        class="px-3 py-1 border text-sm {currentPage === page ? 'bg-blue-600 text-white' : 'bg-white'}"
+                >{page}</button>
+            {/each}
+            <button on:click={() => currentPage = Math.min(currentPage + 1, totalPages)} class="px-3 py-1 border text-sm" disabled={currentPage === totalPages}>▶</button>
+        </div>
+    {/if}
 </section>
 
-{#snippet chipRow(
-	label: string,
-	options: FilterOption[],
-	active: string | null,
-	params: (value: string) => { tag?: string | null; gruppe?: string | null }
-)}
-	<div class="flex flex-col gap-2 sm:flex-row sm:items-baseline">
-		<span class="w-20 shrink-0 text-sm font-semibold text-muted">{label}</span>
-		<ul class="flex flex-wrap gap-2" aria-label="Nach {label} filtern">
-			{#each options as option (option.value)}
-				<li>
-					<FilterChip
-						href={href(params(option.value))}
-						active={option.value === active}
-						count={option.count}
-					>
-						{option.label}
-					</FilterChip>
-				</li>
-			{/each}
-		</ul>
-	</div>
-{/snippet}
+<style>
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
