@@ -13,6 +13,22 @@ export function initials(name: string): string {
 	return (Array.from(first)[0]! + (last ? Array.from(last)[0]! : '')).toLocaleUpperCase('de-DE');
 }
 
+/** Vorname = erster Namensteil: „Anna Maria Beispiel“ → „Anna“, „Jan-Ole Muster“ → „Jan-Ole“. */
+export function firstName(name: string): string {
+	return name.trim().split(/\s+/)[0] ?? '';
+}
+
+/** Ämter mit Inhaber*innen nur als Vornamen (Teamseite – der volle Name soll nicht ausgeliefert werden). */
+export function withFirstNames(offices: readonly WebsiteOffice[]): WebsiteOffice[] {
+	return offices.map((office) => ({
+		...office,
+		holders: office.holders.map((holder) => ({
+			...holder,
+			name: firstName(holder.name) || holder.name
+		}))
+	}));
+}
+
 /** Jahr aus `YYYY-MM-DD` oder `null` */
 export function sinceYear(since: string | null | undefined): string | null {
 	const m = since ? /^(\d{4})-\d{2}-\d{2}$/.exec(since) : null;

@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import type { WebsiteOffice, WebsiteOfficeHolder } from '$lib/server/types';
 import {
+	firstName,
 	initials,
 	isLongText,
 	LONG_TEXT_CHARS,
 	sinceYear,
 	sortOffices,
 	teamMembers,
-	vacantOffices
+	vacantOffices,
+	withFirstNames
 } from './contact';
 
 describe('initials', () => {
@@ -21,6 +23,37 @@ describe('initials', () => {
 	it('liefert ? ohne Namen', () => {
 		expect(initials('')).toBe('?');
 		expect(initials('   ')).toBe('?');
+	});
+});
+
+describe('firstName', () => {
+	it('nimmt den ersten Namensteil, Bindestrich-Namen bleiben ganz', () => {
+		expect(firstName('Anna Beispiel')).toBe('Anna');
+		expect(firstName('  Anna Maria  von Beispiel ')).toBe('Anna');
+		expect(firstName('Jan-Ole Muster')).toBe('Jan-Ole');
+		expect(firstName('Fipsi')).toBe('Fipsi');
+		expect(firstName('   ')).toBe('');
+	});
+});
+
+describe('withFirstNames', () => {
+	it('kürzt nur die Namen der Inhaber*innen und lässt alles andere unverändert', () => {
+		const office = {
+			id: 'o1',
+			name: 'Kasse',
+			description: null,
+			position: 1,
+			emails: [],
+			holders: [
+				{ id: 'u1', name: 'Bernd Prüfer', bio: 'Text', since: '2022-01-01', avatarPath: null },
+				{ id: 'u2', name: '  ', bio: null, since: null, avatarPath: null }
+			]
+		} as WebsiteOffice;
+		const [result] = withFirstNames([office]);
+		expect(result!.name).toBe('Kasse');
+		expect(result!.holders.map((h) => h.name)).toEqual(['Bernd', '  ']);
+		expect(result!.holders[0]!.bio).toBe('Text');
+		expect(office.holders[0]!.name).toBe('Bernd Prüfer');
 	});
 });
 
