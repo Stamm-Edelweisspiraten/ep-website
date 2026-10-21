@@ -10,68 +10,17 @@
  * - `WEBSITE_API_KEY` – API-Key mit den Scopes `events.website.read`, `galleries.website.read`, `members.website.read`
  */
 import { env } from '$env/dynamic/private';
+import type {
+	BackendEvent,
+	BackendEventPage,
+	BackendGallery,
+	BackendGalleryDetail,
+	BackendGroup
+} from './backend-types';
+import { fetchEventWindows, type EventPageFetcher } from './event-pages';
+import { EVENT_KEY_RE, UUID_RE, createCachedLoader } from './cache';
 
-// --- Datenverträge des Backends (Auszug, siehe docs/api.md → „Stammeswebsite“) ----------------
-
-interface BackendEvent {
-	id: string;
-	title: string;
-	description: string | null;
-	location: string | null;
-	color: string | null;
-	startsOn: string;
-	startsTime: string | null;
-	endsOn: string | null;
-	endsTime: string | null;
-	tags: string[];
-	groups: string[];
-	groupIds: string[];
-	recurring: boolean;
-	occurrenceDate: string | null;
-}
-
-interface BackendEventRef {
-	id: string;
-	title: string;
-	startsOn: string;
-	endsOn: string | null;
-}
-
-interface BackendGallery {
-	id: string;
-	title: string;
-	description: string | null;
-	imageCount: number;
-	cover: { imageId: string } | null;
-	events: BackendEventRef[];
-	updatedAt: string;
-}
-
-interface BackendGalleryDetail extends BackendGallery {
-	images: { id: string; description: string | null; position: number }[];
-}
-
-export interface BackendGroup {
-	id: string;
-	/** Website-Adresse `/<type>/<slug>` */
-	slug: string;
-	name: string;
-	type: 'meute' | 'sippe';
-	/** Website-Text, sonst die interne Beschreibung */
-	description: string | null;
-	/** Freitext, z. B. „7 bis 10 Jahre“ */
-	ageRange: string | null;
-	meetingPlace: string | null;
-	/** 1 = Montag … 7 = Sonntag */
-	meetingWeekday: number | null;
-	meetingTime: string | null;
-	meetingEndTime: string | null;
-	color: string | null;
-	contactEmail: string | null;
-	leaders: { firstName: string }[];
-	/** Relativer API-Pfad des Gruppenbilds oder `null` */
-	imagePath: string | null;
-}
+export type { BackendGroup } from './backend-types';
 
 // --- Form der Seiten (wie früher aus PocketBase) ----------------------------------------------
 
@@ -107,7 +56,17 @@ export const FIRST_YEAR = 2023;
 /** Nur Website-Endpunkte – der Key soll nichts anderes abrufen können. */
 const ALLOWED_PATH = /^\/api\/v1\/modules\/[a-z0-9-]+\/website\/[A-Za-z0-9/_.%-]*$/;
 
-const cache = new Map<string, { value: unknown; expires: number }>();
+/**
+ * JSON-Cache (#20, `cache.ts`): Erfolge 60 s, 404/422 (unbekannte IDs) 60 s negativ, gleichzeitige Abrufe desselben
+ * Pfads zusammengelegt, bei Ausfall letzter Stand (erneuter Versuch nach 5 s).
+ */
+const cache = createCachedLoader<unknown>({
+	ttlMs: TTL_MS,
+	negativeTtlMs: 60_000,
+	errorTtlMs: 5_000,
+	maxEntries: 1000,
+	isNegative: (e) => e instanceof BackendError && (e.status === 404 || e.status === 422)
+});
 
 export class BackendError extends Error {
 	constructor(
@@ -148,19 +107,14 @@ async function request(pathWithQuery: string, accept: string): Promise<Response>
 /** JSON-Endpunkt abrufen, `{ data }` entpacken, 60 s zwischenspeichern. */
 async function getJson<T>(path: string, query?: Record<string, string | number | undefined>) {
 	const key = buildPath(path, query);
-	const hit = cache.get(key);
-	if (hit && hit.expires > Date.now()) return hit.value as T;
-
-	const res = await request(key, 'application/json');
-	if (!res.ok) {
-		// Bei Ausfall lieber den letzten Stand zeigen als einen Fehler
-		if (hit && res.status !== 404) return hit.value as T;
-		throw new BackendError(res.status, `Backend antwortet mit ${res.status} für ${path}`);
-	}
-	const body = (await res.json()) as { data: T };
-	cache.set(key, { value: body.data, expires: Date.now() + TTL_MS });
-	if (cache.size > 500) cache.delete(cache.keys().next().value as string);
-	return body.data;
+	return cache.get(key, async () => {
+		const res = await request(key, 'application/json');
+		if (!res.ok) {
+			throw new BackendError(res.status, `Backend antwortet mit ${res.status} für ${path}`);
+		}
+		const body = (await res.json()) as { data: T };
+		return body.data;
+	}) as Promise<T>;
 }
 
 /** Bild aus dem Backend holen (für den Bild-Proxy); `null` bei 404. */
@@ -198,7 +152,7 @@ function today() {
 	return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Berlin' }).format(new Date());
 }
 
-/** Halbjahres-Abschnitte (Serien füllen sonst das Limit von 200 je Abruf). */
+/** Halbjahres-Abschnitte (parallel abrufbar, je Abschnitt mit Paging nachgeladen, siehe `event-pages.ts`). */
 function halfYears(fromYear: number, toYear: number) {
 	const ranges: { from: string; to: string }[] = [];
 	for (let y = fromYear; y <= toYear; y++) {
@@ -307,9 +261,14 @@ export async function fetchGroups(): Promise<Group[]> {
 /** Eine Gruppe per Slug; `null`, wenn unbekannt oder nicht auf der Website. */
 export async function fetchGroup(slug: string): Promise<Group | null> {
 	if (!/^[a-z0-9-]{1,80}$/.test(slug)) return null;
+	// unbekannte Slugs nicht beim Backend anfragen (Liste im Cache; ohne Liste direkt fragen)
+	const listed = await listGroups();
+	if (listed.length > 0 && !listed.some((g) => g.slug === slug)) return null;
 	try {
 		return toGroup(
-			await getJson<BackendGroup>(`/api/v1/modules/members/website/groups/${encodeURIComponent(slug)}`)
+			await getJson<BackendGroup>(
+				`/api/v1/modules/members/website/groups/${encodeURIComponent(slug)}`
+			)
 		);
 	} catch (e) {
 		if (e instanceof BackendError && (e.status === 404 || e.status === 422)) return null;
@@ -319,7 +278,9 @@ export async function fetchGroup(slug: string): Promise<Group | null> {
 
 /** Gruppenbild aus dem Backend (für den Bild-Proxy); `null` bei 404. */
 export async function fetchGroupImage(slug: string): Promise<Response | null> {
-	const path = buildPath(`/api/v1/modules/members/website/groups/${encodeURIComponent(slug)}/image`);
+	const path = buildPath(
+		`/api/v1/modules/members/website/groups/${encodeURIComponent(slug)}/image`
+	);
 	const res = await request(path, 'image/*');
 	if (res.status === 404) return null;
 	if (!res.ok) throw new BackendError(res.status, `Bild nicht abrufbar (${res.status})`);
@@ -342,6 +303,8 @@ async function listGalleries(): Promise<BackendGallery[]> {
 }
 
 async function getGallery(id: string): Promise<BackendGalleryDetail | null> {
+	if (!UUID_RE.test(id)) return null; // zufällige Adressen erreichen das Backend nicht
+	if (!(await isListedGallery(id))) return null;
 	try {
 		return await getJson<BackendGalleryDetail>(
 			`/api/v1/modules/galleries/website/galleries/${encodeURIComponent(id)}`
@@ -402,30 +365,27 @@ async function groupColorMap() {
 /** Alle Termine ab `FIRST_YEAR` bis Ende nächsten Jahres, aufsteigend nach Datum. */
 export async function fetchAppointments(): Promise<Appointment[]> {
 	const nextYear = Number(today().slice(0, 4)) + 1;
-	const [colors, pictures, chunks] = await Promise.all([
+	const fetchPage: EventPageFetcher = (query) =>
+		getJson<BackendEventPage | BackendEvent[]>('/api/v1/modules/events/website/events', {
+			...query
+		});
+	const [colors, pictures, events] = await Promise.all([
 		groupColorMap(),
 		picturesByEvent().catch(() => new Map<string, string[]>()),
-		Promise.all(
-			halfYears(FIRST_YEAR, nextYear).map((r) =>
-				getJson<BackendEvent[]>('/api/v1/modules/events/website/events', { ...r, limit: 200 })
-			)
-		)
+		// mehrtägige Termine stehen in zwei Abschnitten – `fetchEventWindows` führt sie zusammen
+		fetchEventWindows(fetchPage, halfYears(FIRST_YEAR, nextYear))
 	]);
-	const seen = new Set<string>();
-	const result: Appointment[] = [];
-	for (const event of chunks.flat()) {
-		const appointment = toAppointment(event, colors, pictures.get(event.id) ?? []);
-		if (seen.has(appointment.id)) continue; // mehrtägige Termine stehen in zwei Abschnitten
-		seen.add(appointment.id);
-		result.push(appointment);
-	}
-	return result.sort((a, b) => a.date.localeCompare(b.date));
+	return events
+		.map((event) => toAppointment(event, colors, pictures.get(event.id) ?? []))
+		.sort((a, b) => a.date.localeCompare(b.date));
 }
 
 /** Ein Termin (`<id>` oder bei Serien `<id>~<YYYY-MM-DD>`); `null`, wenn unbekannt. */
 export async function fetchAppointmentById(key: string): Promise<Appointment | null> {
+	if (!EVENT_KEY_RE.test(key)) return null; // zufällige Adressen erreichen das Backend nicht
 	const [id, occurrence] = key.split('~');
 	if (!id || (occurrence && !ISO_DATE.test(occurrence))) return null;
+	if (!(await isListedEvent(id))) return null;
 	let event: BackendEvent;
 	try {
 		event = await getJson<BackendEvent>(
@@ -527,4 +487,31 @@ export async function fetchGalleryAppointment(id: string): Promise<Appointment |
 		tags: [],
 		expand: { tags: [] }
 	};
+}
+
+// --- Vorab-Prüfung unbekannter IDs (#20) ---------------------------------------------------------
+// Unbekannte Termin-, Galerie- und Bild-IDs werden gegen die (zwischengespeicherten) Listen geprüft, damit
+// tausend zufällige Adressen nicht tausend Backend-Abrufe auslösen. Ist die Liste gerade nicht abrufbar,
+// wird wie bisher direkt gefragt (negativer Cache und Rate-Limit je IP greifen trotzdem).
+
+async function isListedGallery(id: string): Promise<boolean> {
+	const galleries = await listGalleries().catch(() => null);
+	return !galleries || galleries.some((g) => g.id === id);
+}
+
+/** Nur Termine im Bereich der Terminseite (`FIRST_YEAR` bis Ende nächsten Jahres) sind über `/termine/<id>` erreichbar. */
+async function isListedEvent(id: string): Promise<boolean> {
+	const appointments = await fetchAppointments().catch(() => null);
+	return !appointments || appointments.some((a) => a.id === id || a.id.startsWith(`${id}~`));
+}
+
+/** Gehört das Bild zu einer öffentlichen Galerie? (für den Bild-Proxy; im Zweifel `true`) */
+export async function isKnownGalleryImage(galleryId: string, imageId: string): Promise<boolean> {
+	if (!UUID_RE.test(galleryId) || !UUID_RE.test(imageId)) return false;
+	try {
+		const gallery = await getGallery(galleryId);
+		return !!gallery && gallery.images.some((img) => img.id === imageId);
+	} catch {
+		return true;
+	}
 }

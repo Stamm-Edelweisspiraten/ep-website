@@ -1,24 +1,23 @@
 // Bild-Proxy: Galeriebilder kommen mit dem API-Key vom Backend, der Browser sieht nur diese Adresse.
+// Bilder werden zwischengespeichert (`lib/server/images.ts`), IDs vorab geprüft, damit zufällige Adressen
+// das Backend gar nicht erst erreichen; das Rate-Limit je Besucher-IP sitzt in `hooks.server.ts`.
 import { error } from '@sveltejs/kit';
-import { fetchImage } from '$lib/server/backend';
+import { UUID_RE } from '$lib/server/cache';
+import { imageResponse } from '$lib/server/image-cache';
+import { galleryImage } from '$lib/server/images';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, request }) => {
 	if (params.variant !== 'thumb' && params.variant !== 'web') throw error(404, 'Nicht gefunden');
+	if (!UUID_RE.test(params.id) || !UUID_RE.test(params.imageId)) throw error(404, 'Nicht gefunden');
 
-	const upstream = await fetchImage(params.id, params.imageId, params.variant).catch(() => {
+	const img = await galleryImage(
+		params.id.toLowerCase(),
+		params.imageId.toLowerCase(),
+		params.variant
+	).catch(() => {
 		throw error(502, 'Bild konnte nicht geladen werden');
 	});
-	if (!upstream || !upstream.body) throw error(404, 'Bild nicht gefunden');
-
-	const type = upstream.headers.get('content-type') ?? '';
-	if (!type.startsWith('image/')) throw error(502, 'Ungültige Antwort');
-
-	return new Response(upstream.body, {
-		headers: {
-			'content-type': type,
-			'cache-control': 'public, max-age=3600, stale-while-revalidate=86400',
-			'x-content-type-options': 'nosniff'
-		}
-	});
+	if (!img) throw error(404, 'Bild nicht gefunden');
+	return imageResponse(img, request);
 };

@@ -6,7 +6,7 @@
 
 <section class="max-w-5xl mx-auto py-12 px-6">
     <h1 class="font-bold text-2xl">Datenschutzerklärung</h1>
-    <p class="mb-3">Stand: 25. Mai 2025</p>
+    <p class="mb-3">Stand: 21. Oktober 2026</p>
     <h2 class="font-bold text-xl">Inhaltsübersicht</h2>
     <ul class="index mb-4 mt-1">
         <li><a class="index-link hover:text-blue-500" href="#m3">- Verantwortlicher</a></li>
@@ -51,13 +51,8 @@
     <ul>
         <li>Kommunikation.</li>
         <li>Sicherheitsmaßnahmen.</li>
-        <li>Reichweitenmessung.</li>
-        <li>Tracking.</li>
-        <li>Zielgruppenbildung.</li>
         <li>Organisations- und Verwaltungsverfahren.</li>
         <li>Feedback.</li>
-        <li>Marketing.</li>
-        <li>Profile mit nutzerbezogenen Informationen.</li>
         <li>Bereitstellung unseres Onlineangebotes und Nutzerfreundlichkeit.</li>
         <li>Informationstechnische Infrastruktur.</li>
         <li>Öffentlichkeitsarbeit.</li>
@@ -281,6 +276,13 @@
             danach gelöscht oder anonymisiert. Daten, deren weitere Aufbewahrung zu Beweiszwecken erforderlich ist, sind
             bis zur endgültigen Klärung des jeweiligen Vorfalls von der Löschung ausgenommen.
         </li>
+        <li><strong>Eigener Server, keine Inhalte von Dritten beim Seitenaufruf: </strong>Die Website, ihre Schriften,
+            Symbole und Bilder (Termine, Galerien, Gruppenbilder) werden ausschließlich von unserem eigenen Server
+            ausgeliefert; Termine und Bilder holt die Website serverseitig aus unserem internen Verwaltungssystem. Beim
+            Aufruf der Seiten werden keine Anfragen an Server Dritter gestellt (zur Karte siehe „OpenStreetMap“). Zum
+            Schutz vor Überlastung zählt der Server Anfragen je IP-Adresse; dieser Zähler liegt nur im Arbeitsspeicher
+            und verfällt nach wenigen Minuten; <span class=""><strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO).</span>
+        </li>
     </ul>
 
 
@@ -326,30 +328,9 @@
             Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO).
         </li>
     </ul>
-    <p><strong>Weitere Hinweise zu Verarbeitungsprozessen, Verfahren und Diensten:</strong></p>
-    <ul class="m-elements">
-        <li><strong>Verarbeitung von Cookie-Daten auf Grundlage einer Einwilligung: </strong>Wir setzen eine
-            Einwilligungs-Management-Lösung ein, bei der die Einwilligung der Nutzer zur Verwendung von Cookies oder zu
-            den im Rahmen der Einwilligungs-Management-Lösung genannten Verfahren und Anbietern eingeholt wird. Dieses
-            Verfahren dient der Einholung, Protokollierung, Verwaltung und dem Widerruf von Einwilligungen, insbesondere
-            bezogen auf den Einsatz von Cookies und vergleichbaren Technologien, die zur Speicherung, zum Auslesen und
-            zur Verarbeitung von Informationen auf den Endgeräten der Nutzer eingesetzt werden. Im Rahmen dieses
-            Verfahrens werden die Einwilligungen der Nutzer für die Nutzung von Cookies und die damit verbundenen
-            Verarbeitungen von Informationen, einschließlich der im Einwilligungs-Management-Verfahren genannten
-            spezifischen Verarbeitungen und Anbieter, eingeholt. Die Nutzer haben zudem die Möglichkeit, ihre
-            Einwilligungen zu verwalten und zu widerrufen. Die Einwilligungserklärungen werden gespeichert, um eine
-            erneute Abfrage zu vermeiden und den Nachweis der Einwilligung gemäß der gesetzlichen Anforderungen führen
-            zu können. Die Speicherung erfolgt serverseitig und/oder in einem Cookie (sogenanntes Opt-In-Cookie) oder
-            mittels vergleichbarer Technologien, um die Einwilligung einem spezifischen Nutzer oder dessen Gerät
-            zuordnen zu können. Sofern keine spezifischen Angaben zu den Anbietern von Einwilligungs-Management-Diensten
-            vorliegen, gelten folgende allgemeine Hinweise: Die Dauer der Speicherung der Einwilligung beträgt bis zu
-            zwei Jahre. Dabei wird ein pseudonymer Nutzer-Identifikator erstellt, der zusammen mit dem Zeitpunkt der
-            Einwilligung, den Angaben zum Umfang der Einwilligung (z. B. betreffende Kategorien von Cookies und/oder
-            Diensteanbieter) sowie Informationen über den Browser, das System und das verwendete Endgerät gespeichert
-            wird; <span
-                    class=""><strong>Rechtsgrundlagen:</strong> Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO).</span>
-        </li>
-    </ul>
+    <p><strong>Cookies auf dieser Website: </strong>Diese Website setzt derzeit keine Cookies und speichert keine
+        Informationen auf Ihrem Endgerät; wir verwenden daher auch kein Einwilligungs-Management (Cookie-Banner). Die Karte
+        wird erst nach Ihrem Klick geladen; diese Wahl wird nicht gespeichert.</p>
 
 
     <h2 id="m104" class="text-xl font-bold  mt-8">Blogs und Publikationsmedien</h2>
@@ -412,7 +393,11 @@
             Bearbeitung des jeweiligen Anliegens. Dies umfasst in der Regel Angaben wie Name, Kontaktinformationen und
             gegebenenfalls weitere Informationen, die uns mitgeteilt werden und zur angemessenen Bearbeitung
             erforderlich sind. Wir nutzen diese Daten ausschließlich für den angegebenen Zweck der Kontaktaufnahme und
-            Kommunikation; <span class=""><strong>Rechtsgrundlagen:</strong> Vertragserfüllung und vorvertragliche Anfragen (Art. 6 Abs. 1 S. 1 lit. b) DSGVO), Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO).</span>
+            Kommunikation. Die Angaben aus dem Kontaktformular (Name, E-Mail-Adresse, optional Telefonnummer, Nachricht)
+            werden von unserem eigenen Server als E-Mail an unser Postfach des Stammes gesendet; dafür nutzen wir den
+            E-Mail-Server unseres E-Mail-Anbieters (Auftragsverarbeitung). Es wird kein externer Formulardienst
+            eingesetzt, die Angaben werden auf dem Webserver nicht gespeichert und es wird keine automatische E-Mail an die
+            angegebene Adresse versendet; <span class=""><strong>Rechtsgrundlagen:</strong> Vertragserfüllung und vorvertragliche Anfragen (Art. 6 Abs. 1 S. 1 lit. b) DSGVO), Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO).</span>
         </li>
     </ul>
 
@@ -475,8 +460,9 @@
 
     <h2 id="m328" class="text-xl font-bold mt-8">Plug-ins und eingebettete Funktionen sowie Inhalte</h2>
     <p>Wir binden Funktions- und Inhaltselemente in unser Onlineangebot ein, die von den Servern ihrer jeweiligen
-        Anbieter (nachfolgend als „Drittanbieter" bezeichnet) bezogen werden. Dabei kann es sich zum Beispiel um
-        Grafiken, Videos oder Stadtpläne handeln (nachfolgend einheitlich als „Inhalte" bezeichnet).</p>
+        Anbieter (nachfolgend als „Drittanbieter" bezeichnet) bezogen werden. Derzeit ist das ausschließlich die Karte
+        von OpenStreetMap auf der Start- und der Kontaktseite, und auch diese erst, nachdem Sie auf „Karte laden“
+        geklickt haben (nachfolgend „Inhalte“).</p>
     <p>Die Einbindung setzt immer voraus, dass die Drittanbieter dieser Inhalte die IP-Adresse der Nutzer verarbeiten,
         da sie ohne IP-Adresse die Inhalte nicht an deren Browser senden könnten. Die IP-Adresse ist damit für die
         Darstellung dieser Inhalte oder Funktionen erforderlich. Wir bemühen uns, nur solche Inhalte zu verwenden, deren
@@ -499,109 +485,28 @@
             Identifikationsnummern, beteiligte Personen).
         </li>
         <li><strong>Betroffene Personen:</strong> Nutzer (z. B. Webseitenbesucher, Nutzer von Onlinediensten).</li>
-        <li><strong>Zwecke der Verarbeitung:</strong> Bereitstellung unseres Onlineangebotes und Nutzerfreundlichkeit;
-            Reichweitenmessung (z. B. Zugriffsstatistiken, Erkennung wiederkehrender Besucher); Tracking (z. B.
-            interessens-/verhaltensbezogenes Profiling, Nutzung von Cookies); Zielgruppenbildung; Marketing. Profile mit
-            nutzerbezogenen Informationen (Erstellen von Nutzerprofilen).
+        <li><strong>Zwecke der Verarbeitung:</strong> Bereitstellung unseres Onlineangebotes und Nutzerfreundlichkeit.
         </li>
         <li><strong>Aufbewahrung und Löschung:</strong> Löschung entsprechend Angaben im Abschnitt "Allgemeine
             Informationen zur Datenspeicherung und Löschung". Speicherung von Cookies von bis zu 2 Jahren (Sofern nicht
             anders angegeben, können Cookies und ähnliche Speichermethoden für einen Zeitraum von zwei Jahren auf den
             Geräten der Nutzer gespeichert werden.).
         </li>
-        <li class=""><strong>Rechtsgrundlagen:</strong> Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO). Berechtigte
-            Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO).
+        <li class=""><strong>Rechtsgrundlagen:</strong> Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO, § 25 Abs. 1 TDDDG)
+            durch Klick auf „Karte laden“.
         </li>
     </ul>
     <p><strong>Weitere Hinweise zu Verarbeitungsprozessen, Verfahren und Diensten:</strong></p>
     <ul class="m-elements">
-        <li><strong>Google Fonts (Bezug vom Google Server): </strong>Bezug von Schriften (und Symbolen) zum Zwecke einer
-            technisch sicheren, wartungsfreien und effizienten Nutzung von Schriften und Symbolen im Hinblick auf
-            Aktualität und Ladezeiten, deren einheitliche Darstellung und Berücksichtigung möglicher lizenzrechtlicher
-            Beschränkungen. Dem Anbieter der Schriftarten wird die IP-Adresse des Nutzers mitgeteilt, damit die
-            Schriftarten im Browser des Nutzers zur Verfügung gestellt werden können. Darüber hinaus werden technische
-            Daten (Spracheinstellungen, Bildschirmauflösung, Betriebssystem, verwendete Hardware) übermittelt, die für
-            die Bereitstellung der Schriften in Abhängigkeit von den verwendeten Geräten und der technischen Umgebung
-            notwendig sind. Diese Daten können auf einem Server des Anbieters der Schriftarten in den USA verarbeitet
-            werden - Beim Besuch unseres Onlineangebotes senden die Browser der Nutzer ihre Browser HTTP-Anfragen an die
-            Google Fonts Web API (d. h. eine Softwareschnittstelle für den Abruf der Schriftarten). Die Google Fonts Web
-            API stellt den Nutzern die Cascading Style Sheets (CSS) von Google Fonts und danach die in der CCS
-            angegebenen Schriftarten zur Verfügung. Zu diesen HTTP-Anfragen gehören (1) die vom jeweiligen Nutzer für
-            den Zugriff auf das Internet verwendete IP-Adresse, (2) die angeforderte URL auf dem Google-Server und (3)
-            die HTTP-Header, einschließlich des User-Agents, der die Browser- und Betriebssystemversionen der
-            Websitebesucher beschreibt, sowie die Verweis-URL (d. h. die Webseite, auf der die Google-Schriftart
-            angezeigt werden soll). IP-Adressen werden weder auf Google-Servern protokolliert noch gespeichert und sie
-            werden nicht analysiert. Die Google Fonts Web API protokolliert Details der HTTP-Anfragen (angeforderte URL,
-            User-Agent und Verweis-URL). Der Zugriff auf diese Daten ist eingeschränkt und streng kontrolliert. Die
-            angeforderte URL identifiziert die Schriftfamilien, für die der Nutzer Schriftarten laden möchte. Diese
-            Daten werden protokolliert, damit Google bestimmen kann, wie oft eine bestimmte Schriftfamilie angefordert
-            wird. Bei der Google Fonts Web API muss der User-Agent die Schriftart anpassen, die für den jeweiligen
-            Browsertyp generiert wird. Der User-Agent wird in erster Linie zum Debugging protokolliert und verwendet, um
-            aggregierte Nutzungsstatistiken zu generieren, mit denen die Beliebtheit von Schriftfamilien gemessen wird.
-            Diese zusammengefassten Nutzungsstatistiken werden auf der Seite „Analysen" von Google Fonts veröffentlicht.
-            Schließlich wird die Verweis-URL protokolliert, sodass die Daten für die Wartung der Produktion verwendet
-            und ein aggregierter Bericht zu den Top-Integrationen basierend auf der Anzahl der Schriftartenanfragen
-            generiert werden kann. Google verwendet laut eigener Auskunft keine der von Google Fonts erfassten
-            Informationen, um Profile von Endnutzern zu erstellen oder zielgerichtete Anzeigen zu schalten; <strong>Dienstanbieter:</strong>
-            Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland; <span class=""><strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO); </span><strong>Website:</strong>
-            <a href="https://fonts.google.com/" target="_blank">https://fonts.google.com/</a>; <strong>Datenschutzerklärung:</strong>
-            <a href="https://policies.google.com/privacy" target="_blank">https://policies.google.com/privacy</a>;
-            <strong>Grundlage Drittlandtransfers:</strong> Data Privacy Framework (DPF), Data Privacy Framework (DPF).
-            <strong>Weitere Informationen:</strong> <a href="https://developers.google.com/fonts/faq/privacy?hl=de"
-                                                       target="_blank">https://developers.google.com/fonts/faq/privacy?hl=de</a>.
-        </li>
-        <li><strong>Instagram-Plugins und -Inhalte: </strong>Instagram Plugins und -Inhalte - Hierzu können z. B.
-            Inhalte wie Bilder, Videos oder Texte und Schaltflächen gehören, mit denen Nutzer Inhalte dieses
-            Onlineangebotes innerhalb von Instagram teilen können. - Wir sind gemeinsam mit Meta Platforms Ireland
-            Limited für die Erhebung oder den Erhalt im Rahmen einer Übermittlung (jedoch nicht die weitere
-            Verarbeitung) von "Event-Daten", die Facebook mittels Funktionen von Instagram (z. B. Einbettungsfunktionen
-            für Inhalte), die auf unserem Onlineangebot ausgeführt werden, erhebt oder im Rahmen einer Übermittlung zu
-            folgenden Zwecken erhält, gemeinsam verantwortlich: a) Anzeige von Inhalten sowie Werbeinformationen, die
-            den mutmaßlichen Interessen der Nutzer entsprechen; b) Zustellung kommerzieller und transaktionsbezogener
-            Nachrichten (z. B. Ansprache von Nutzern via Facebook-Messenger); c) Verbesserung der Anzeigenauslieferung
-            und Personalisierung von Funktionen und Inhalten (z. B. Verbesserung der Erkennung, welche Inhalte oder
-            Werbeinformationen mutmaßlich den Interessen der Nutzer entsprechen). Wir haben mit Facebook eine spezielle
-            Vereinbarung abgeschlossen ("Zusatz für Verantwortliche", <a
-                    href="https://www.facebook.com/legal/controller_addendum" target="_blank">https://www.facebook.com/legal/controller_addendum</a>),
-            in der insbesondere geregelt wird, welche Sicherheitsmaßnahmen Facebook beachten muss (<a
-                    href="https://www.facebook.com/legal/terms/data_security_terms" target="_blank">https://www.facebook.com/legal/terms/data_security_terms</a>)
-            und in der Facebook sich bereit erklärt hat die Betroffenenrechte zu erfüllen (d. h. Nutzer können z. B.
-            Auskünfte oder Löschungsanfragen direkt an Facebook richten). Hinweis: Wenn Facebook uns Messwerte, Analysen
-            und Berichte bereitstellt (die aggregiert sind, d. h. keine Angaben zu einzelnen Nutzern erhalten und für
-            uns anonym sind), dann erfolgt diese Verarbeitung nicht im Rahmen der gemeinsamen Verantwortlichkeit,
-            sondern auf Grundlage eines Auftragsverarbeitungsvertrages ("Datenverarbeitungsbedingungen ", <a
-                    href="https://www.facebook.com/legal/terms/dataprocessing" target="_blank">https://www.facebook.com/legal/terms/dataprocessing</a>)
-            , der "Datensicherheitsbedingungen" (<a href="https://www.facebook.com/legal/terms/data_security_terms"
-                                                    target="_blank">https://www.facebook.com/legal/terms/data_security_terms</a>)
-            sowie im Hinblick auf die Verarbeitung in den USA auf Grundlage von Standardvertragsklauseln
-            ("Facebook-EU-Datenübermittlungszusatz, <a href="https://www.facebook.com/legal/EU_data_transfer_addendum"
-                                                       target="_blank">https://www.facebook.com/legal/EU_data_transfer_addendum</a>).
-            Die Rechte der Nutzer (insbesondere auf Auskunft, Löschung, Widerspruch und Beschwerde bei zuständiger
-            Aufsichtsbehörde), werden durch die Vereinbarungen mit Facebook nicht eingeschränkt;
-            <strong>Dienstanbieter:</strong> Meta Platforms Ireland Limited, Merrion Road, Dublin 4, D04 X2K5, Irland;
-            <span class=""><strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO); </span><strong>Website:</strong>
-            <a href="https://www.instagram.com" target="_blank">https://www.instagram.com</a>. <strong>Datenschutzerklärung:</strong>
-            <a href="https://privacycenter.instagram.com/policy/" target="_blank">https://privacycenter.instagram.com/policy/</a>.
-        </li>
-        <li><strong>OpenStreetMap: </strong>Wir binden die Landkarten des Dienstes "OpenStreetMap" ein, die auf
+        <li><strong>OpenStreetMap: </strong>Erst nach Klick auf „Karte laden“ binden wir die Landkarten des Dienstes "OpenStreetMap" ein, die auf
             Grundlage der Open Data Commons Open Database Lizenz (ODbL) durch die OpenStreetMap Foundation (OSMF)
             angeboten werden. Die Daten der Nutzer werden durch OpenStreetMap ausschließlich zu Zwecken der Darstellung
             der Kartenfunktionen und zur Zwischenspeicherung der gewählten Einstellungen verwendet. Zu diesen Daten
             können insbesondere IP-Adressen und Standortdaten der Nutzer gehören, die jedoch nicht ohne deren
             Einwilligung (im Regelfall im Rahmen der Einstellungen ihrer Endgeräte oder Browser vollzogen) erhoben
-            werden; <strong>Dienstanbieter:</strong> OpenStreetMap Foundation (OSMF); <span class=""><strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO); </span><strong>Website:</strong>
+            werden. Dabei wird Ihre IP-Adresse an die OSMF (Vereinigtes Königreich, Angemessenheitsbeschluss der EU-Kommission) übermittelt; <strong>Dienstanbieter:</strong> OpenStreetMap Foundation (OSMF); <span class=""><strong>Rechtsgrundlagen:</strong> Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO) durch Klick auf „Karte laden“; </span><strong>Website:</strong>
             <a href="https://www.openstreetmap.de" target="_blank">https://www.openstreetmap.de</a>. <strong>Datenschutzerklärung:</strong>
             <a href="https://osmfoundation.org/wiki/Privacy_Policy" target="_blank">https://osmfoundation.org/wiki/Privacy_Policy</a>.
-        </li>
-        <li><strong>YouTube-Videos: </strong>Videoinhalte; <strong>Dienstanbieter:</strong> Google Ireland Limited,
-            Gordon House, Barrow Street, Dublin 4, Irland; <span class=""><strong>Rechtsgrundlagen:</strong> Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO); </span><strong>Website:</strong>
-            <a href="https://www.youtube.com" target="_blank">https://www.youtube.com</a>;
-            <strong>Datenschutzerklärung:</strong> <a href="https://policies.google.com/privacy" target="_blank">https://policies.google.com/privacy</a>;
-            <strong>Grundlage Drittlandtransfers:</strong> Data Privacy Framework (DPF), Data Privacy Framework (DPF).
-            <strong>Widerspruchsmöglichkeit (Opt-Out):</strong> Opt-Out-Plugin: <a
-                    href="https://tools.google.com/dlpage/gaoptout?hl=de" target="_blank">https://tools.google.com/dlpage/gaoptout?hl=de</a>,
-            Einstellungen für die Darstellung von Werbeeinblendungen: <a
-                    href="https://myadcenter.google.com/personalizationoff" target="_blank">https://myadcenter.google.com/personalizationoff</a>.
         </li>
     </ul>
 

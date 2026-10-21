@@ -1,17 +1,20 @@
 # Stammeswebsite (SvelteKit, adapter-node) – eigenständiger Dienst neben dem Intern-Bereich.
 # Bauen im Ordner website/:  docker build -t ep-website .
+# Gleiche Basis wie das App-Image (../Dockerfile): feste Version + Digest, Updates per Dependabot (Issue #74).
+FROM node:24.22.0-bookworm-slim@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5 AS base
 
-FROM node:24-slim AS deps
+FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+# Keine Install-Skripte aus Abhängigkeiten ausführen; `svelte-kit sync` (sonst `prepare`) läuft explizit im Build
+RUN npm ci --ignore-scripts
 
 FROM deps AS build
 WORKDIR /app
 COPY . .
-RUN npm run build && npm prune --omit=dev
+RUN npx svelte-kit sync && npm run build && npm prune --omit=dev
 
-FROM node:24-slim AS runtime
+FROM base AS runtime
 ENV NODE_ENV=production \
 	PORT=3001 \
 	HOST=0.0.0.0
@@ -23,4 +26,5 @@ USER node
 EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
 	CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3001)+'/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+STOPSIGNAL SIGTERM
 CMD ["node", "build"]
