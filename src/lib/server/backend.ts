@@ -19,6 +19,7 @@ import type {
 } from './backend-types';
 import { fetchEventWindows, type EventPageFetcher } from './event-pages';
 import { EVENT_KEY_RE, UUID_RE, createCachedLoader } from './cache';
+import { fetchWithRetry } from './retry';
 
 import type {
 	SiteEvent,
@@ -56,7 +57,10 @@ export interface Appointment {
 
 // --- HTTP ----------------------------------------------------------------------------------------
 
-const TIMEOUT_MS = 5000;
+/** Je Versuch; mit zwei Wiederholungen höchstens ~13 s */
+const TIMEOUT_MS = 4000;
+/** Wartezeiten vor der 2. und 3. Anfrage (kurze Aussetzer, Neustart beim Deployment) */
+const RETRY_DELAYS_MS = [300, 1000];
 const TTL_MS = 60_000;
 /** Erstes Jahr, das auf der Terminseite angeboten wird */
 export const FIRST_YEAR = 2023;
@@ -66,12 +70,13 @@ const ALLOWED_PATH = /^\/api\/v1\/modules\/[a-z0-9-]+\/website\/[A-Za-z0-9/_.%-]
 
 /**
  * JSON-Cache (#20, `cache.ts`): Erfolge 60 s, 404/422 (unbekannte IDs) 60 s negativ, gleichzeitige Abrufe desselben
- * Pfads zusammengelegt, bei Ausfall letzter Stand (erneuter Versuch nach 5 s).
+ * Pfads zusammengelegt, bei Ausfall letzter Stand (erneuter Versuch nach 2 s). Vorübergehende Fehler werden vorher
+ * schon in `request` wiederholt (`retry.ts`).
  */
 const cache = createCachedLoader<unknown>({
 	ttlMs: TTL_MS,
 	negativeTtlMs: 60_000,
-	errorTtlMs: 5_000,
+	errorTtlMs: 2_000,
 	maxEntries: 1000,
 	isNegative: (e) => e instanceof BackendError && (e.status === 404 || e.status === 422)
 });
@@ -104,20 +109,44 @@ function buildPath(path: string, query: Record<string, string | number | undefin
 	return qs ? `${path}?${qs}` : path;
 }
 
+/** Pfad ohne Query (Logs enthalten keine Suchbegriffe o. Ä.) */
+function logPath(pathWithQuery: string) {
+	return pathWithQuery.split('?')[0];
+}
+
 async function request(pathWithQuery: string, accept: string): Promise<Response> {
 	const { baseUrl, apiKey } = config();
-	return fetch(`${baseUrl}${pathWithQuery}`, {
-		headers: { authorization: `Bearer ${apiKey}`, accept },
-		signal: AbortSignal.timeout(TIMEOUT_MS)
-	});
+	return fetchWithRetry(
+		() =>
+			fetch(`${baseUrl}${pathWithQuery}`, {
+				headers: { authorization: `Bearer ${apiKey}`, accept },
+				signal: AbortSignal.timeout(TIMEOUT_MS)
+			}),
+		{
+			delays: RETRY_DELAYS_MS,
+			onRetry: ({ attempt, reason, waitMs }) =>
+				console.warn(
+					`[backend] ${logPath(pathWithQuery)}: ${reason} – Versuch ${attempt + 1} in ${waitMs} ms`
+				)
+		}
+	);
 }
 
 /** JSON-Endpunkt abrufen, `{ data }` entpacken, 60 s zwischenspeichern. */
 async function getJson<T>(path: string, query?: Record<string, string | number | undefined>) {
 	const key = buildPath(path, query);
 	return cache.get(key, async () => {
-		const res = await request(key, 'application/json');
+		let res: Response;
+		try {
+			res = await request(key, 'application/json');
+		} catch (e) {
+			console.error(`[backend] ${path}: nicht erreichbar`, e instanceof Error ? e.message : e);
+			throw new BackendError(503, `Backend nicht erreichbar für ${path}`);
+		}
 		if (!res.ok) {
+			if (res.status !== 404 && res.status !== 422) {
+				console.error(`[backend] ${path}: HTTP ${res.status}`);
+			}
 			throw new BackendError(res.status, `Backend antwortet mit ${res.status} für ${path}`);
 		}
 		const body = (await res.json()) as { data: T };
