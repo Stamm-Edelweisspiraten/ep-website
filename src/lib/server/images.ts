@@ -3,7 +3,14 @@
  * (siehe `image-cache.ts`). Umgebung: `IMAGE_CACHE_MB` (Standard 48, 0 = aus), `IMAGE_CACHE_TTL_SEC` (Standard 3600).
  */
 import { env } from '$env/dynamic/private';
-import { fetchGroupImage, fetchGroups, fetchImage, isKnownGalleryImage } from './backend';
+import {
+	fetchGroupImage,
+	fetchGroups,
+	fetchImage,
+	fetchTeamAvatar,
+	isKnownGalleryImage,
+	teamAvatarVersion
+} from './backend';
 import { createImageCache, readImage, type CachedImage } from './image-cache';
 
 function numberEnv(value: string | undefined, fallback: number, max: number) {
@@ -42,4 +49,14 @@ export async function groupImage(slug: string): Promise<CachedImage | null> {
 	if (groups.length > 0 && !group?.image?.startsWith('/bilder/gruppe/')) return null;
 	const version = new URLSearchParams(group?.image?.split('?')[1] ?? '').get('v') ?? '';
 	return cache.get(`s:${slug}:${version}`, async () => readImage(await fetchGroupImage(slug)));
+}
+
+/**
+ * Profilbild einer Person aus „Unser Team“ je aktueller Version. Nur Personen, die mit Bild in der Ämterliste stehen
+ * (also der Anzeige zugestimmt haben), erreichen das Backend; andere IDs → `null` ohne Abruf.
+ */
+export async function teamImage(userId: string): Promise<CachedImage | null> {
+	const version = await teamAvatarVersion(userId);
+	if (version === null) return null;
+	return cache.get(`t:${userId}:${version}`, async () => readImage(await fetchTeamAvatar(userId)));
 }

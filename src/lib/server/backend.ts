@@ -7,7 +7,8 @@
  *
  * Umgebung:
  * - `WEBSITE_API_URL` – Basis-URL des Backends ohne abschließenden Schrägstrich (Standard `http://app:3000`)
- * - `WEBSITE_API_KEY` – API-Key mit den Scopes `events.website.read`, `galleries.website.read`, `members.website.read`
+ * - `WEBSITE_API_KEY` – API-Key mit den Scopes `events.website.read`, `galleries.website.read`, `members.website.read`,
+ *   `offices.website.read` („Unser Team“)
  */
 import { env } from '$env/dynamic/private';
 import type {
@@ -15,7 +16,8 @@ import type {
 	BackendEventPage,
 	BackendGallery,
 	BackendGalleryDetail,
-	BackendGroup
+	BackendGroup,
+	BackendOffice
 } from './backend-types';
 import { fetchEventWindows, type EventPageFetcher } from './event-pages';
 import { EVENT_KEY_RE, UUID_RE, createCachedLoader } from './cache';
@@ -26,7 +28,8 @@ import type {
 	SiteGallery,
 	SiteGalleryDetail,
 	SiteGalleryRef,
-	SiteGroupRef
+	SiteGroupRef,
+	SiteOffice
 } from '../site-types';
 
 export type { BackendGroup } from './backend-types';
@@ -583,6 +586,69 @@ export async function fetchGallery(id: string): Promise<SiteGalleryDetail | null
 				description: img.description?.trim() || null
 			}))
 	};
+}
+
+// --- Ämter („Unser Team“) ------------------------------------------------------------------------
+
+/** IDs der Inhaber*innen: Better-Auth-IDs bzw. UUIDs */
+const HOLDER_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
+
+async function listOffices(): Promise<BackendOffice[]> {
+	return getJson<BackendOffice[]>('/api/v1/modules/offices/website/offices');
+}
+
+/** Version aus dem `avatarPath` des Backends (`…/avatar?v=…`) – neues Bild → neue Adresse */
+function avatarVersion(path: string) {
+	return new URLSearchParams(path.split('?')[1] ?? '').get('v') ?? '';
+}
+
+/**
+ * Ämter mit Inhaber*innen (nur Vornamen, nur mit Zustimmung im Profil), in der Reihenfolge des Intern-Bereichs.
+ * Ämter ohne sichtbare Personen und ohne Adresse bleiben weg (nichts zu zeigen).
+ */
+export async function fetchTeam(): Promise<SiteOffice[]> {
+	const offices = await listOffices();
+	return [...offices]
+		.sort((a, b) => a.position - b.position)
+		.filter((o) => o.holders.length > 0 || o.emails.length > 0)
+		.map((o) => ({
+			id: o.id,
+			name: o.name,
+			description: o.description?.trim() || null,
+			emails: o.emails,
+			holders: o.holders.map((h) => ({
+				id: h.id,
+				firstName: h.firstName,
+				bio: h.bio?.trim() || null,
+				since: h.since,
+				imageUrl: h.avatarPath
+					? `/bilder/team/${encodeURIComponent(h.id)}?v=${encodeURIComponent(avatarVersion(h.avatarPath))}`
+					: null
+			}))
+		}));
+}
+
+/** Aktuelle Bildversion einer Person mit Profilbild; `null`, wenn sie nicht (mit Bild) im Team steht. */
+export async function teamAvatarVersion(userId: string): Promise<string | null> {
+	if (!HOLDER_ID_RE.test(userId)) return null;
+	const offices = await listOffices();
+	for (const o of offices) {
+		const h = o.holders.find((x) => x.id === userId);
+		if (h?.avatarPath) return avatarVersion(h.avatarPath);
+	}
+	return null;
+}
+
+/** Profilbild einer Inhaberin / eines Inhabers aus dem Backend (für den Bild-Proxy); `null` bei 404. */
+export async function fetchTeamAvatar(userId: string): Promise<Response | null> {
+	if (!HOLDER_ID_RE.test(userId)) return null;
+	const path = buildPath(
+		`/api/v1/modules/offices/website/offices/holders/${encodeURIComponent(userId)}/avatar`
+	);
+	const res = await request(path, 'image/*');
+	if (res.status === 404) return null;
+	if (!res.ok) throw new BackendError(res.status, `Bild nicht abrufbar (${res.status})`);
+	return res;
 }
 
 // --- Vorab-Prüfung unbekannter IDs (#20) ---------------------------------------------------------

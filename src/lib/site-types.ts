@@ -66,3 +66,22 @@ export interface SiteGallery {
 export interface SiteGalleryDetail extends SiteGallery {
 	images: SiteImage[];
 }
+
+export interface SiteTeamMember {
+	id: string;
+	/** Nur Vorname */
+	firstName: string;
+	bio: string | null;
+	/** `YYYY-MM-DD` oder `null` */
+	since: string | null;
+	/** Profilbild über den Bild-Proxy oder `null` */
+	imageUrl: string | null;
+}
+
+export interface SiteOffice {
+	id: string;
+	name: string;
+	description: string | null;
+	emails: { label: string | null; email: string }[];
+	holders: SiteTeamMember[];
+}

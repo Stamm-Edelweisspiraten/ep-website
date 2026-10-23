@@ -81,3 +81,24 @@ export interface BackendGroup {
 	/** Relativer API-Pfad des Gruppenbilds oder `null` */
 	imagePath: string | null;
 }
+
+export interface BackendOfficeHolder {
+	/** Stabile ID für Avatar-Abruf (`/website/offices/holders/:userId/avatar`) */
+	id: string;
+	/** Nur der Vorname (erstes Wort des Kontonamens) – Nachnamen verlassen den Server nicht */
+	firstName: string;
+	bio: string | null;
+	since: string | null;
+	/** Relativer API-Pfad des Profilbilds oder `null` ohne Bild */
+	avatarPath: string | null;
+}
+
+/** Amt mit Inhaber*innen, die der Anzeige auf der Website zugestimmt haben */
+export interface BackendOffice {
+	id: string;
+	name: string;
+	description: string | null;
+	position: number;
+	emails: { label: string | null; email: string }[];
+	holders: BackendOfficeHolder[];
+}

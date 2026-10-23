@@ -87,6 +87,7 @@
                 <a href="/galerie" class="nav-link">Galerie</a>
                 <a href="/termine" class="nav-link">Termine</a>
                 <a href="/cpd" class="nav-link">CPD</a>
+                <a href="/team" class="nav-link">Unser Team</a>
                 <a href="/kontakt" class="nav-link">Kontakt</a>
             </div>
 
@@ -124,6 +125,7 @@
             <a href="/galerie" class="mobile-link text-lg block" on:click={() => (open = false)}>Galerie</a>
             <a href="/termine" class="mobile-link text-lg block" on:click={() => (open = false)}>Termine</a>
             <a href="/cpd" class="mobile-link text-lg block" on:click={() => (open = false)}>CPD</a>
+            <a href="/team" class="mobile-link text-lg block" on:click={() => (open = false)}>Unser Team</a>
             <a href="/kontakt" class="mobile-link text-lg block" on:click={() => (open = false)}>Kontakt</a>
         </div>
     {/if}
