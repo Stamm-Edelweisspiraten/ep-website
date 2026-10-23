@@ -93,11 +93,44 @@ export class BackendError extends Error {
 	}
 }
 
+/** Anführungszeichen um den Wert entfernen (passiert leicht beim Eintragen in Dokploy/Compose) */
+export function cleanEnvValue(value: string | undefined): string {
+	return (value ?? '').trim().replace(/^(['"])(.*)\1$/, '$2').trim();
+}
+
+/** Präfix wie in Administration → API-Keys (`epk_` + 8 Zeichen) – zum Zuordnen im Log, nie der ganze Key */
+export function keyPrefix(apiKey: string): string {
+	return apiKey.slice(0, 12);
+}
+
+let formatWarned = false;
+
 function config() {
-	const baseUrl = (env.WEBSITE_API_URL || 'http://app:3000').trim().replace(/\/+$/, '');
-	const apiKey = (env.WEBSITE_API_KEY ?? '').trim();
+	const baseUrl = cleanEnvValue(env.WEBSITE_API_URL || 'http://app:3000').replace(/\/+$/, '');
+	const apiKey = cleanEnvValue(env.WEBSITE_API_KEY);
 	if (!apiKey) throw new BackendError(503, 'WEBSITE_API_KEY ist nicht gesetzt');
+	if (!apiKey.startsWith('epk_') && !formatWarned) {
+		formatWarned = true;
+		console.error('[backend] WEBSITE_API_KEY hat nicht das Format „epk_…“ – Key aus Administration → API-Keys eintragen');
+	}
 	return { baseUrl, apiKey };
+}
+
+/** 401/403 je Status nur einmal je Minute ausführlich erklären (sonst flutet jede Seite das Log) */
+const authHintAt = new Map<number, number>();
+
+function logAuthProblem(status: number, path: string, message: string) {
+	const now = Date.now();
+	if ((authHintAt.get(status) ?? 0) > now - 60_000) return;
+	authHintAt.set(status, now);
+	const prefix = keyPrefix(cleanEnvValue(env.WEBSITE_API_KEY));
+	const hint =
+		status === 401
+			? `API-Key ${prefix}… wird nicht akzeptiert (unbekannt, widerrufen, abgelaufen oder Konto deaktiviert). ` +
+				'In Administration → API-Keys prüfen bzw. neuen Key anlegen und WEBSITE_API_KEY im Website-Dienst ersetzen.'
+			: `API-Key ${prefix}… fehlt ein Recht für ${path}. Benötigte Scopes: events.website.read ` +
+				'galleries.website.read members.website.read offices.website.read (und das Konto muss sie selbst haben).';
+	console.error(`[backend] ${hint}${message ? ` Backend: „${message}“` : ''}`);
 }
 
 function buildPath(path: string, query: Record<string, string | number | undefined> = {}) {
@@ -147,7 +180,12 @@ async function getJson<T>(path: string, query?: Record<string, string | number |
 			throw new BackendError(503, `Backend nicht erreichbar für ${path}`);
 		}
 		if (!res.ok) {
-			if (res.status !== 404 && res.status !== 422) {
+			if (res.status === 401 || res.status === 403) {
+				const body = (await res.json().catch(() => null)) as {
+					error?: { message?: string };
+				} | null;
+				logAuthProblem(res.status, path, body?.error?.message ?? '');
+			} else if (res.status !== 404 && res.status !== 422) {
 				console.error(`[backend] ${path}: HTTP ${res.status}`);
 			}
 			throw new BackendError(res.status, `Backend antwortet mit ${res.status} für ${path}`);
