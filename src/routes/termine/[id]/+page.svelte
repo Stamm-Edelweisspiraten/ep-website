@@ -1,114 +1,147 @@
 <script lang="ts">
+    import Chip from '$lib/components/Chip.svelte';
+    import Icon from '$lib/components/Icon.svelte';
+    import Share from '$lib/components/Share.svelte';
+    import { formatDateRange, formatLongDate, formatTimeRange, isMultiDay, time } from '$lib/dates';
+    import { eventColor } from '$lib/event-view';
     import type { PageData } from './$types';
+
     export let data: PageData;
-    const a = data.appointment;
 
+    let shareOpen = false;
 
-    function fmtDateRange(startStr: string, endStr?: string | null) {
-        const start = new Date(startStr);
-        const hasEnd = !!endStr;
-        const end = hasEnd ? new Date(endStr as string) : null;
-
-
-        const fmtFull = new Intl.DateTimeFormat('de-DE', {
-            weekday: 'short', day: '2-digit', month: 'long', year: 'numeric'
-        });
-        const fmtShort = new Intl.DateTimeFormat('de-DE', {
-            day: '2-digit', month: 'long', year: 'numeric'
-        });
-
-
-        if (hasEnd && end) {
-            if (start.toDateString() === end.toDateString()) return fmtFull.format(start);
-            if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-                return `${start.getDate().toString().padStart(2,'0')}.–${fmtShort.format(end)}`;
-            }
-            return `${fmtFull.format(start)} – ${fmtFull.format(end)}`;
-        }
-        return fmtFull.format(start);
-    }
-
-
-    function fileUrl(file: string) {
-        return file; // bereits vollständige Adresse über den Bild-Proxy
-    }
-
-
-    function getTextColor(bg?: string | null) {
-        if (!bg) return '#1f2937';
-        const m = bg.trim().match(/^#?([\da-f]{6})$/i);
-        if (!m) return '#111827';
-        const hex = m[1];
-        const r = parseInt(hex.slice(0, 2), 16) / 255;
-        const g = parseInt(hex.slice(2, 4), 16) / 255;
-        const b = parseInt(hex.slice(4, 6), 16) / 255;
-        const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        return lum > 0.6 ? '#111827' : '#ffffff';
-    }
-
-
-    let lightboxOpen = false;
-    let lightboxIndex = 0;
-    function openLightbox(i: number) { lightboxIndex = i; lightboxOpen = true; }
-    function closeLightbox() { lightboxOpen = false; }
-    function prev() { if (!a.pictures?.length) return; lightboxIndex = (lightboxIndex - 1 + a.pictures.length) % a.pictures.length; }
-    function next() { if (!a.pictures?.length) return; lightboxIndex = (lightboxIndex + 1) % a.pictures.length; }
+    $: e = data.event;
+    $: color = eventColor(e);
+    $: dateText = isMultiDay(e) ? formatDateRange(e) : formatLongDate(e.startsOn);
+    $: timeText = isMultiDay(e)
+        ? [time(e.startsTime) && `Beginn ${time(e.startsTime)} Uhr`, time(e.endsTime) && `Ende ${time(e.endsTime)} Uhr`]
+              .filter(Boolean)
+              .join(' · ')
+        : formatTimeRange(e.startsTime, e.endsTime);
+    $: mapUrl = e.location
+        ? `https://www.openstreetmap.org/search?query=${encodeURIComponent(e.location)}`
+        : null;
+    $: summary = e.description.replace(/\s+/g, ' ').trim().slice(0, 160);
+    $: ogImage = e.galleries.find((g) => g.coverUrl)?.coverUrl ?? null;
 </script>
 
-
 <svelte:head>
-    <title>{a.title} – Termine</title>
-    <meta name="description" content={a.description?.slice(0, 150) || 'Termin'} />
+    <title>{e.title} – Termine – Stamm Edelweißpiraten</title>
+    <meta name="description" content={summary || `${e.title} am ${dateText}`} />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={e.title} />
+    <meta property="og:description" content={summary || dateText} />
+    <meta property="og:url" content={data.pageUrl} />
+    {#if ogImage}<meta property="og:image" content={`${data.origin}${ogImage}`} />{/if}
 </svelte:head>
 
-
-<section class="max-w-5xl mx-auto px-6 py-8">
-    <button class="text-sm text-blue-700 hover:underline mb-4" on:click={() => history.back()}>
-        ← Zurück
-    </button>
-
-
-    <div class="w-full border border-gray-200 bg-white p-6">
-        <h1 class="text-2xl font-bold mb-1">{a.title}</h1>
-        <p class="text-sm text-gray-600 mb-3">{fmtDateRange(a.date, a.end_date)}</p>
-
-
-        {#if a.expand?.tags?.length}
-            <div class="flex flex-wrap gap-2 mb-4">
-                {#each a.expand.tags as t}
-<span
-        class="inline-flex items-center px-2 py-0.5 text-xs font-medium"
-        style={`background-color: ${t.color || '#e5e7eb'}; color: ${getTextColor(t.color)}`}
->
-{t.name}
-</span>
-                {/each}
-            </div>
-        {/if}
-
-
-        {#if a.description}
-            <p class="text-gray-800 leading-relaxed whitespace-pre-line">{a.description}</p>
-        {/if}
-
-
-        {#if a.pictures?.length}
-            <div class="mt-6 grid grid-cols-2 md:grid-cols-3 gap-4">
-                {#each a.pictures as pic, i}
-                    <img src={fileUrl(pic)} alt="Bild" class="w-full h-40 md:h-48 object-cover cursor-zoom-in border border-gray-200"
-                         on:click={() => openLightbox(i)} />
-                {/each}
-            </div>
-        {/if}
+<section class="mx-auto max-w-4xl space-y-6 px-6 py-10">
+    <div class="flex items-center justify-between gap-3">
+        <a href="/termine" class="inline-flex items-center gap-1.5 text-sm text-blue-700 hover:underline">
+            <Icon name="arrow-left" /> Alle Termine
+        </a>
+        <button
+            type="button"
+            class="inline-flex items-center gap-1.5 text-sm text-blue-700 hover:underline"
+            on:click={() => (shareOpen = true)}
+        >
+            <Icon name="share" /> Teilen
+        </button>
     </div>
+
+    <article class="border border-gray-200 bg-white">
+        <div class="h-2 {color ? '' : 'bg-blue-700'}" style={color ? `background-color: ${color}` : ''}></div>
+        <div class="space-y-6 p-6 sm:p-8">
+            <header class="space-y-3">
+                {#if e.recurring}
+                    <p class="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                        <Icon name="repeat" size={14} /> Regelmäßiger Termin
+                    </p>
+                {/if}
+                <h1 class="text-3xl leading-tight font-bold text-gray-900">{e.title}</h1>
+                {#if e.groups.length || e.tags.length}
+                    <div class="flex flex-wrap gap-2">
+                        {#each e.groups as g (g.id)}<Chip label={g.name} color={g.color} href={g.href} size="md" />{/each}
+                        {#each e.tags as t (t)}<Chip label={t} size="md" />{/each}
+                    </div>
+                {/if}
+            </header>
+
+            <dl class="grid gap-4 border-y border-gray-100 py-5 sm:grid-cols-3">
+                <div class="flex gap-3">
+                    <dt class="mt-0.5 text-gray-400"><Icon name="calendar" size={18} /><span class="sr-only">Datum</span></dt>
+                    <dd class="text-gray-800">{dateText}</dd>
+                </div>
+                {#if timeText}
+                    <div class="flex gap-3">
+                        <dt class="mt-0.5 text-gray-400"><Icon name="clock" size={18} /><span class="sr-only">Uhrzeit</span></dt>
+                        <dd class="text-gray-800">{timeText}</dd>
+                    </div>
+                {/if}
+                {#if e.location}
+                    <div class="flex gap-3">
+                        <dt class="mt-0.5 text-gray-400"><Icon name="map-pin" size={18} /><span class="sr-only">Ort</span></dt>
+                        <dd class="min-w-0 text-gray-800">
+                            <span class="block break-words">{e.location}</span>
+                            {#if mapUrl}
+                                <a
+                                    href={mapUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="mt-1 inline-flex items-center gap-1 text-sm text-blue-700 hover:underline"
+                                >
+                                    In Karte öffnen <Icon name="external" size={13} />
+                                </a>
+                            {/if}
+                        </dd>
+                    </div>
+                {/if}
+            </dl>
+
+            {#if e.description}
+                <p class="leading-relaxed whitespace-pre-line text-gray-800">{e.description}</p>
+            {/if}
+
+            {#if e.galleries.length}
+                <section class="space-y-3" aria-labelledby="bilder">
+                    <h2 id="bilder" class="text-lg font-semibold text-gray-900">Bilder</h2>
+                    <ul class="grid gap-4 sm:grid-cols-2">
+                        {#each e.galleries as g (g.id)}
+                            <li>
+                                <a
+                                    href={`/galerie/${g.id}`}
+                                    class="group flex items-center gap-4 border border-gray-200 p-3 transition hover:shadow-sm"
+                                >
+                                    {#if g.coverUrl}
+                                        <img
+                                            src={g.coverUrl}
+                                            alt=""
+                                            loading="lazy"
+                                            class="size-20 shrink-0 object-cover"
+                                        />
+                                    {:else}
+                                        <span class="flex size-20 shrink-0 items-center justify-center bg-gray-100 text-gray-400"
+                                            ><Icon name="image" size={24} /></span
+                                        >
+                                    {/if}
+                                    <span class="min-w-0">
+                                        <span class="block font-medium text-gray-900 group-hover:text-blue-800">{g.title}</span>
+                                        <span class="text-sm text-gray-500">{g.imageCount} {g.imageCount === 1 ? 'Bild' : 'Bilder'}</span>
+                                    </span>
+                                </a>
+                            </li>
+                        {/each}
+                    </ul>
+                </section>
+            {/if}
+        </div>
+    </article>
 </section>
 
-
-{#if lightboxOpen}
-    <div class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
-        <button class="absolute top-4 right-6 text-white text-4xl" on:click={closeLightbox}>×</button>
-        <button class="absolute left-4 text-white text-4xl" on:click={prev}>‹</button>
-        <img src={fileUrl(a.pictures[lightboxIndex])} class="max-w-[92vw] max-h-[90vh] object-contain" alt="Bild groß" />
-        <button class="absolute right-4 text-white text-4xl" on:click={next}>›</button>
-    </div>
-{/if}
+<Share
+    url={data.pageUrl}
+    title={e.title}
+    whatsappMessage={`${e.title} am ${dateText}: ${data.pageUrl}`}
+    open={shareOpen}
+    onClose={() => (shareOpen = false)}
+/>

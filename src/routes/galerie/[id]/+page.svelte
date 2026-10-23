@@ -1,96 +1,119 @@
 <script lang="ts">
+    import Chip from '$lib/components/Chip.svelte';
+    import Icon from '$lib/components/Icon.svelte';
     import Lightbox from '$lib/components/Lightbox.svelte';
     import Share from '$lib/components/Share.svelte';
-    import { page as pageStore } from '$app/stores';
+    import { formatDateRange } from '$lib/dates';
+    import type { PageData } from './$types';
 
-    export let data: {
-        appointment: any;
-        firstImage: string | null;
-        pageUrl: string;
-    };
-
-    const { appointment, firstImage, pageUrl } = data;
+    export let data: PageData;
 
     let selectedIndex: number | null = null;
     let shareOpen = false;
 
+    $: g = data.gallery;
+    $: dateText = formatDateRange({ startsOn: g.date, endsOn: g.endDate });
+    $: summary = g.description.replace(/\s+/g, ' ').trim().slice(0, 160);
+    $: altOf = (i: number) =>
+        g.images[i]?.description ?? `Bild ${i + 1} von ${g.images.length} – ${g.title}`;
+    $: lightboxImages = g.images.map((img, i) => ({
+        src: img.webUrl,
+        alt: altOf(i),
+        caption: img.description
+    }));
 </script>
 
 <svelte:head>
-    <!-- Grundlegendes -->
-    <title>{appointment?.title ?? 'Galerie'}</title>
-    <meta name="description" content={appointment?.description ?? 'Bildergalerie'} />
-
-    <!-- Open Graph -->
+    <title>{g.title} – Galerie – Stamm Edelweißpiraten</title>
+    <meta name="description" content={summary || `Bilder von ${g.title}`} />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content={`Bilder von ${appointment?.title ?? 'unserer Aktion'}`} />
-    <meta property="og:description" content={appointment?.description ?? ''} />
-    <meta property="og:url" content={pageUrl} />
-    {#if firstImage}
-        <meta property="og:image" content={firstImage} />
-        <meta property="og:image:alt" content={`Vorschaubild: ${appointment.title}`} />
+    <meta property="og:title" content={`Bilder von ${g.title}`} />
+    <meta property="og:description" content={summary} />
+    <meta property="og:url" content={data.pageUrl} />
+    {#if data.firstImage}
+        <meta property="og:image" content={data.firstImage} />
+        <meta property="og:image:alt" content={`Vorschaubild: ${g.title}`} />
     {/if}
-
-    <meta name="twitter:card" content={firstImage ? 'summary_large_image' : 'summary'} />
-    <meta name="twitter:title" content={`Bilder von ${appointment?.title ?? 'unserer Aktion'}`} />
-    <meta name="twitter:description" content={appointment?.description ?? ''} />
-    {#if firstImage}
-        <meta name="twitter:image" content={firstImage} />
-    {/if}
+    <meta name="twitter:card" content={data.firstImage ? 'summary_large_image' : 'summary'} />
 </svelte:head>
 
-<section class="max-w-5xl mx-auto px-6 py-12 space-y-6">
-    {#if appointment}
-        <div class="flex items-center justify-between">
-            <a href="/galerie" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
-                </svg>
-                Zurück
-            </a>
+<section class="mx-auto max-w-6xl space-y-6 px-6 py-10">
+    <div class="flex items-center justify-between gap-3">
+        <a href="/galerie" class="inline-flex items-center gap-1.5 text-sm text-blue-700 hover:underline">
+            <Icon name="arrow-left" /> Alle Galerien
+        </a>
+        <button
+            type="button"
+            class="inline-flex items-center gap-1.5 text-sm text-blue-700 hover:underline"
+            on:click={() => (shareOpen = true)}
+        >
+            <Icon name="share" /> Teilen
+        </button>
+    </div>
 
-            <button class="text-sm text-blue-600 hover:underline flex items-center gap-1" on:click={() => shareOpen = true}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-share" viewBox="0 0 16 16">
-                    <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"/>
-                </svg>
-                Teilen
-            </button>
-        </div>
-
-        <h1 class="text-2xl font-bold mb-2">{appointment.title}</h1>
-        <p class="text-gray-500 mb-4">
-            {new Date(appointment.date).toLocaleDateString()}
-            {#if appointment.end_date}
-                – {new Date(appointment.end_date).toLocaleDateString()}
-            {/if}
+    <header class="space-y-3">
+        <h1 class="text-3xl leading-tight font-bold text-gray-900">{g.title}</h1>
+        <p class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
+            <span class="inline-flex items-center gap-1.5"><Icon name="calendar" size={14} />{dateText}</span>
+            <span class="inline-flex items-center gap-1.5"
+                ><Icon name="images" size={14} />{g.imageCount} {g.imageCount === 1 ? 'Bild' : 'Bilder'}</span
+            >
         </p>
-        <p class="mb-6">{appointment.description}</p>
-
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {#each appointment.pictures as pic, i}
-                <img
-                        src={pic}
-                        alt="Bild"
-                        class="rounded shadow cursor-zoom-in object-cover h-48 w-full"
-                        on:click={() => selectedIndex = i}
-                />
-            {/each}
-        </div>
-
-        {#if selectedIndex !== null}
-            <Lightbox
-                    images={appointment.pictures}
-                    index={selectedIndex}
-                    on:close={() => selectedIndex = null}
-            />
+        {#if g.groups.length}
+            <div class="flex flex-wrap gap-2">
+                {#each g.groups as x (x.id)}<Chip label={x.name} color={x.color} href={x.href} />{/each}
+            </div>
         {/if}
+        {#if g.description}
+            <p class="max-w-3xl leading-relaxed whitespace-pre-line text-gray-800">{g.description}</p>
+        {/if}
+        {#if g.events.length}
+            <p class="text-sm text-gray-600">
+                Zum Termin:
+                {#each g.events as e, i (e.key)}
+                    <a href={`/termine/${e.key}`} class="text-blue-700 hover:underline">{e.title}</a
+                    >{i < g.events.length - 1 ? ', ' : ''}
+                {/each}
+            </p>
+        {/if}
+    </header>
 
-        <Share
-                url={pageUrl}
-                title={`Bilder von ${appointment.title}`}
-                whatsappMessage={`Schau dir die Bilder von der Aktion ${appointment.title} an: ${pageUrl}`}
-                open={shareOpen}
-                onClose={() => shareOpen = false}
-        />
-    {/if}
+    <!-- Bilder in Spalten mit echten Seitenverhältnissen (kein Springen beim Laden) -->
+    <ul class="columns-2 gap-3 md:columns-3 lg:columns-4 [&>li]:mb-3">
+        {#each g.images as img, i (img.id)}
+            <li class="break-inside-avoid">
+                <button
+                    type="button"
+                    class="group block w-full overflow-hidden bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+                    aria-label={`${altOf(i)} vergrößern`}
+                    on:click={() => (selectedIndex = i)}
+                >
+                    <img
+                        src={img.thumbUrl}
+                        alt={altOf(i)}
+                        width={img.width}
+                        height={img.height}
+                        loading={i < 8 ? 'eager' : 'lazy'}
+                        decoding="async"
+                        class="h-auto w-full transition duration-300 group-hover:scale-[1.03] group-hover:opacity-95"
+                    />
+                </button>
+                {#if img.description}
+                    <p class="mt-1 line-clamp-2 text-xs text-gray-600">{img.description}</p>
+                {/if}
+            </li>
+        {/each}
+    </ul>
 </section>
+
+{#if selectedIndex !== null}
+    <Lightbox images={lightboxImages} index={selectedIndex} on:close={() => (selectedIndex = null)} />
+{/if}
+
+<Share
+    url={data.pageUrl}
+    title={`Bilder von ${g.title}`}
+    whatsappMessage={`Schau dir die Bilder von ${g.title} an: ${data.pageUrl}`}
+    open={shareOpen}
+    onClose={() => (shareOpen = false)}
+/>
