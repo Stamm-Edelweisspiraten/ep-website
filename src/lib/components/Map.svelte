@@ -3,6 +3,9 @@
     // beim Seitenaufruf gehen keine Anfragen an Dritte. Die Wahl wird nicht gespeichert (kein Cookie, kein Storage).
     import { tick } from 'svelte';
 
+    /** Höhe als Tailwind-Klasse */
+    export let height = 'h-[400px]';
+
     /** @type {HTMLDivElement | undefined} */
     let container;
     let active = false;
@@ -41,24 +44,23 @@
 
 <!-- Karte -->
 {#if active}
-    <div bind:this={container} class="relative z-0 w-full h-[400px] rounded shadow"></div>
+    <div bind:this={container} class="relative z-0 w-full {height} border border-line-strong"></div>
 {:else}
-    <div class="w-full h-[400px] rounded shadow bg-gray-100 border border-gray-200 flex items-center justify-center p-6">
-        <div class="max-w-md text-center space-y-3">
-            <p class="font-semibold text-gray-800">Karte: Drakenburger Str. 42, 28207 Bremen</p>
-            <p class="text-sm text-gray-600">
-                Die Karte wird erst nach deinem Klick von OpenStreetMap geladen. Dabei wird deine IP-Adresse an die
-                OpenStreetMap Foundation übertragen. Mehr dazu in der <a href="/datenschutz#m328" class="underline">Datenschutzerklärung</a>.
-            </p>
+    <div class="w-full {height} border border-line-strong bg-subtle flex items-center justify-center p-5">
+        <div class="max-w-md text-center space-y-2.5">
             <button type="button" on:click={loadMap} disabled={loading}
-                    class="inline-flex items-center px-5 py-2.5 bg-gray-900 text-white font-medium rounded hover:bg-gray-800 transition disabled:opacity-60">
+                    class="inline-flex items-center px-4 py-2 border border-gray-400 bg-surface text-ink rounded hover:bg-page transition disabled:opacity-60">
                 {loading ? 'Karte wird geladen …' : 'Karte laden'}
             </button>
+            <p class="text-sm text-muted">
+                Lädt Kartendaten von OpenStreetMap; dabei wird deine IP-Adresse übertragen
+                (<a href="/datenschutz#m328" class="underline">Datenschutz</a>).
+            </p>
             {#if failed}
                 <p class="text-sm text-red-700">Die Karte konnte nicht geladen werden.</p>
             {/if}
             <p class="text-sm">
-                <a href={osmLink} target="_blank" rel="noopener noreferrer" class="underline text-gray-700">Auf openstreetmap.org öffnen</a>
+                <a href={osmLink} target="_blank" rel="noopener noreferrer" class="text-link">Auf openstreetmap.org öffnen</a>
             </p>
         </div>
     </div>

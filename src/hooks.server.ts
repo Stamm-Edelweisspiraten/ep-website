@@ -36,6 +36,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 			}
 		}), { https });
 	}
+	// Darstellung hell/dunkel: nur bei ausdrücklicher Wahl (Cookie `theme`), sonst folgt `app.html` dem System
+	const choice = event.cookies.get('theme');
+	const themeClass = choice === 'dark' || choice === 'light' ? choice : '';
 	// Sicherheits-Header (#67, 01b-13); CSP der Seiten kommt aus kit.csp
-	return withSecurityHeaders(await resolve(event), { https });
+	return withSecurityHeaders(
+		await resolve(event, {
+			transformPageChunk: ({ html }) => html.replace('%ep.theme%', themeClass)
+		}),
+		{ https }
+	);
 };

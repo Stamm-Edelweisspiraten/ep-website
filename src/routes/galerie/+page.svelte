@@ -51,7 +51,7 @@
     onMount(() => (ready = true));
 
     const chipClass = (on: boolean) =>
-        `rounded-full border px-3 py-1 text-sm transition ${
+        `rounded border px-3 py-1 text-sm transition ${
             on ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
         }`;
 </script>
@@ -67,7 +67,7 @@
         <p class="mt-1 text-gray-600">Einblicke in unsere Fahrten, Lager und Aktionen.</p>
     </header>
 
-    <div class="space-y-3 border border-gray-200 bg-white p-4">
+    <div class="space-y-3 border-y border-gray-200 py-4">
         <div class="relative max-w-md">
             <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"><Icon name="search" /></span>
             <input
@@ -80,7 +80,7 @@
         </div>
         {#if years.length > 1}
             <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Jahr">
-                <span class="mr-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Jahr</span>
+                <span class="mr-1 text-sm text-gray-500">Jahr</span>
                 <button type="button" class={chipClass(!year)} aria-pressed={!year} on:click={() => (year = '')}>Alle</button>
                 {#each years as y (y)}
                     <button type="button" class={chipClass(year === y)} aria-pressed={year === y} on:click={() => (year = year === y ? '' : y)}>{y}</button>
@@ -89,7 +89,7 @@
         {/if}
         {#if groups.length}
             <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Gruppe">
-                <span class="mr-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Gruppe</span>
+                <span class="mr-1 text-sm text-gray-500">Gruppe</span>
                 {#each groups as g (g.id)}
                     <button
                         type="button"
@@ -125,7 +125,7 @@
                 <li>
                     <a
                         href={`/galerie/${g.id}`}
-                        class="group flex h-full flex-col overflow-hidden border border-gray-200 bg-white transition hover:-translate-y-0.5 hover:shadow-md"
+                        class="group flex h-full flex-col overflow-hidden border border-gray-200 bg-white transition hover:border-gray-400"
                     >
                         <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
                             {#if g.cover}

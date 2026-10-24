@@ -1,55 +1,27 @@
 <script>
-    export let email = 'kontakt@example.com';
-    export let color = 'indigo'; // z. B. "green", "blue", "indigo"
+    // „E-Mail senden“ und „Adresse kopieren“ – schlicht, für Gruppen und Ämter gleich.
+    export let email = '';
     let copied = false;
-
-    // Gruppenfarbe "#rrggbb" aus dem Intern-Bereich: etwas abgedunkelt, damit weiße Schrift lesbar bleibt
-    $: hex = /^#[0-9a-f]{6}$/i.test(color);
-    $: hexBackground = hex ? `color-mix(in srgb, ${color} 80%, black)` : undefined;
-
-    // Hintergrund- und Hoverfarbe je nach Farbe
-    $: bgColor = {
-        green: 'bg-green-600 hover:bg-green-700',
-        blue: 'bg-blue-600 hover:bg-blue-700',
-        indigo: 'bg-indigo-600 hover:bg-indigo-700',
-        red: 'bg-red-600 hover:bg-red-700',
-        pink: 'bg-pink-600 hover:bg-pink-700'
-    }[color] || (hex ? 'hover:brightness-90' : 'bg-gray-600 hover:bg-gray-700');
+    let failed = false;
 
     async function copyEmail() {
-        await navigator.clipboard.writeText(email);
-        copied = true;
-        setTimeout(() => (copied = false), 2000);
+        try {
+            await navigator.clipboard.writeText(email);
+            copied = true;
+            failed = false;
+            setTimeout(() => (copied = false), 2000);
+        } catch {
+            failed = true;
+        }
     }
 </script>
 
-<div class="flex flex-col md:flex-row items-center gap-4 mt-6">
-    <!-- Mail senden -->
-    <a
-            href={`mailto:${email}`}
-            class={`flex items-center gap-2 px-4 py-2 ${bgColor} text-white rounded transition`}
-            style:background-color={hexBackground}
-    >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16v16H4z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" d="M22 6L12 13 2 6"/>
-        </svg>
+<div class="mt-3 flex flex-wrap items-center gap-3">
+    <a href={`mailto:${email}`} class="inline-flex items-center rounded bg-blue-700 px-4 py-2 font-medium text-white hover:bg-blue-800">
         E-Mail senden
     </a>
-
-    <!-- Mail kopieren -->
-    <button
-            on:click={copyEmail}
-            class="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition"
-    >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M8 16h8M8 12h8M8 8h8M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"/>
-        </svg>
-        {#if copied}
-            Kopiert!
-        {:else}
-            E-Mail kopieren
-        {/if}
+    <button type="button" on:click={copyEmail} class="inline-flex items-center rounded border border-gray-400 bg-surface px-4 py-2 text-ink hover:bg-subtle">
+        {copied ? 'Kopiert' : 'Adresse kopieren'}
     </button>
+    {#if failed}<span class="text-sm text-muted">Kopieren nicht möglich – bitte Adresse markieren.</span>{/if}
 </div>

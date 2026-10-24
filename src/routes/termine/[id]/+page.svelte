@@ -54,7 +54,7 @@
         <div class="space-y-6 p-6 sm:p-8">
             <header class="space-y-3">
                 {#if e.recurring}
-                    <p class="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                    <p class="inline-flex items-center gap-1.5 text-sm text-gray-500">
                         <Icon name="repeat" size={14} /> Regelmäßiger Termin
                     </p>
                 {/if}

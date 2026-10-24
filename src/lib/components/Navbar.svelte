@@ -1,5 +1,7 @@
 <script>
     import { onMount } from 'svelte';
+    import { page } from '$app/stores';
+    import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 
     /**
      * Gruppen aus dem Intern-Bereich (Layout-Load)
@@ -13,24 +15,38 @@
         { label: 'Sippe', groups: groups.filter((g) => g.type === 'sippe') }
     ].filter((s) => s.groups.length > 0);
 
+    const links = [
+        { href: '/termine', label: 'Termine' },
+        { href: '/galerie', label: 'Galerie' },
+        { href: '/team', label: 'Unser Team' },
+        { href: '/cpd', label: 'CPD' },
+        { href: '/kontakt', label: 'Kontakt' }
+    ];
+
     let open = false;
     let gruppenOpen = false;
 
-    const toggleGruppen = () => {
-        gruppenOpen = !gruppenOpen;
-    };
+    $: path = $page.url.pathname;
+    $: inGroups = path.startsWith('/meute') || path.startsWith('/sippe');
+    /** @param {string} href */
+    const active = (href) => path === href || path.startsWith(`${href}/`);
 
+    // Menüs nach dem Seitenwechsel schließen
+    $: path, (open = false), (gruppenOpen = false);
+
+    /** @param {MouseEvent} event */
     function handleClickOutside(event) {
         const dropdown = document.getElementById('gruppen-dropdown');
         const button = document.getElementById('gruppen-button');
-        if (
-            dropdown &&
-            !dropdown.contains(event.target) &&
-            button &&
-            !button.contains(event.target)
-        ) {
+        const target = /** @type {Node} */ (event.target);
+        if (dropdown && !dropdown.contains(target) && button && !button.contains(target)) {
             gruppenOpen = false;
         }
+    }
+
+    /** @param {KeyboardEvent} event */
+    function handleKey(event) {
+        if (event.key === 'Escape') gruppenOpen = false;
     }
 
     onMount(() => {
@@ -39,109 +55,101 @@
     });
 </script>
 
-<nav class="bg-white shadow-md sticky top-0 z-50 border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-            <!-- Logo -->
-            <a href="/" class="text-xl font-extrabold text-indigo-900">Edelweißpiraten</a>
+<svelte:window on:keydown={handleKey} />
 
-            <!-- Desktop Navigation -->
-            <div class="hidden md:flex gap-6 items-center relative">
-                <!-- Gruppen Dropdown -->
-                <div class="relative">
-                    <button
-                            class="nav-link flex items-center gap-2"
-                            on:click={toggleGruppen}
-                            id="gruppen-button"
-                    >
-                        Gruppen
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M19 9l-7 7-7-7"
-                            />
-                        </svg>
-                    </button>
+<nav class="sticky top-0 z-50 border-b border-line bg-page" aria-label="Hauptmenü">
+    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-4 sm:px-6">
+        <a href="/" class="text-xl font-extrabold text-brand">Edelweißpiraten</a>
 
-                    {#if gruppenOpen}
-                        <div
-                                id="gruppen-dropdown"
-                                class="absolute top-full left-0 bg-white border border-gray-200 shadow-md z-50 w-64 px-4 py-3"
-                        >
-                            {#each sections as section, i (section.label)}
-                                {#if i > 0}<hr class="border-gray-200 my-2" />{/if}
-                                <p class="text-xs uppercase text-gray-400 font-semibold mb-1">{section.label}</p>
-                                {#each section.groups as group, j (group.slug)}
-                                    <a href={group.href} class="dropdown-link pl-2 block {j > 0 ? 'mt-2' : ''}" on:click={() => (gruppenOpen = false)}>{group.name}</a>
-                                {/each}
-                            {/each}
-                            {#if sections.length === 0}
-                                <p class="text-sm text-gray-500">Gruppen konnten gerade nicht geladen werden.</p>
-                            {/if}
-                        </div>
-                    {/if}
-                </div>
-
-                <a href="/galerie" class="nav-link">Galerie</a>
-                <a href="/termine" class="nav-link">Termine</a>
-                <a href="/cpd" class="nav-link">CPD</a>
-                <a href="/team" class="nav-link">Unser Team</a>
-                <a href="/kontakt" class="nav-link">Kontakt</a>
-            </div>
-
-            <!-- Mobile Toggle Button -->
-            <div class="md:hidden">
-                <button on:click={() => (open = !open)} class="text-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d={open ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
-                        />
+        <!-- Desktop -->
+        <div class="hidden items-center gap-6 md:flex">
+            <div class="relative">
+                <button
+                        id="gruppen-button"
+                        type="button"
+                        class="nav-link flex items-center gap-1 {inGroups ? 'is-active' : ''}"
+                        aria-expanded={gruppenOpen}
+                        aria-controls="gruppen-dropdown"
+                        on:click={() => (gruppenOpen = !gruppenOpen)}
+                >
+                    Gruppen
+                    <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
+
+                {#if gruppenOpen}
+                    <div id="gruppen-dropdown" class="absolute left-0 top-full z-50 mt-2 w-64 border border-line-strong bg-surface py-2">
+                        {#each sections as section, i (section.label)}
+                            <p class="px-4 pb-1 text-sm text-muted {i > 0 ? 'mt-2 border-t border-line pt-3' : 'pt-1'}">{section.label}</p>
+                            {#each section.groups as group (group.slug)}
+                                <a href={group.href} class="block px-4 py-2 text-ink hover:bg-subtle">{group.name}</a>
+                            {/each}
+                        {/each}
+                        {#if sections.length === 0}
+                            <p class="px-4 py-2 text-sm text-muted">Die Gruppen konnten gerade nicht geladen werden.</p>
+                        {/if}
+                    </div>
+                {/if}
             </div>
+
+            {#each links as link (link.href)}
+                <a href={link.href} class="nav-link {active(link.href) ? 'is-active' : ''}" aria-current={active(link.href) ? 'page' : undefined}>{link.label}</a>
+            {/each}
+            <ThemeToggle />
+        </div>
+
+        <!-- Mobil -->
+        <div class="flex items-center md:hidden">
+            <ThemeToggle />
+            <button
+                    type="button"
+                    on:click={() => (open = !open)}
+                    class="inline-flex size-11 items-center justify-center text-body"
+                    aria-expanded={open}
+                    aria-controls="mobile-menu"
+                    aria-label={open ? 'Menü schließen' : 'Menü öffnen'}
+            >
+                <svg class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={open ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
+                </svg>
+            </button>
         </div>
     </div>
 
-    <!-- Mobile Navigation -->
     {#if open}
-        <div class="md:hidden px-4 pb-4 bg-white border-t border-gray-200 space-y-3">
-            <p class="text-sm text-gray-500 uppercase font-semibold tracking-wide mt-2">Gruppen</p>
-            <div class="ml-2">
-                {#each sections as section, i (section.label)}
-                    <p class="text-xs uppercase text-gray-400 font-semibold {i === 0 ? 'mt-2' : 'mt-4'}">{section.label}</p>
-                    {#each section.groups as group (group.slug)}
-                        <a href={group.href} class="mobile-link text-lg py-2 block" on:click={() => (open = false)}>{group.name}</a>
-                    {/each}
+        <div id="mobile-menu" class="border-t border-line bg-page px-4 pb-4 md:hidden">
+            {#each sections as section (section.label)}
+                <p class="mt-4 text-sm text-muted">{section.label}</p>
+                {#each section.groups as group (group.slug)}
+                    <a href={group.href} class="mobile-link">{group.name}</a>
+                {/each}
+            {/each}
+            <div class="mt-4 border-t border-line pt-2">
+                {#each links as link (link.href)}
+                    <a href={link.href} class="mobile-link" aria-current={active(link.href) ? 'page' : undefined}>{link.label}</a>
                 {/each}
             </div>
-
-            <hr class="my-4 border-gray-300" />
-
-            <a href="/galerie" class="mobile-link text-lg block" on:click={() => (open = false)}>Galerie</a>
-            <a href="/termine" class="mobile-link text-lg block" on:click={() => (open = false)}>Termine</a>
-            <a href="/cpd" class="mobile-link text-lg block" on:click={() => (open = false)}>CPD</a>
-            <a href="/team" class="mobile-link text-lg block" on:click={() => (open = false)}>Unser Team</a>
-            <a href="/kontakt" class="mobile-link text-lg block" on:click={() => (open = false)}>Kontakt</a>
         </div>
     {/if}
-
-
-    <style>
-        .nav-link {
-            @apply text-gray-700 hover:text-blue-600 font-medium text-lg transition;
-        }
-
-        .mobile-link {
-            @apply block text-gray-700 hover:text-blue-600 font-semibold transition;
-        }
-
-        .dropdown-link {
-            @apply block px-5 py-3 text-gray-800 hover:bg-gray-100 font-medium text-base transition;
-        }
-    </style>
 </nav>
+
+<style>
+    .nav-link {
+        color: var(--color-body);
+        padding: 0.5rem 0;
+    }
+    .nav-link:hover {
+        color: var(--color-link);
+    }
+    .nav-link.is-active {
+        color: var(--color-ink);
+        font-weight: 600;
+    }
+    .mobile-link {
+        display: block;
+        padding: 0.6rem 0;
+        font-size: 1.0625rem;
+        color: var(--color-ink);
+    }
+</style>

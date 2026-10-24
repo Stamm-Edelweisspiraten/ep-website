@@ -6,7 +6,7 @@
 
 <section class="max-w-5xl mx-auto py-12 px-6">
     <h1 class="font-bold text-2xl">Datenschutzerklärung</h1>
-    <p class="mb-3">Stand: 21. Oktober 2026</p>
+    <p class="mb-3">Stand: 24. Oktober 2026</p>
     <h2 class="font-bold text-xl">Inhaltsübersicht</h2>
     <ul class="index mb-4 mt-1">
         <li><a class="index-link hover:text-blue-500" href="#m3">- Verantwortlicher</a></li>
@@ -297,6 +297,14 @@
         Einstellungen sowie die Sicherstellung der Funktionalität und Sicherheit unseres Onlineangebots. Die
         Einwilligung kann jederzeit widerrufen werden. Wir informieren klar über deren Umfang und welche Cookies genutzt
         werden.</p>
+    <p><strong>Cookies und Speicher auf dieser Website: </strong>Wir setzen keine Cookies zu Analyse- oder Werbezwecken.
+        Wählst du über den Knopf in der Navigation ausdrücklich die helle oder dunkle Darstellung, speichern wir diese
+        Wahl im Cookie „theme“ (Inhalt nur „light“ oder „dark“, Speicherdauer ein Jahr), damit die Seite beim nächsten
+        Besuch gleich in deiner Darstellung erscheint. Die gewählte Ansicht der Terminseite (Kalender, Kacheln oder Liste)
+        merkt sich dein Browser im lokalen Speicher; dieser Eintrag bleibt auf deinem Gerät. Das Cookie wird mit jeder
+        Seitenanfrage an unseren Server übertragen, nur zur Wahl der Darstellung genutzt und nicht ausgewertet. Beides
+        lässt sich jederzeit in den Browser-Einstellungen löschen. Rechtsgrundlage ist
+        § 25 Abs. 2 Nr. 2 TDDDG (ausdrücklich gewünschte Funktion).</p>
     <p><strong>Hinweise zu datenschutzrechtlichen Rechtsgrundlagen: </strong>Ob wir personenbezogene Daten mithilfe von
         Cookies verarbeiten, hängt von einer Einwilligung ab. Liegt eine Einwilligung vor, dient sie als
         Rechtsgrundlage. Ohne Einwilligung stützen wir uns auf unsere berechtigten Interessen, die vorstehend in diesem

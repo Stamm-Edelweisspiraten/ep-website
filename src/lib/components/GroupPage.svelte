@@ -1,93 +1,84 @@
 <script>
-    // Gruppenseite im Aufbau der alten Meute-/Sippen-Seiten; Inhalte kommen aus dem Intern-Bereich
-    // (Gruppendialog → Allgemein + Reiter Website). Die Gruppenfarbe ersetzt die früheren festen Farben.
+    // Gruppenseite; Inhalte kommen aus dem Intern-Bereich (Gruppendialog → Allgemein + Reiter Website).
+    // Die Gruppenfarbe färbt nur den Namen.
     import Map from '$lib/components/Map.svelte';
     import EmailButtons from '$lib/components/EmailButtons.svelte';
-    import AppointmentPreview from '$lib/components/AppointmentPreview.svelte';
+    import EventList from '$lib/components/EventList.svelte';
 
     /** @type {import('$lib/server/backend').Group} */
     export let group;
+    /** @type {import('$lib/site-types').SiteEvent[] | null} */
+    export let events = null;
 
-    $: dark = `color-mix(in srgb, ${group.color} 78%, black)`;
-    $: when = [group.weekday, group.time].filter(Boolean).join(' ');
+    $: when = [group.weekday, group.time].filter(Boolean).join(', ');
+    $: facts = [
+        { label: 'Gruppenstunde', value: when },
+        { label: 'Ort', value: group.meetingPlace },
+        { label: 'Alter', value: group.ageRange },
+        { label: 'Gruppenleitung', value: group.leaders }
+    ].filter((f) => f.value);
 </script>
 
 <svelte:head>
-    <title>Stamm Edelweißpiraten – {group.name}</title>
+    <title>{group.name} – Stamm Edelweißpiraten</title>
     <meta
             name="description"
             content={`${group.typeLabel} der Edelweißpiraten${group.ageRange ? ` (${group.ageRange})` : ''} in Bremen-Hastedt: ${group.teaser}`}
     />
 </svelte:head>
 
-<section class="max-w-5xl mx-auto px-6 py-12 space-y-6">
-
-    <h2 class="text-2xl font-bold" style:color={dark}>{group.typeLabel}</h2>
-    <div class="bg-white border border-gray-300 p-8 w-full flex flex-col md:flex-row gap-6 items-start">
-        <div class="flex-1">
-            <p class="text-gray-700">Gruppenname</p>
-            <p class="text-sm text-gray-500">{group.name}</p>
-
-            {#if group.leaders}
-                <p class="text-gray-700 mt-2">Gruppenleiter</p>
-                <p class="text-sm text-gray-500">{group.leaders}</p>
-            {/if}
-
-            {#if when}
-                <p class="text-gray-700 mt-2">Uhrzeit</p>
-                <p class="text-sm text-gray-500">{when}</p>
-            {/if}
-
-            {#if group.meetingPlace}
-                <p class="text-gray-700 mt-2">Ort</p>
-                <p class="text-sm text-gray-500">{group.meetingPlace}</p>
-            {/if}
-
-            {#if group.ageRange}
-                <p class="text-gray-700 mt-2">Alter</p>
-                <p class="text-sm text-gray-500">{group.ageRange}</p>
-            {/if}
-        </div>
-
+<div class="mx-auto max-w-5xl px-6 pt-12">
+    <header class="grid items-center gap-4 border-b border-line pb-8 {group.image ? 'grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[180px_minmax(0,1fr)] sm:gap-9' : ''}">
         {#if group.image}
-            <div class="w-full md:w-1/3 flex-shrink-0">
-                <img
-                        src={group.image}
-                        alt="Gruppenbild {group.name}"
-                        class="w-full h-auto object-cover rounded"
-                />
-            </div>
+            <img src={group.image} alt="Gruppenbild {group.name}" width="180" height="180" class="h-auto w-full" />
         {/if}
-    </div>
+        <div>
+            <p class="text-muted">{group.typeLabel}</p>
+            <h1 class="group-name text-3xl font-bold leading-tight sm:text-[40px]" style="--g: {group.color}">{group.name}</h1>
+            {#if group.teaser}<p class="mt-2">{group.teaser}</p>{/if}
+        </div>
+    </header>
 
-    {#if group.description}
-        <h2 class="text-2xl mb-2 font-bold" style:color={dark}>Das sind wir</h2>
-        <p class="text-gray-700 leading-relaxed text-justify whitespace-pre-line">{group.description}</p>
+    {#if facts.length || group.contactEmail}
+        <dl class="grid gap-x-4 gap-y-2 pt-8 sm:grid-cols-[10rem_minmax(0,1fr)]">
+            {#each facts as f (f.label)}
+                <dt class="text-muted">{f.label}</dt>
+                <dd class="text-ink">{f.value}</dd>
+            {/each}
+            {#if group.contactEmail}
+                <dt class="text-muted">Kontakt</dt>
+                <dd><a href="mailto:{group.contactEmail}" class="text-link">{group.contactEmail}</a></dd>
+            {/if}
+        </dl>
     {/if}
 
-    <h2 class="text-2xl mb-2 font-bold" style:color={dark}>Treffpunkt</h2>
-    <Map/>
+    {#if group.description}
+        <section class="pt-10">
+            <h2 class="mb-3 text-[26px] font-bold text-ink">Das sind wir</h2>
+            <p class="max-w-3xl leading-relaxed whitespace-pre-line">{group.description}</p>
+        </section>
+    {/if}
 
-    <div class="space-y-6 mt-20  mb-20">
-        <div
-                class="border-l-4 p-4"
-                style:border-color={group.color}
-                style:background-color={`color-mix(in srgb, ${group.color} 8%, white)`}
-        >
-            <h3 class="text-xl font-bold" style:color={dark}>{group.title}</h3>
-            {#if group.leaders}
-                <p class="text-gray-700 mt-1"><span class="font-bold">Ansprechpartner</span><br>{group.leaders}</p>
-            {/if}
-            {#if group.contactEmail}
-                <p class="text-gray-700 mt-1"><span class="font-bold">E-Mail</span><br>{group.contactEmail}</p>
-                <EmailButtons email={group.contactEmail} color={group.color} />
-            {:else}
-                <p class="text-gray-700 mt-1">
-                    Schreib uns gern über das <a href="/kontakt" class="underline">Kontaktformular</a>.
-                </p>
-            {/if}
-        </div>
-    </div>
+    <section class="pt-10">
+        <h2 class="mb-3 text-[26px] font-bold text-ink">Nächste Termine</h2>
+        <EventList {events} showGroups={false} emptyText="Gerade stehen keine besonderen Termine an – die Gruppenstunde findet wie gewohnt statt." />
+        <p class="border-t border-line pt-3">
+            <a href="/termine?gruppe={encodeURIComponent(group.name)}" class="text-link">Alle Termine der {group.typeLabel}</a>
+        </p>
+    </section>
 
-    <AppointmentPreview gruppe={group.title} slug={group.slug}/>
-</section>
+    <section class="pt-10">
+        <h2 class="mb-3 text-[26px] font-bold text-ink">Kontakt</h2>
+        {#if group.contactEmail}
+            <p>Bei Fragen schreib der Gruppenleitung: <span class="text-ink">{group.contactEmail}</span></p>
+            <EmailButtons email={group.contactEmail} />
+        {:else}
+            <p>Schreib uns gern über das <a href="/kontakt" class="text-link">Kontaktformular</a>.</p>
+        {/if}
+    </section>
+
+    <section class="pt-10">
+        <h2 class="mb-3 text-[26px] font-bold text-ink">Treffpunkt</h2>
+        <Map height="h-[320px]" />
+    </section>
+</div>

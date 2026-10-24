@@ -5,7 +5,7 @@
             Stamm <br class="md:hidden" />
             <span class="font-bold text-white">Edelweißpiraten</span>
         </h1>
-        <div class="h-1 w-2/3 mx-auto md:ml-auto md:mr-0 my-2 bg-black rounded bg-white"></div>
+        <div class="h-1 w-2/3 mx-auto md:ml-auto md:mr-0 my-2 rounded bg-[#fff]"></div>
         <p class="text-base md:text-lg leading-tight text-white font-bold">
             in der <br />
             Ev. Kirchengemeinde <br />

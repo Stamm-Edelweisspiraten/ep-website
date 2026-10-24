@@ -1,2 +1,126 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
+
+/*
+ * Farben der Website (Konzept 2026-10: schlicht, weißer Grund, Indigo-Schriftzug, Gruppenfarben nur für Namen).
+ * Neue Bausteine nutzen die Namen unten (`text-ink`, `bg-surface`, `border-line` …). Ältere Seiten mit
+ * Tailwind-Grautönen funktionieren im Dunkelmodus über die Umschaltung der Grauskala weiter unten.
+ */
+@theme {
+	--color-page: #ffffff;
+	--color-surface: #ffffff;
+	--color-subtle: #f3f4f6;
+	--color-ink: #111827;
+	--color-body: #374151;
+	--color-muted: #6b7280;
+	--color-line: #e5e7eb;
+	--color-line-strong: #d1d5db;
+	--color-brand: #312e81;
+	--color-link: #1d4ed8;
+	--color-link-hover: #1e3a8a;
+	--color-notice: #fffbeb;
+	--color-notice-line: #f2c94c;
+}
+
+html {
+	color-scheme: light;
+}
+
+body {
+	background-color: var(--color-page);
+	color: var(--color-body);
+}
+
+/* Name einer Gruppe in ihrer Farbe (`style="--g: #rrggbb"`), abgedunkelt bzw. im Dunkelmodus aufgehellt */
+.group-name {
+	color: color-mix(in srgb, var(--g, #33338c) 65%, black);
+}
+
+/* Fließtext-Links in Inhalten */
+.text-link {
+	color: var(--color-link);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+.text-link:hover {
+	color: var(--color-link-hover);
+}
+
+/*
+ * Dunkelmodus: `html.dark` (gesetzt aus dem Cookie `theme` oder – ohne Wahl – nach der Systemeinstellung per
+ * Inline-Skript in `app.html`). Absichtlich ohne `@layer`, damit die Regeln die Tailwind-Klassen überstimmen.
+ */
+html.dark {
+	color-scheme: dark;
+	--color-page: #121318;
+	--color-surface: #1a1c22;
+	--color-subtle: #1f2128;
+	--color-ink: #f3f4f6;
+	--color-body: #c9ccd3;
+	--color-muted: #9ca3af;
+	--color-line: #2c2f38;
+	--color-line-strong: #3a3d48;
+	--color-brand: #c7d2fe;
+	--color-link: #8ab4ff;
+	--color-link-hover: #b9d1ff;
+	--color-notice: #2a2412;
+	--color-notice-line: #6b5a1e;
+
+	/* Grauskala umdrehen: hell ↔ dunkel (für Seiten mit `text-gray-*`, `bg-gray-*`, `border-gray-*`) */
+	--color-gray-50: #1a1c22;
+	--color-gray-100: #1f2128;
+	--color-gray-200: #2c2f38;
+	--color-gray-300: #3a3d48;
+	--color-gray-400: #5b606e;
+	--color-gray-500: #9ca3af;
+	--color-gray-600: #b4b9c4;
+	--color-gray-700: #c9ccd3;
+	--color-gray-800: #e0e2e7;
+	--color-gray-900: #f3f4f6;
+	--color-gray-950: #fafafa;
+}
+
+html.dark .group-name {
+	color: color-mix(in srgb, var(--g, #8a8ad8) 55%, white);
+}
+
+html.dark .bg-white {
+	background-color: var(--color-surface);
+}
+/* dunkle Knöpfe/aktive Filter (bg-gray-900 + weiße Schrift) werden hell – Schrift entsprechend dunkel */
+html.dark .bg-gray-900.text-white,
+html.dark .bg-gray-900 .text-white {
+	color: #111827;
+}
+html.dark :is(.text-blue-500, .text-blue-600, .text-blue-700, .text-blue-800, .text-blue-900),
+html.dark :is(.text-indigo-700, .text-indigo-800, .text-indigo-900) {
+	color: var(--color-link);
+}
+html.dark :is(.hover\:text-blue-500, .hover\:text-blue-600, .hover\:text-blue-800, .hover\:text-blue-900):hover,
+html.dark :is(.hover\:text-indigo-900):hover {
+	color: var(--color-link-hover);
+}
+html.dark :is(.bg-blue-50, .bg-indigo-50) {
+	background-color: #1e2540;
+}
+html.dark .bg-red-50 {
+	background-color: #2a1517;
+}
+html.dark :is(.border-red-200, .border-red-300, .border-red-400) {
+	border-color: #7f2a2f;
+}
+html.dark :is(.text-red-700, .text-red-800) {
+	color: #fca5a5;
+}
+html.dark .bg-green-50 {
+	background-color: #13261a;
+}
+html.dark .border-green-300 {
+	border-color: #2f6b45;
+}
+html.dark .text-green-800 {
+	color: #86efac;
+}
+html.dark .leaflet-container {
+	filter: brightness(0.85);
+}

@@ -1,7 +1,6 @@
 <script lang="ts">
     // „Unser Team“: Ämter aus dem Intern-Bereich mit den Personen, die der Anzeige im Profil zugestimmt haben.
     // Es erscheinen nur Vornamen (der Nachname kommt gar nicht erst vom Backend).
-    import EmailButtons from '$lib/components/EmailButtons.svelte';
     import type { PageData } from './$types';
 
     export let data: PageData;
@@ -19,11 +18,6 @@
         return `seit ${since.slice(0, 4)}`;
     }
 
-    function names(list: { firstName: string }[]) {
-        const n = list.map((h) => h.firstName);
-        return n.length <= 1 ? n.join('') : `${n.slice(0, -1).join(', ')} und ${n[n.length - 1]}`;
-    }
-
     $: people = data.offices.reduce((sum, o) => sum + o.holders.length, 0);
 </script>
 
@@ -35,103 +29,86 @@
     />
 </svelte:head>
 
-<section class="mx-auto max-w-5xl space-y-10 px-6 py-12">
-    <header class="space-y-3">
-        <h1 class="text-3xl font-bold text-gray-800">Unser Team</h1>
-        <p class="leading-relaxed text-gray-700">
-            Hinter dem Stamm stehen viele Ehrenamtliche. Hier siehst du, wer sich um welche Aufgabe kümmert und wie du die
-            richtigen Ansprechpartner erreichst. Für Fragen zu einer Gruppe schau auf der jeweiligen Gruppenseite oder unter
-            <a href="/kontakt" class="text-indigo-700 underline hover:text-indigo-900">Kontakt</a>.
+<div class="mx-auto max-w-5xl px-6 pt-12">
+    <header class="max-w-3xl">
+        <h1 class="text-3xl font-bold text-ink sm:text-[36px]">Unser Team</h1>
+        <p class="mt-3 leading-relaxed">
+            Hinter dem Stamm stehen viele Ehrenamtliche. Hier siehst du, wer sich um welche Aufgabe kümmert und wen du bei
+            Fragen ansprechen kannst. Fragen zu einer Gruppe beantworten die Gruppenleitungen – die Adressen stehen auf den
+            Gruppenseiten und unter <a href="/kontakt" class="text-link">Kontakt</a>.
         </p>
     </header>
 
     {#if data.offices.length === 0}
-        <p class="border border-dashed border-gray-300 p-8 text-center text-gray-500">
-            Hier stellen wir bald unser Team vor.
-        </p>
+        <p class="mt-10 border-t border-line pt-6 text-muted">Hier stellen wir bald unser Team vor.</p>
     {:else}
-        <div class="space-y-8">
-            {#each data.offices as office (office.id)}
-                <article class="border border-gray-300 bg-white" aria-labelledby="amt-{office.id}">
-                    <div class="border-l-4 border-indigo-800 px-6 py-5 sm:px-8">
-                        <h2 id="amt-{office.id}" class="text-2xl font-bold text-indigo-900">{office.name}</h2>
-                        {#if office.holders.length}
-                            <p class="mt-1 text-gray-600">{names(office.holders)}</p>
-                        {/if}
-                        {#if office.description}
-                            <p class="mt-3 leading-relaxed whitespace-pre-line text-gray-700">{office.description}</p>
-                        {/if}
-                    </div>
+        {#each data.offices as office (office.id)}
+            <section class="mt-12 border-t border-line-strong pt-7" aria-labelledby="amt-{office.id}">
+                <h2 id="amt-{office.id}" class="text-[26px] font-bold text-brand">{office.name}</h2>
+                {#if office.description}
+                    <p class="mt-1.5 max-w-3xl leading-relaxed whitespace-pre-line">{office.description}</p>
+                {/if}
+                {#each office.emails as mail (mail.email)}
+                    <p class="mt-1.5">
+                        {mail.label || 'E-Mail'}: <a href="mailto:{mail.email}" class="text-link">{mail.email}</a>
+                    </p>
+                {/each}
 
-                    {#if office.holders.length}
-                        <ul class="grid gap-6 border-t border-gray-200 px-6 py-6 sm:grid-cols-2 sm:px-8">
-                            {#each office.holders as person (person.id)}
-                                {@const key = `${office.id}:${person.id}`}
-                                {@const long = (person.bio?.length ?? 0) > BIO_PREVIEW}
-                                <li class="flex gap-4">
-                                    {#if person.imageUrl}
-                                        <img
-                                            src={person.imageUrl}
-                                            alt="Profilbild von {person.firstName}"
-                                            width="80"
-                                            height="80"
-                                            loading="lazy"
-                                            decoding="async"
-                                            class="size-20 shrink-0 rounded-full border border-gray-200 object-cover"
-                                        />
-                                    {:else}
-                                        <span
-                                            class="flex size-20 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-2xl font-bold text-indigo-800"
-                                            aria-hidden="true">{person.firstName.charAt(0).toUpperCase()}</span
-                                        >
-                                    {/if}
-                                    <div class="min-w-0 space-y-1">
-                                        <p class="text-lg font-semibold text-gray-900">{person.firstName}</p>
-                                        {#if sinceText(person.since)}
-                                            <p class="text-sm text-gray-500">{sinceText(person.since)}</p>
-                                        {/if}
-                                        {#if person.bio}
-                                            <p class="leading-relaxed whitespace-pre-line text-gray-700">
-                                                {long && !expanded.has(key)
-                                                    ? `${person.bio.slice(0, BIO_PREVIEW).trimEnd()} …`
-                                                    : person.bio}
-                                            </p>
-                                            {#if long}
-                                                <button
-                                                    type="button"
-                                                    class="text-sm text-indigo-700 underline hover:text-indigo-900"
-                                                    aria-expanded={expanded.has(key)}
-                                                    on:click={() => toggle(key)}
-                                                >
-                                                    {expanded.has(key) ? 'Weniger anzeigen' : 'Mehr lesen'}
-                                                </button>
-                                            {/if}
-                                        {/if}
-                                    </div>
-                                </li>
-                            {/each}
-                        </ul>
-                    {/if}
-
-                    {#if office.emails.length}
-                        <div class="space-y-4 border-t border-gray-200 bg-gray-50 px-6 py-5 sm:px-8">
-                            {#each office.emails as mail (mail.email)}
-                                <div>
-                                    <p class="text-gray-700">
-                                        <span class="font-bold">{mail.label || 'E-Mail'}</span><br />{mail.email}
+                {#if office.holders.length}
+                    <ul class="mt-6 space-y-6">
+                        {#each office.holders as person (person.id)}
+                            {@const key = `${office.id}:${person.id}`}
+                            {@const long = (person.bio?.length ?? 0) > BIO_PREVIEW}
+                            <li class="grid grid-cols-[56px_minmax(0,1fr)] gap-4 sm:grid-cols-[72px_minmax(0,1fr)] sm:gap-5">
+                                {#if person.imageUrl}
+                                    <img
+                                        src={person.imageUrl}
+                                        alt="Profilbild von {person.firstName}"
+                                        width="72"
+                                        height="72"
+                                        loading="lazy"
+                                        decoding="async"
+                                        class="size-14 rounded-full object-cover sm:size-[72px]"
+                                    />
+                                {:else}
+                                    <span
+                                        class="flex size-14 items-center justify-center rounded-full bg-gray-200 text-2xl font-semibold text-gray-600 sm:size-[72px]"
+                                        aria-hidden="true">{person.firstName.charAt(0).toUpperCase()}</span
+                                    >
+                                {/if}
+                                <div class="min-w-0">
+                                    <p class="font-bold text-ink">
+                                        {person.firstName}
+                                        {#if sinceText(person.since)}<span class="font-normal text-muted"> · {sinceText(person.since)}</span>{/if}
                                     </p>
-                                    <EmailButtons email={mail.email} color="indigo" />
+                                    {#if person.bio}
+                                        <p class="mt-0.5 max-w-3xl leading-relaxed whitespace-pre-line">
+                                            {long && !expanded.has(key)
+                                                ? `${person.bio.slice(0, BIO_PREVIEW).trimEnd()} …`
+                                                : person.bio}
+                                        </p>
+                                        {#if long}
+                                            <button
+                                                type="button"
+                                                class="mt-1 text-link"
+                                                aria-expanded={expanded.has(key)}
+                                                on:click={() => toggle(key)}
+                                            >
+                                                {expanded.has(key) ? 'Weniger anzeigen' : 'Mehr lesen'}
+                                            </button>
+                                        {/if}
+                                    {/if}
                                 </div>
-                            {/each}
-                        </div>
-                    {/if}
-                </article>
-            {/each}
-        </div>
+                            </li>
+                        {/each}
+                    </ul>
+                {/if}
+            </section>
+        {/each}
         {#if people === 0}
-            <p class="text-sm text-gray-500">
+            <p class="mt-10 text-sm text-muted">
                 Die Personen hinter den Ämtern stellen sich hier vor, sobald sie zugestimmt haben.
             </p>
         {/if}
     {/if}
-</section>
+</div>

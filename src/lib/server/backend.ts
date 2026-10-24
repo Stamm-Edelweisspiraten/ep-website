@@ -2,8 +2,7 @@
  * Anbindung an das neue Backend (Intern-Bereich, Website-API) statt PocketBase.
  *
  * Alle Abrufe laufen serverseitig mit dem API-Key aus `WEBSITE_API_KEY` – der Key gelangt nie in den Browser.
- * Termine und Galerien werden in die Seitenform `SiteEvent`/`SiteGallery` (`../site-types.ts`) gebracht; nur die
- * Terminvorschau der Gruppenseite nutzt noch die alte PocketBase-Form `Appointment`.
+ * Termine und Galerien werden in die Seitenform `SiteEvent`/`SiteGallery` (`../site-types.ts`) gebracht.
  *
  * Umgebung:
  * - `WEBSITE_API_URL` – Basis-URL des Backends ohne abschließenden Schrägstrich (Standard `http://app:3000`)
@@ -33,30 +32,6 @@ import type {
 } from '../site-types';
 
 export type { BackendGroup } from './backend-types';
-
-// --- Alte Form (PocketBase) für `AppointmentPreview` ------------------------------------------
-
-export interface Tag {
-	id: string;
-	name: string;
-	color: string | null;
-}
-
-export interface Appointment {
-	/** Bei Serien `<id>~<YYYY-MM-DD>`, damit jedes Vorkommen eine eigene Adresse hat */
-	id: string;
-	title: string;
-	description: string;
-	/** Beginn als lokale Zeit `YYYY-MM-DDTHH:MM:00` (für `new Date(…)`) */
-	date: string;
-	end_date: string | null;
-	location: string | null;
-	/** Bild-URLs (über den Bild-Proxy der Website) */
-	pictures: string[];
-	/** IDs aus `expand.tags` */
-	tags: string[];
-	expand: { tags: Tag[] };
-}
 
 // --- HTTP ----------------------------------------------------------------------------------------
 
@@ -213,10 +188,6 @@ export async function fetchImage(
 // --- Hilfen ------------------------------------------------------------------------------------
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-
-function localDateTime(day: string, time: string | null) {
-	return `${day}T${time && /^\d{2}:\d{2}$/.test(time) ? time : '00:00'}:00`;
-}
 
 function safeColor(value: string | null | undefined) {
 	return value && /^#[0-9a-f]{6}$/i.test(value) ? value : null;
@@ -505,44 +476,48 @@ export async function fetchEvent(key: string): Promise<SiteEvent | null> {
 	return toSiteEvent(event, groups, galleries.get(event.id) ?? []);
 }
 
-// --- Termine der Gruppenseite (alte Form für `AppointmentPreview`) --------------------------------
+// --- Nächste Termine (Startseite, Gruppenseite) --------------------------------------------------
 
-function toAppointment(e: BackendEvent, groupColors: Map<string, string | null>): Appointment {
-	const tags: Tag[] = [
-		...e.groups.map((name, i) => {
-			const groupId = e.groupIds[i] ?? name;
-			return { id: `g:${groupId}`, name, color: groupColors.get(groupId) ?? safeColor(e.color) };
-		}),
-		...e.tags.map((name) => ({ id: `t:${name}`, name, color: null }))
-	];
-	return {
-		id: eventKey(e),
-		title: e.title,
-		description: e.description ?? '',
-		date: localDateTime(e.startsOn, e.startsTime),
-		end_date: e.endsOn ? localDateTime(e.endsOn, e.endsTime) : null,
-		location: e.location,
-		pictures: [],
-		tags: tags.map((t) => t.id),
-		expand: { tags }
-	};
+/** So weit schauen „Nächste Termine“ höchstens voraus */
+const UPCOMING_DAYS = 180;
+
+function addDays(day: string, days: number) {
+	const [y, m, d] = day.split('-').map(Number);
+	return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
 }
 
-/** Nächste Termine einer Gruppe (Slug wie auf der Website), höchstens `limit`. */
-export async function fetchUpcomingForGroup(slug: string, limit = 3) {
+/**
+ * Nächste einzelne Termine ab heute, höchstens `limit` – ein kleiner Abruf statt der ganzen Terminliste.
+ * Serien (z. B. die wöchentlichen Gruppenstunden) bleiben weg, die stehen schon bei den Gruppen.
+ * Mit `groupSlug` nur Termine dieser Gruppe; eine unbekannte Gruppe ergibt eine leere Liste ohne Backend-Abruf.
+ */
+export async function fetchUpcomingEvents(
+	opts: { limit?: number; groupSlug?: string } = {}
+): Promise<SiteEvent[]> {
+	const limit = opts.limit ?? 4;
 	const groups = await listGroups();
-	const group = groups.find((g) => g.slug === slug);
-	if (!group) return { group: null, appointments: [] as Appointment[] };
+	let groupId: string | undefined;
+	if (opts.groupSlug) {
+		groupId = groups.find((g) => g.slug === opts.groupSlug)?.id;
+		if (!groupId) return [];
+	}
+	const from = today();
 	const events = await getJson<BackendEvent[]>('/api/v1/modules/events/website/events', {
-		from: today(),
-		group: group.id,
-		limit
+		from,
+		to: addDays(from, UPCOMING_DAYS),
+		group: groupId,
+		limit: 100
 	});
-	const colors = new Map(groups.map((g) => [g.id, safeColor(g.color)]));
-	return {
-		group: { name: group.name, tagId: `g:${group.id}` },
-		appointments: events.map((e) => toAppointment(e, colors))
-	};
+	const refs = await groupRefMap();
+	return events
+		.filter((e) => !e.recurring && (e.endsOn ?? e.startsOn) >= from)
+		.sort(
+			(a, b) =>
+				a.startsOn.localeCompare(b.startsOn) ||
+				(a.startsTime ?? '').localeCompare(b.startsTime ?? '')
+		)
+		.slice(0, limit)
+		.map((e) => toSiteEvent(e, refs, []));
 }
 
 // --- Galerien (Seiten) ---------------------------------------------------------------------------

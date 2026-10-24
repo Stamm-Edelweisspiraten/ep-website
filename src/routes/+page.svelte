@@ -4,135 +4,130 @@
 </svelte:head>
 
 <script>
-
     import Map from '$lib/components/Map.svelte';
     import StammHeader from '$lib/components/StammHeader.svelte';
+    import EventList from '$lib/components/EventList.svelte';
 
     export let data;
-    let faqs = data.faqs;
 
-    function toggleFAQ(index) {
-        faqs = faqs.map((faq, i) => ({
-            ...faq,
-            open: i === index ? !faq.open : faq.open
-        }));
+    /** Ferienhinweis (statisch gepflegt): `show: false` blendet ihn aus */
+    const ferien = {
+        show: true,
+        text: 'In den Ferien finden keine Gruppenstunden statt.',
+        groups: [
+            { name: 'Meute', href: '/meute', color: '#c05621', note: 'startet wieder am 21.08.' },
+            { name: 'Die Goldenen Löwenzähne', href: '/sippe/die-goldenen-loewenzaehne', color: '#d69e2e', note: 'starten wieder am 14.08.' },
+            { name: 'Funkelfüchse', href: '/sippe/funkelfuechse', color: '#d53f8c', note: 'starten am 21.08. mit aktiven Gruppenstunden.' }
+        ]
+    };
+
+    /** @type {number | null} */
+    let openFaq = null;
+
+    /** @param {import('$lib/server/backend').Group} g */
+    function meta(g) {
+        const when = [g.weekday.toLowerCase(), g.time].filter(Boolean).join(' ');
+        return [g.ageRange, when].filter(Boolean).join(' · ');
     }
 </script>
 
-<!-- HERO -->
-<section class="relative h-[70vh] w-full overflow-hidden">
-    <img src="/pfadfinder.avif" alt="Stamm Edelweißpiraten"
-         class="absolute w-full h-full object-cover brightness-75" />
+<section class="relative h-[60vh] min-h-[380px] max-h-[600px] w-full overflow-hidden bg-gray-700">
+    <img src="/pfadfinder.avif" alt="Pfadfinder*innen des Stammes Edelweißpiraten"
+         class="absolute h-full w-full object-cover brightness-[0.72]" />
     <div class="absolute inset-0 flex items-center justify-center">
-        <StammHeader/>
+        <StammHeader />
     </div>
 </section>
 
-<!-- Ferienhinweis -->
-<section class="max-w-5xl mx-auto px-6 pt-10">
-    <div class="border-l-4 border-amber-500 bg-amber-50 p-6">
-        <p class="text-sm font-semibold uppercase tracking-wide text-amber-800">Ferienhinweis</p>
-        <h2 class="mt-2 text-2xl font-bold text-gray-900">In den Ferien finden keine Gruppenstunden statt.</h2>
-        <div class="mt-3 grid gap-2 text-gray-700 sm:grid-cols-3">
-            <p>
-                <a href="/meute" class="font-semibold text-green-700 underline decoration-green-300 underline-offset-4 hover:text-green-800">
-                    Meute
-                </a>
-                <span class="block text-sm text-gray-600">startet wieder am 21.08.</span>
-            </p>
-            <p>
-                <a href="/sippe/die-goldenen-loewenzaehne" class="font-semibold text-blue-700 underline decoration-blue-300 underline-offset-4 hover:text-blue-800">
-                    Die Goldenen Löwenzähne
-                </a>
-                <span class="block text-sm text-gray-600">starten wieder am 14.08.</span>
-            </p>
-            <p>
-                <a href="/sippe/funkelfuechse" class="font-semibold text-pink-700 underline decoration-pink-300 underline-offset-4 hover:text-pink-800">
-                    Funkelfüchse
-                </a>
-                <span class="block text-sm text-gray-600">starten am 21.08. mit aktiven Gruppenstunden.</span>
-            </p>
-        </div>
-    </div>
-</section>
-
-<!-- KACHELN: MEUTE UND SIPPE (aus dem Intern-Bereich) -->
-<section id="gruppen" class="max-w-5xl mx-auto px-6 py-12 space-y-6">
-    <h2 class="text-3xl font-bold text-gray-800 mb-6">Unsere Gruppen</h2>
-    {#each data.groups as group (group.slug)}
-        {@const dark = `color-mix(in srgb, ${group.color} 78%, black)`}
-        <div class="bg-white border border-gray-300 p-8 w-full">
-            <h2 class="text-2xl font-bold" style:color={dark}>{group.title}</h2>
-            {#if group.teaser}
-                <p class="text-gray-700 mt-2">{group.teaser}</p>
+<div class="mx-auto max-w-5xl px-6 pt-12">
+    {#if ferien.show}
+        <div class="mb-14 border border-notice-line bg-notice px-5 py-4 text-ink">
+            <p><strong>Ferien:</strong> {ferien.text}</p>
+            {#if ferien.groups.length}
+                <ul class="mt-2 space-y-0.5 text-[15px] text-body">
+                    {#each ferien.groups as g (g.name)}
+                        <li><a href={g.href} class="group-name font-semibold hover:underline" style="--g: {g.color}">{g.name}</a> {g.note}</li>
+                    {/each}
+                </ul>
             {/if}
-            <p class="text-sm text-gray-500 mt-4">
-                {[group.weekday, group.time, group.meetingPlace].filter(Boolean).join(' · ')}
-            </p>
-            <a
-                    href={group.href}
-                    class="inline-block mt-4 px-4 py-2 font-medium border hover:brightness-95 transition rounded"
-                    style:color={dark}
-                    style:background-color={`color-mix(in srgb, ${group.color} 12%, white)`}
-                    style:border-color={`color-mix(in srgb, ${group.color} 35%, white)`}
-            >
-                Mehr zur {group.typeLabel} →
-            </a>
         </div>
-    {:else}
-        <p class="text-gray-600">Die Gruppen konnten gerade nicht geladen werden – schau gern später noch einmal vorbei.</p>
-    {/each}
-</section>
+    {/if}
 
-<!-- Über uns -->
-<section class="max-w-5xl mx-auto px-6 py-12 space-y-6">
-    <h2 class="text-3xl font-bold text-gray-800 mb-6">Über Uns</h2>
+    <section id="gruppen" aria-labelledby="h-gruppen">
+        <h2 id="h-gruppen" class="text-[28px] font-bold text-ink">Unsere Gruppen</h2>
+        <p class="mt-1">Jede Gruppe trifft sich einmal in der Woche. Zum Schnuppern könnt ihr einfach vorbeikommen.</p>
 
-    <p class="text-justify">
-        Wir sind der <span class="font-bold">Stamm Edelweißpiraten</span> der Christlichen Pfadfinderschaft Deutschlands e.V. (CPD).
-        Unser Zuhause ist Bremen Hastedt, wo wir eng mit der Evangelischen Auferstehungsgemeinde zusammenarbeiten.
-        Als Teil der CPD bieten wir Kindern und Jugendlichen eine lebendige Gemeinschaft, in der Abenteuer, Freundschaft und
-        Verantwortung großgeschrieben werden.
-    </p>
-
-    <p class="text-justify">
-        Neben unseren wöchentlichen Gruppenstunden unternehmen wir regelmäßig spannende Fahrten und Aktionen. Ob im Wald,
-        am Lagerfeuer oder auf einem Zeltplatz – bei uns gibt es immer etwas zu erleben.
-    </p>
-
-    <p class="font-bold">
-        Jede und jeder ist willkommen – komm vorbei und mach mit!
-    </p>
-</section>
-
-
-<!-- FAQ -->
-<section class="max-w-5xl mx-auto px-6 py-12">
-    <h2 class="text-3xl font-bold text-gray-800 mb-6">Häufige Fragen</h2>
-    <div class="space-y-4">
-        {#each faqs as faq, index}
-            <div class="border border-gray-300 overflow-hidden bg-white rounded">
-                <button
-                        on:click={() => toggleFAQ(index)}
-                        class="w-full flex justify-between items-center px-6 py-4 bg-gray-100 hover:bg-gray-200 transition text-left"
-                >
-                    <span class="font-medium text-gray-800">{faq.question}</span>
-                    <span class="text-xl text-gray-500">
-                    {faq.open ? '−' : '+'}
-                </span>
-                </button>
-                {#if faq.open}
-                    <div class="px-6 py-4 border-t border-gray-300">
-                        <p class="text-gray-700">{faq.answer}</p>
-                    </div>
+        {#each data.groups as group, i (group.slug)}
+            <article class="grid grid-cols-[72px_minmax(0,1fr)] gap-4 py-7 sm:grid-cols-[120px_minmax(0,1fr)] sm:gap-7 {i < data.groups.length - 1 ? 'border-b border-line' : ''}">
+                {#if group.image}
+                    <img src={group.image} alt="Gruppenbild {group.name}" width="120" height="120" loading="lazy" decoding="async" class="h-auto w-full" />
+                {:else}
+                    <span></span>
                 {/if}
-            </div>
+                <div>
+                    <h3 class="text-[22px] font-bold leading-snug">
+                        <a href={group.href} class="group-name hover:underline" style="--g: {group.color}">{group.typeLabel} – {group.name}</a>
+                    </h3>
+                    {#if meta(group)}<p class="text-muted">{meta(group)}</p>{/if}
+                    {#if group.teaser}<p class="mt-2">{group.teaser}</p>{/if}
+                    <p class="mt-2"><a href={group.href} class="text-link">Mehr zur {group.typeLabel}</a></p>
+                </div>
+            </article>
+        {:else}
+            <p class="mt-6 text-muted">Die Gruppen konnten gerade nicht geladen werden – schau gern später noch einmal vorbei.</p>
         {/each}
-    </div>
+    </section>
 
-    <div class="mt-10">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">Hier findest du uns</h2>
-        <Map/>
-    </div>
-</section>
+    <section class="pt-12" aria-labelledby="h-termine">
+        <h2 id="h-termine" class="mb-4 text-[28px] font-bold text-ink">Nächste Termine</h2>
+        <EventList events={data.events} />
+        <p class="border-t border-line pt-3"><a href="/termine" class="text-link">Alle Termine</a></p>
+    </section>
 
+    <section class="pt-12" aria-labelledby="h-ueber">
+        <h2 id="h-ueber" class="mb-4 text-[28px] font-bold text-ink">Über uns</h2>
+        <div class="max-w-3xl space-y-3.5 leading-relaxed">
+            <p>
+                Wir sind der <strong class="text-ink">Stamm Edelweißpiraten</strong> der Christlichen Pfadfinderschaft Deutschlands e.V. (CPD).
+                Unser Zuhause ist Bremen-Hastedt, wo wir eng mit der Evangelischen Auferstehungsgemeinde zusammenarbeiten.
+                Als Teil der CPD bieten wir Kindern und Jugendlichen eine lebendige Gemeinschaft, in der Abenteuer, Freundschaft und
+                Verantwortung großgeschrieben werden.
+            </p>
+            <p>
+                Neben unseren wöchentlichen Gruppenstunden unternehmen wir regelmäßig spannende Fahrten und Aktionen. Ob im Wald,
+                am Lagerfeuer oder auf einem Zeltplatz – bei uns gibt es immer etwas zu erleben.
+            </p>
+            <p>Jede und jeder ist willkommen – komm vorbei und mach mit!</p>
+        </div>
+    </section>
+
+    <section class="grid gap-12 pt-12 md:grid-cols-2">
+        <div>
+            <h2 class="mb-4 text-[28px] font-bold text-ink">Häufige Fragen</h2>
+            <div class="border-t border-line-strong">
+                {#each data.faqs as faq, index (faq.id)}
+                    <div class="border-b border-line-strong">
+                        <button
+                                type="button"
+                                class="flex w-full items-center justify-between gap-4 py-3.5 text-left font-semibold text-ink"
+                                aria-expanded={openFaq === index}
+                                aria-controls="faq-{faq.id}"
+                                on:click={() => (openFaq = openFaq === index ? null : index)}
+                        >
+                            {faq.question}
+                            <span class="text-xl text-muted" aria-hidden="true">{openFaq === index ? '−' : '+'}</span>
+                        </button>
+                        {#if openFaq === index}
+                            <p id="faq-{faq.id}" class="pb-3.5">{faq.answer}</p>
+                        {/if}
+                    </div>
+                {/each}
+            </div>
+        </div>
+        <div>
+            <h2 class="mb-4 text-[28px] font-bold text-ink">Hier findest du uns</h2>
+            <p class="mb-3">Ev. Auferstehungsgemeinde<br />Drakenburger Str. 42<br />28207 Bremen</p>
+            <Map height="h-[260px]" />
+        </div>
+    </section>
+</div>

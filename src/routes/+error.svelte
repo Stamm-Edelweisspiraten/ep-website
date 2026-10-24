@@ -60,7 +60,7 @@
 </svelte:head>
 
 <section class="mx-auto max-w-2xl px-6 py-20 text-center">
-    <p class="text-sm font-semibold tracking-wide text-gray-500 uppercase">Fehler {status}</p>
+    <p class="text-base font-semibold text-gray-700">Fehler {status}</p>
     {#if notFound}
         <h1 class="mt-2 text-3xl font-bold text-gray-900">Diese Seite gibt es nicht (mehr)</h1>
         <p class="mt-3 text-gray-600">

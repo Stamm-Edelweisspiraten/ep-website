@@ -182,7 +182,7 @@
     <li>
         <a
             href={`/termine/${e.key}`}
-            class="group flex h-full flex-col border border-gray-200 bg-white transition hover:-translate-y-0.5 hover:shadow-md"
+            class="group flex h-full flex-col border border-gray-200 bg-white transition hover:border-gray-400"
         >
             <span class="h-1.5 {color ? '' : 'bg-blue-700'}" style={color ? `background-color: ${color}` : ''}></span>
             <span class="flex flex-1 flex-col gap-2 p-4">
@@ -224,7 +224,7 @@
                 <button
                     type="button"
                     class="inline-flex h-10 items-center gap-2 px-3 text-sm transition {view === v.id
-                        ? 'bg-blue-700 text-white'
+                        ? 'bg-gray-900 text-white'
                         : 'text-gray-700 hover:bg-gray-50'}"
                     aria-pressed={view === v.id}
                     on:click={() => setView(v.id)}
@@ -238,7 +238,7 @@
     </header>
 
     <!-- Filter -->
-    <div class="space-y-3 border border-gray-200 bg-white p-4">
+    <div class="space-y-3 border-y border-gray-200 py-4">
         <div class="relative max-w-md">
             <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400">
                 <Icon name="search" />
@@ -253,12 +253,12 @@
         </div>
         {#if groups.length}
             <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Gruppen">
-                <span class="mr-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Gruppen</span>
+                <span class="mr-1 text-sm text-gray-500">Gruppen</span>
                 {#each groups as g (g.id)}
                     {@const on = selectedGroups.includes(g.id)}
                     <button
                         type="button"
-                        class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition {on
+                        class="inline-flex items-center gap-1.5 rounded border px-3 py-1 text-sm transition {on
                             ? 'border-gray-900 bg-gray-900 text-white'
                             : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'}"
                         aria-pressed={on}
@@ -276,12 +276,12 @@
         {/if}
         {#if tags.length}
             <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Themen">
-                <span class="mr-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">Themen</span>
+                <span class="mr-1 text-sm text-gray-500">Themen</span>
                 {#each tags as t (t)}
                     {@const on = selectedTags.includes(t)}
                     <button
                         type="button"
-                        class="rounded-full border px-3 py-1 text-sm transition {on
+                        class="rounded border px-3 py-1 text-sm transition {on
                             ? 'border-gray-900 bg-gray-900 text-white'
                             : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'}"
                         aria-pressed={on}
@@ -316,7 +316,7 @@
                         <li>
                             <a
                                 href={`/termine/${s.next.key}`}
-                                class="flex h-full gap-3 border border-gray-200 bg-white p-4 transition hover:border-gray-300 hover:shadow-sm"
+                                class="flex h-full gap-3 border border-gray-200 bg-white p-4 transition hover:border-gray-400"
                             >
                                 <span
                                     class="w-1 shrink-0 rounded-full {s.color ? '' : 'bg-blue-700'}"
@@ -358,7 +358,7 @@
             {:else if view === 'liste'}
                 {#each groupByMonth(upcomingShown) as m (m.month)}
                     <div>
-                        <h3 class="mb-2 text-sm font-semibold tracking-wide text-gray-500 uppercase">
+                        <h3 class="mb-2 text-base font-semibold text-gray-700">
                             {formatMonth(m.month)}
                         </h3>
                         <ul class="divide-y divide-gray-100 border border-gray-200 bg-white">
@@ -402,7 +402,7 @@
                     <h2 id="vergangen" class="text-lg font-semibold text-gray-900">Vergangene Termine</h2>
                     {#each groupByMonth(singles.past) as m (m.month)}
                         <div class="opacity-80">
-                            <h3 class="mb-2 text-sm font-semibold tracking-wide text-gray-500 uppercase">
+                            <h3 class="mb-2 text-base font-semibold text-gray-700">
                                 {formatMonth(m.month)}
                             </h3>
                             <ul class="divide-y divide-gray-100 border border-gray-200 bg-white">
