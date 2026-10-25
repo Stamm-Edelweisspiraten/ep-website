@@ -7,6 +7,7 @@
     import EventList from '$lib/components/EventList.svelte';
     import FaqList from '$lib/components/FaqList.svelte';
     import Icon from '$lib/components/Icon.svelte';
+    import ContactGuard from '$lib/components/ContactGuard.svelte';
     import { formatLongDate, formatMonth } from '$lib/dates';
 
     export let data;
@@ -270,6 +271,7 @@
                 <input id="k-ok" name="consent" type="checkbox" required />
                 <label for="k-ok">Ich habe die <a href="/datenschutz#m182" class="text-link">Hinweise zum Datenschutz</a> gelesen und bin einverstanden, dass meine Angaben zur Beantwortung verarbeitet werden.</label>
             </div>
+            <ContactGuard />
             <div class="formfoot full">
                 <p class="cap">Wir nutzen deine Angaben nur, um dir zu antworten.</p>
                 <button class="pill" type="submit"><Icon name="send" size={18} />Nachricht senden</button>

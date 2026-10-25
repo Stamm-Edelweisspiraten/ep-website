@@ -8,6 +8,9 @@
  * - Text als Base64 (UTF-8), daher keine Kopfzeilen-/SMTP-Injection über den Nachrichtentext.
  * - Keine automatische Antwort an die eingegebene Adresse (sonst Versand an beliebige Dritte).
  * - Honeypot-Feld und Rate-Limit je IP (in `routes/kontakt/+page.server.ts`).
+ *
+ * Seit 2026-10-25 geht die Anfrage zuerst an den Intern-Bereich (Posteingang, Stamm-Postfach) – mit Proof-of-Work
+ * und Zeitfalle (`POW_FIELD`, geprüft im Backend); der SMTP-Versand ist nur noch Rückfall bei Ausfall des Backends.
  */
 import { randomUUID } from 'node:crypto';
 
@@ -15,6 +18,35 @@ export const CONTACT_LIMITS = { name: 100, email: 254, phone: 40, message: 5000 
 /** Name des versteckten Honeypot-Felds (Menschen sehen es nicht, Bots füllen es aus) */
 export const HONEYPOT_FIELD = 'website';
 export const CONTACT_SUBJECT = 'Kontaktanfrage über die Website';
+/** Verstecktes Feld mit der Lösung der Spam-Schutz-Aufgabe (JSON, setzt `ContactGuard.svelte`) */
+export const POW_FIELD = 'pow';
+
+export interface PowSolution {
+	salt: string;
+	challenge: string;
+	number: number;
+	signature: string;
+}
+
+/** Lösung aus dem Formular lesen (nur Form prüfen; Echtheit prüft das Backend), sonst `null` */
+export function parsePow(form: FormData): PowSolution | null {
+	const raw = field(form, POW_FIELD);
+	if (!raw || raw.length > 400) return null;
+	try {
+		const v = JSON.parse(raw) as Record<string, unknown>;
+		const text = (x: unknown) => typeof x === 'string' && x.length > 0 && x.length <= 128;
+		if (!text(v.salt) || !text(v.challenge) || !text(v.signature)) return null;
+		if (typeof v.number !== 'number' || !Number.isInteger(v.number) || v.number < 0) return null;
+		return {
+			salt: v.salt as string,
+			challenge: v.challenge as string,
+			number: v.number,
+			signature: v.signature as string
+		};
+	} catch {
+		return null;
+	}
+}
 
 export interface ContactInput {
 	name: string;

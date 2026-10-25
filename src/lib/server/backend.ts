@@ -7,7 +7,8 @@
  * Umgebung:
  * - `WEBSITE_API_URL` – Basis-URL des Backends ohne abschließenden Schrägstrich (Standard `http://app:3000`)
  * - `WEBSITE_API_KEY` – API-Key mit den Scopes `events.website.read`, `galleries.website.read`, `members.website.read`,
- *   `offices.website.read` („Unser Team“), `website.content.read` (Banner, häufige Fragen, Blog)
+ *   `offices.website.read` („Unser Team“), `website.content.read` (Banner, häufige Fragen, Blog),
+ *   `messages.website.contact` (Kontaktformular → Posteingang)
  */
 import { env } from '$env/dynamic/private';
 import type {
@@ -119,6 +120,7 @@ function logAuthProblem(status: number, path: string, message: string) {
 				'In Administration → API-Keys prüfen bzw. neuen Key anlegen und WEBSITE_API_KEY im Website-Dienst ersetzen.'
 			: `API-Key ${prefix}… fehlt ein Recht für ${path}. Benötigte Scopes: events.website.read ` +
 				'galleries.website.read members.website.read offices.website.read website.content.read ' +
+				'messages.website.contact ' +
 				'(und das Konto muss sie selbst haben).';
 	console.error(`[backend] ${hint}${message ? ` Backend: „${message}“` : ''}`);
 }
@@ -183,6 +185,85 @@ async function getJson<T>(path: string, query?: Record<string, string | number |
 		const body = (await res.json()) as { data: T };
 		return body.data;
 	}) as Promise<T>;
+}
+
+// --- Kontaktformular (Posteingang im Intern-Bereich) ---------------------------------------------
+
+const CONTACT_BASE = '/api/v1/modules/messages/website/contact';
+
+/** Spam-Schutz-Aufgabe (Proof-of-Work) vom Backend – nie zwischengespeichert, jede Aufgabe gilt nur einmal */
+export interface ContactChallenge {
+	algorithm: 'SHA-256';
+	salt: string;
+	challenge: string;
+	maxNumber: number;
+	signature: string;
+	expiresAt: string;
+}
+
+export interface ContactSubmission {
+	name: string;
+	email: string;
+	phone: string;
+	message: string;
+	pow: { salt: string; challenge: string; number: number; signature: string };
+}
+
+export async function fetchContactChallenge(): Promise<ContactChallenge> {
+	const path = buildPath(`${CONTACT_BASE}/challenge`);
+	let res: Response;
+	try {
+		res = await request(path, 'application/json');
+	} catch (e) {
+		console.error(`[backend] ${path}: nicht erreichbar`, e instanceof Error ? e.message : e);
+		throw new BackendError(503, 'Backend nicht erreichbar');
+	}
+	if (!res.ok) {
+		if (res.status === 401 || res.status === 403) logAuthProblem(res.status, path, '');
+		else console.error(`[backend] ${path}: HTTP ${res.status}`);
+		throw new BackendError(res.status, `Backend antwortet mit ${res.status}`);
+	}
+	return ((await res.json()) as { data: ContactChallenge }).data;
+}
+
+/**
+ * Anfrage in den Posteingang legen. Wiederholungen bei Aussetzern sind unbedenklich: dieselbe Aufgabe kann das
+ * Backend nur einmal einlösen, eine zweite Zustellung beantwortet es mit 409 (= schon angekommen).
+ * Wirft `BackendError` (422 = Spam-Schutz/Eingaben abgelehnt, Text in `message`).
+ */
+export async function submitContact(input: ContactSubmission): Promise<void> {
+	const { baseUrl, apiKey } = config();
+	const path = buildPath(CONTACT_BASE);
+	let res: Response;
+	try {
+		res = await fetchWithRetry(
+			() =>
+				fetch(`${baseUrl}${path}`, {
+					method: 'POST',
+					headers: {
+						authorization: `Bearer ${apiKey}`,
+						accept: 'application/json',
+						'content-type': 'application/json'
+					},
+					body: JSON.stringify(input),
+					signal: AbortSignal.timeout(TIMEOUT_MS * 2)
+				}),
+			{
+				delays: RETRY_DELAYS_MS,
+				onRetry: ({ attempt, reason, waitMs }) =>
+					console.warn(`[backend] ${path}: ${reason} – Versuch ${attempt + 1} in ${waitMs} ms`)
+			}
+		);
+	} catch (e) {
+		console.error(`[backend] ${path}: nicht erreichbar`, e instanceof Error ? e.message : e);
+		throw new BackendError(503, 'Backend nicht erreichbar');
+	}
+	if (res.ok || res.status === 409) return;
+	const body = (await res.json().catch(() => null)) as { error?: { message?: string } } | null;
+	const message = body?.error?.message ?? '';
+	if (res.status === 401 || res.status === 403) logAuthProblem(res.status, path, message);
+	else if (res.status !== 422) console.error(`[backend] ${path}: HTTP ${res.status}`);
+	throw new BackendError(res.status, message || `Backend antwortet mit ${res.status}`);
 }
 
 /** Bild aus dem Backend holen (für den Bild-Proxy); `null` bei 404. */

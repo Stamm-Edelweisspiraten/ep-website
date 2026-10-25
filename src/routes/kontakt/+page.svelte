@@ -9,6 +9,7 @@
     import Map from '$lib/components/Map.svelte';
     import EmailButtons from '$lib/components/EmailButtons.svelte';
     import Icon from '$lib/components/Icon.svelte';
+    import ContactGuard from '$lib/components/ContactGuard.svelte';
 
     export let data;
     /** Ergebnis der Form-Action (`+page.server.ts`): Fehlertext, Feldfehler, eingegebene Werte */
@@ -91,6 +92,7 @@
                         </div>
                         {#if errors.consent}<p id="consent-error" class="field-error" role="alert">{errors.consent}</p>{/if}
                     </div>
+                    <ContactGuard />
                     <div class="formfoot full">
                         <p class="cap">Alle Felder außer Telefon sind Pflicht.</p>
                         <button type="submit" class="pill"><Icon name="send" size={18} />Nachricht senden</button>
