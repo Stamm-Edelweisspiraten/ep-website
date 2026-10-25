@@ -4,4 +4,4 @@
     export let data;
 </script>
 
-<GroupPage group={data.group} />
+<GroupPage group={data.group} events={data.events} galleries={data.galleries} />

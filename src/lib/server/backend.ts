@@ -262,7 +262,7 @@ export interface Group {
 	ageRange: string;
 	/** „Freitags“ */
 	weekday: string;
-	/** „16:30 Uhr - 18:00 Uhr“ */
+	/** „16:30–18:00 Uhr“ */
 	time: string;
 	meetingPlace: string;
 	/** „Larissa und Philipp“ */
@@ -289,7 +289,7 @@ function toGroup(g: BackendGroup): Group {
 	const day = g.meetingWeekday ? WEEKDAYS[g.meetingWeekday - 1] : undefined;
 	const time = g.meetingTime
 		? g.meetingEndTime
-			? `${g.meetingTime} Uhr - ${g.meetingEndTime} Uhr`
+			? `${g.meetingTime}–${g.meetingEndTime} Uhr`
 			: `${g.meetingTime} Uhr`
 		: '';
 	const description = g.description?.trim() ?? '';

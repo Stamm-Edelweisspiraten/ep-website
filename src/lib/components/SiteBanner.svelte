@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import type { SiteBanner } from '$lib/site-types';
+    import Icon from '$lib/components/Icon.svelte';
 
     /** Laufende Banner mit `placement: 'bar'` (aus dem Layout-Load) */
     export let banners: SiteBanner[] = [];
@@ -38,37 +39,80 @@
 </script>
 
 {#each visible as banner (banner.id)}
-    <aside
-        aria-label="Hinweis"
-        class="border-b {banner.level === 'important'
-            ? 'border-alert-line bg-alert'
-            : 'border-notice-line bg-notice'} text-ink"
-    >
-        <div class="site-container flex items-start gap-4 py-2.5">
-            <p class="min-w-0 flex-1 text-base leading-snug {banner.level === 'important' ? 'font-medium' : ''}">
-                {#if banner.title}<strong class="font-semibold">{banner.title}:</strong>{/if}
-                {banner.text}
-                {#if banner.linkUrl}
-                    <a
-                        href={banner.linkUrl}
-                        class="text-link whitespace-nowrap"
-                        target={banner.linkExternal ? '_blank' : undefined}
-                        rel={banner.linkExternal ? 'noopener noreferrer' : undefined}
-                    >{banner.linkLabel ?? 'Mehr erfahren'}</a>
-                {/if}
-            </p>
-            {#if banner.dismissible}
-                <button
-                    type="button"
-                    class="-my-1.5 inline-flex size-9 shrink-0 items-center justify-center text-muted hover:text-ink"
-                    aria-label="Hinweis schließen"
-                    on:click={() => dismiss(banner)}
-                >
-                    <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+    <aside aria-label="Hinweis" class="bar {banner.level === 'important' ? 'important' : ''}">
+        <p>
+            <Icon name={banner.level === 'important' ? 'alert' : 'info'} size={18} class="bi" />
+            {#if banner.title}<strong>{banner.title}:</strong>{/if}
+            <span>{banner.text}</span>
+            {#if banner.linkUrl}
+                <a
+                    href={banner.linkUrl}
+                    target={banner.linkExternal ? '_blank' : undefined}
+                    rel={banner.linkExternal ? 'noopener noreferrer' : undefined}
+                >{banner.linkLabel ?? 'Mehr erfahren'}</a>
             {/if}
-        </div>
+        </p>
+        {#if banner.dismissible}
+            <button type="button" class="close" aria-label="Hinweis schließen" on:click={() => dismiss(banner)}>
+                <Icon name="x" size={18} />
+            </button>
+        {/if}
     </aside>
 {/each}
+
+<style>
+    .bar {
+        position: relative;
+        background: var(--color-subtle);
+        color: var(--color-ink);
+        font-size: 15px;
+        line-height: 1.45;
+        padding: 10px 56px;
+        text-align: center;
+    }
+    .bar.important {
+        background: var(--color-ink);
+        color: var(--color-on-ink);
+    }
+    .bar :global(.bi) {
+        display: inline-block;
+        vertical-align: -3px;
+        margin-right: 6px;
+    }
+    strong {
+        font-weight: 600;
+    }
+    a {
+        font-weight: 500;
+        margin-left: 8px;
+        white-space: nowrap;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+    .close {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: inherit;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+    .close:hover {
+        background: rgba(127, 127, 127, 0.15);
+    }
+    @media (max-width: 50rem) {
+        .bar {
+            font-size: 14px;
+            padding: 10px 52px 10px 16px;
+            text-align: left;
+        }
+    }
+</style>

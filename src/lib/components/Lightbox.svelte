@@ -59,7 +59,7 @@
 </script>
 
 <div
-    class="fixed inset-0 z-50 flex flex-col bg-black text-white"
+    class="fixed inset-0 z-50 flex flex-col bg-[#0a0a0b]/95 text-white"
     style="overscroll-behavior: contain"
     role="dialog"
     aria-modal="true"
@@ -73,9 +73,9 @@
         <button
             type="button"
             bind:this={closeButton}
-            class="inline-flex size-10 items-center justify-center transition-colors hover:bg-white/10"
+            class="inline-flex size-12 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
             aria-label="Schließen"
-            on:click={close}><Icon name="x" size={26} /></button
+            on:click={close}><Icon name="x" size={22} /></button
         >
     </div>
 
@@ -83,9 +83,9 @@
         {#if images.length > 1}
             <button
                 type="button"
-                class="absolute left-2 z-10 inline-flex size-12 items-center justify-center bg-black/40 transition-colors hover:bg-white/15"
+                class="absolute left-2 z-10 inline-flex size-12 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
                 aria-label="Vorheriges Bild"
-                on:click={prev}><Icon name="chevron-left" size={30} /></button
+                on:click={prev}><Icon name="chevron-left" size={24} /></button
             >
         {/if}
         {#if image}
@@ -96,9 +96,9 @@
         {#if images.length > 1}
             <button
                 type="button"
-                class="absolute right-2 z-10 inline-flex size-12 items-center justify-center bg-black/40 transition-colors hover:bg-white/15"
+                class="absolute right-2 z-10 inline-flex size-12 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
                 aria-label="Nächstes Bild"
-                on:click={next}><Icon name="chevron-right" size={30} /></button
+                on:click={next}><Icon name="chevron-right" size={24} /></button
             >
         {/if}
     </div>

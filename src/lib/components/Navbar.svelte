@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { page } from '$app/stores';
     import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+    import Icon from '$lib/components/Icon.svelte';
 
     /**
      * Gruppen aus dem Intern-Bereich (Layout-Load)
@@ -9,7 +10,7 @@
      */
     export let groups = [];
 
-    // Meute(n) zuerst, dann Sippe(n) – wie im früheren festen Menü
+    // Meute(n) zuerst, dann Sippe(n)
     $: sections = [
         { label: 'Meute', groups: groups.filter((g) => g.type === 'meute') },
         { label: 'Sippe', groups: groups.filter((g) => g.type === 'sippe') }
@@ -18,36 +19,45 @@
     const links = [
         { href: '/termine', label: 'Termine' },
         { href: '/galerie', label: 'Galerie' },
-        { href: '/blog', label: 'Blog' },
+        { href: '/blog', label: 'Blog' }
+    ];
+    const about = [
         { href: '/team', label: 'Unser Team' },
-        { href: '/cpd', label: 'CPD' },
+        { href: '/cpd', label: 'Unser Bund (CPD)' },
+        { href: '/faq', label: 'Häufige Fragen' },
         { href: '/kontakt', label: 'Kontakt' }
     ];
 
     let open = false;
-    let gruppenOpen = false;
+    /** @type {'' | 'gruppen' | 'about'} */
+    let dropdown = '';
 
     $: path = $page.url.pathname;
     $: inGroups = path.startsWith('/meute') || path.startsWith('/sippe');
-    /** @param {string} href */
-    const active = (href) => path === href || path.startsWith(`${href}/`);
+    $: inAbout = about.some((l) => active(l.href, path));
+    /** @param {string} href @param {string} p */
+    const active = (href, p) => p === href || p.startsWith(`${href}/`);
 
     // Menüs nach dem Seitenwechsel schließen
-    $: path, (open = false), (gruppenOpen = false);
+    $: path, (open = false), (dropdown = '');
+
+    /** @param {'gruppen' | 'about'} which */
+    function toggle(which) {
+        dropdown = dropdown === which ? '' : which;
+    }
 
     /** @param {MouseEvent} event */
     function handleClickOutside(event) {
-        const dropdown = document.getElementById('gruppen-dropdown');
-        const button = document.getElementById('gruppen-button');
-        const target = /** @type {Node} */ (event.target);
-        if (dropdown && !dropdown.contains(target) && button && !button.contains(target)) {
-            gruppenOpen = false;
-        }
+        const target = /** @type {HTMLElement} */ (event.target);
+        if (!target.closest?.('[data-dropdown]')) dropdown = '';
     }
 
     /** @param {KeyboardEvent} event */
     function handleKey(event) {
-        if (event.key === 'Escape') gruppenOpen = false;
+        if (event.key === 'Escape') {
+            dropdown = '';
+            open = false;
+        }
     }
 
     onMount(() => {
@@ -58,106 +68,228 @@
 
 <svelte:window on:keydown={handleKey} />
 
-<nav class="sticky top-0 z-50 border-b border-line bg-page" aria-label="Hauptmenü">
-    <div class="site-container flex h-16 items-center justify-between gap-6">
-        <a href="/" class="text-xl font-extrabold tracking-tight text-brand" translate="no">Edelweißpiraten</a>
+<header class="site-container nav">
+    <a class="mark" href="/" translate="no"><img src="/logo.avif" alt="" width="26" height="38" /><span>Edelweißpiraten</span></a>
 
-        <!-- Desktop -->
-        <div class="hidden items-center gap-6 md:flex">
-            <div class="relative">
-                <button
-                        id="gruppen-button"
-                        type="button"
-                        class="nav-link flex items-center gap-1 {inGroups ? 'is-active' : ''}"
-                        aria-expanded={gruppenOpen}
-                        aria-controls="gruppen-dropdown"
-                        on:click={() => (gruppenOpen = !gruppenOpen)}
-                >
-                    Gruppen
-                    <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
-
-                {#if gruppenOpen}
-                    <div id="gruppen-dropdown" class="absolute left-0 top-full z-50 mt-2 w-64 border border-line-strong bg-surface py-2">
-                        {#each sections as section, i (section.label)}
-                            <p class="px-4 pb-1 text-sm text-muted {i > 0 ? 'mt-2 border-t border-line pt-3' : 'pt-1'}">{section.label}</p>
-                            {#each section.groups as group (group.slug)}
-                                <a href={group.href} class="block px-4 py-2 text-ink hover:bg-subtle">{group.name}</a>
-                            {/each}
-                        {/each}
-                        {#if sections.length === 0}
-                            <p class="px-4 py-2 text-sm text-muted">Die Gruppen konnten gerade nicht geladen werden.</p>
-                        {/if}
-                    </div>
-                {/if}
-            </div>
-
-            {#each links as link (link.href)}
-                <a href={link.href} class="nav-link {active(link.href) ? 'is-active' : ''}" aria-current={active(link.href) ? 'page' : undefined}>{link.label}</a>
-            {/each}
-            <ThemeToggle />
-        </div>
-
-        <!-- Mobil -->
-        <div class="flex items-center md:hidden">
-            <ThemeToggle />
+    <nav class="links" aria-label="Hauptmenü">
+        <div class="dd" data-dropdown>
             <button
-                    type="button"
-                    on:click={() => (open = !open)}
-                    class="inline-flex size-11 items-center justify-center text-body"
-                    aria-expanded={open}
-                    aria-controls="mobile-menu"
-                    aria-label={open ? 'Menü schließen' : 'Menü öffnen'}
-            >
-                <svg class="size-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={open ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
-                </svg>
-            </button>
+                type="button"
+                class="nl {inGroups ? 'is-active' : ''}"
+                aria-expanded={dropdown === 'gruppen'}
+                aria-controls="dd-gruppen"
+                on:click={() => toggle('gruppen')}
+            >Gruppen<Icon name="chevron-down" size={16} /></button>
+            {#if dropdown === 'gruppen'}
+                <div id="dd-gruppen" class="panel">
+                    {#each sections as section (section.label)}
+                        <p class="pl">{section.label}</p>
+                        {#each section.groups as group (group.slug)}
+                            <a href={group.href} class="pi" aria-current={active(group.href, path) ? 'page' : undefined}
+                                ><span class="dot" style="--g: {group.color}"></span>{group.name}</a
+                            >
+                        {/each}
+                    {/each}
+                    {#if sections.length === 0}
+                        <p class="pl">Die Gruppen konnten gerade nicht geladen werden.</p>
+                    {/if}
+                    <a href="/#gruppen" class="pi all">Alle Gruppen auf einen Blick</a>
+                </div>
+            {/if}
         </div>
-    </div>
+        {#each links as link (link.href)}
+            <a href={link.href} class="nl {active(link.href, path) ? 'is-active' : ''}" aria-current={active(link.href, path) ? 'page' : undefined}
+                >{link.label}</a
+            >
+        {/each}
+        <div class="dd" data-dropdown>
+            <button
+                type="button"
+                class="nl {inAbout ? 'is-active' : ''}"
+                aria-expanded={dropdown === 'about'}
+                aria-controls="dd-about"
+                on:click={() => toggle('about')}
+            >Über uns<Icon name="chevron-down" size={16} /></button>
+            {#if dropdown === 'about'}
+                <div id="dd-about" class="panel right">
+                    {#each about as link (link.href)}
+                        <a href={link.href} class="pi" aria-current={active(link.href, path) ? 'page' : undefined}>{link.label}</a>
+                    {/each}
+                </div>
+            {/if}
+        </div>
+    </nav>
 
-    {#if open}
-        <div id="mobile-menu" class="border-t border-line bg-page px-4 pb-4 md:hidden">
+    <div class="end">
+        <ThemeToggle />
+        <a class="round hide-m" href="/kontakt" aria-label="Kontakt" title="Kontakt"><Icon name="mail" /></a>
+        <a class="pill hide-m" href="/#gruppen">Probestunde</a>
+        <button
+            type="button"
+            class="round menu"
+            on:click={() => (open = !open)}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? 'Menü schließen' : 'Menü öffnen'}
+        >
+            <Icon name={open ? 'x' : 'menu'} />
+        </button>
+    </div>
+</header>
+
+{#if open}
+    <nav id="mobile-menu" class="mobile" aria-label="Menü">
+        <div class="site-container">
             {#each sections as section (section.label)}
-                <p class="mt-4 text-sm text-muted">{section.label}</p>
+                <p class="ml">{section.label}</p>
                 {#each section.groups as group (group.slug)}
-                    <a href={group.href} class="mobile-link">{group.name}</a>
+                    <a href={group.href} class="mi" aria-current={active(group.href, path) ? 'page' : undefined}
+                        ><span class="dot" style="--g: {group.color}"></span>{group.name}</a
+                    >
                 {/each}
             {/each}
-            <div class="mt-4 border-t border-line pt-2">
-                {#each links as link (link.href)}
-                    <a href={link.href} class="mobile-link" aria-current={active(link.href) ? 'page' : undefined}>{link.label}</a>
-                {/each}
-            </div>
+            <p class="ml">Stamm</p>
+            {#each [...links, ...about] as link (link.href)}
+                <a href={link.href} class="mi" aria-current={active(link.href, path) ? 'page' : undefined}>{link.label}</a>
+            {/each}
+            <p style="margin-top: 20px"><a class="pill" href="/#gruppen">Probestunde</a></p>
         </div>
-    {/if}
-</nav>
+    </nav>
+{/if}
 
 <style>
-    .nav-link {
-        color: var(--color-body);
-        padding: 0.5rem 0;
-        border-bottom: 2px solid transparent;
-        transition: color 0.15s ease, border-color 0.15s ease;
+    .nav {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        height: 76px;
     }
-    .nav-link:hover {
-        color: var(--color-ink);
-        border-bottom-color: var(--color-line-strong);
-    }
-    .nav-link.is-active {
-        color: var(--color-ink);
-        border-bottom-color: var(--color-brand);
-    }
-    .mobile-link {
-        display: block;
-        padding: 0.6rem 0;
-        font-size: 1.0625rem;
-        color: var(--color-ink);
-    }
-    .mobile-link[aria-current='page'] {
-        color: var(--color-brand);
+    .mark {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
         font-weight: 600;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+        color: var(--color-ink);
+        justify-self: start;
+    }
+    .mark img {
+        width: 26px;
+        height: auto;
+        display: block;
+    }
+    .links {
+        display: flex;
+        gap: 28px;
+        font-size: 16px;
+        font-weight: 500;
+        align-items: center;
+    }
+    .nl {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+        padding: 6px 0;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background: none;
+        color: var(--color-ink);
+        font: inherit;
+        cursor: pointer;
+        transition: border-color 0.15s ease;
+    }
+    .nl:hover,
+    .nl.is-active {
+        border-bottom-color: var(--color-ink);
+    }
+    .dd {
+        position: relative;
+    }
+    .panel {
+        position: absolute;
+        left: -16px;
+        top: calc(100% + 10px);
+        z-index: 60;
+        min-width: 260px;
+        background: var(--color-subtle);
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+    }
+    .panel.right {
+        left: auto;
+        right: -16px;
+    }
+    .pl {
+        padding: 10px 12px 4px;
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--color-muted);
+    }
+    .pi {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 44px;
+        padding: 0 12px;
+        text-decoration: none;
+        color: var(--color-ink);
+    }
+    .pi:hover,
+    .pi[aria-current='page'] {
+        background: var(--color-page);
+    }
+    .pi.all {
+        margin-top: 6px;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+    .end {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+    }
+    .menu {
+        display: none;
+    }
+    .mobile {
+        background: var(--color-subtle);
+        padding-block: 8px 28px;
+    }
+    .ml {
+        margin-top: 18px;
+        font-size: 14px;
+        color: var(--color-muted);
+    }
+    .mi {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 48px;
+        font-size: 18px;
+        font-weight: 500;
+        text-decoration: none;
+        color: var(--color-ink);
+    }
+    .mi[aria-current='page'] {
+        text-decoration: underline;
+        text-underline-offset: 5px;
+    }
+    @media (max-width: 62rem) {
+        .nav {
+            grid-template-columns: 1fr auto;
+            height: 64px;
+        }
+        .links,
+        .hide-m {
+            display: none;
+        }
+        .menu {
+            display: inline-flex;
+        }
     }
 </style>

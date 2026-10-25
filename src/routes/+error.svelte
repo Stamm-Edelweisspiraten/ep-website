@@ -59,19 +59,19 @@
     <meta name="robots" content="noindex" />
 </svelte:head>
 
-<section class="site-container py-20 text-center">
-<div class="mx-auto max-w-2xl">
-    <p class="text-small font-semibold text-muted tabular-nums">Fehler {status}</p>
+<section class="site-container" style="padding-block: 64px 24px">
+<div style="max-width: 900px">
+    <p class="cap tab strong">Fehler {status}</p>
     {#if notFound}
-        <h1 class="mt-2 text-display text-ink">Diese Seite gibt es nicht (mehr)</h1>
-        <p class="mt-3 text-lede text-body">
+        <h1 class="display err-title">Diese Seite gibt es nicht (mehr)</h1>
+        <p class="err-lede">
             {$page.error?.message && $page.error.message !== 'Not Found'
                 ? $page.error.message
                 : 'Vielleicht wurde sie verschoben oder der Link ist veraltet.'}
         </p>
     {:else if unavailable}
-        <h1 class="mt-2 text-display text-ink">Gerade nicht erreichbar</h1>
-        <p class="mt-3 text-lede text-body">
+        <h1 class="display err-title">Gerade nicht erreichbar</h1>
+        <p class="err-lede">
             {($page.error?.message ?? 'Die Daten konnten gerade nicht geladen werden').replace(/\.?$/, '.')} Meist ist das nach wenigen Sekunden
             wieder vorbei.
         </p>
@@ -85,23 +85,37 @@
             {/if}
         </p>
     {:else}
-        <h1 class="mt-2 text-display text-ink">Da ist etwas schiefgegangen</h1>
-        <p class="mt-3 text-lede text-body">{$page.error?.message ?? 'Unbekannter Fehler.'}</p>
+        <h1 class="display err-title">Da ist etwas schiefgegangen</h1>
+        <p class="err-lede">{$page.error?.message ?? 'Unbekannter Fehler.'}</p>
     {/if}
 
-    <div class="mt-8 flex flex-wrap justify-center gap-3">
+    <div class="acts" style="margin-top: 32px">
         {#if unavailable}
             <button
                 type="button"
-                class="bg-ink px-4 py-2 font-medium text-page transition-colors hover:bg-body disabled:opacity-60"
+                class="pill"
                 disabled={retrying}
                 on:click={() => ((attempt = 0), retry())}
             >
                 Jetzt erneut versuchen
             </button>
         {/if}
-        <a href="/" class="border border-line-strong bg-surface px-4 py-2 text-ink transition-colors hover:bg-subtle">Zur Startseite</a>
-        <a href="/kontakt" class="border border-line-strong bg-surface px-4 py-2 text-ink transition-colors hover:bg-subtle">Kontakt</a>
+        <a href="/" class="pill {unavailable ? 'soft' : ''}">Zur Startseite</a>
+        <a href="/termine" class="pill soft">Termine</a>
+        <a href="/kontakt" class="pill soft">Kontakt</a>
     </div>
 </div>
 </section>
+
+<style>
+    .err-title {
+        margin-top: 12px;
+        font-size: clamp(56px, 8vw, 120px);
+    }
+    .err-lede {
+        margin-top: 20px;
+        font-size: 18px;
+        color: var(--color-body);
+        max-width: 56ch;
+    }
+</style>

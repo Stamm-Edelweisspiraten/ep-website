@@ -3,7 +3,6 @@
     import { browser } from '$app/environment';
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
-    import Chip from '$lib/components/Chip.svelte';
     import Icon from '$lib/components/Icon.svelte';
     import MonthCalendar from '$lib/components/MonthCalendar.svelte';
     import { dayParts, formatDateRange, formatMonth, formatTimeRange, isMultiDay } from '$lib/dates';
@@ -135,290 +134,368 @@
 
 {#snippet row(e: SiteEvent)}
     {@const d = dayParts(e.startsOn)}
-    {@const color = eventColor(e)}
     <li>
-        <a href={`/termine/${e.key}`} class="flex items-stretch gap-4 px-4 py-3 transition-colors hover:bg-subtle">
-            <span
-                class="flex w-14 shrink-0 flex-col items-center justify-center border-l-4 bg-subtle py-1 text-center {color
-                    ? ''
-                    : 'border-brand'}"
-                style={color ? `border-color: ${color}` : ''}
-            >
-                <span class="text-small text-muted">{d.weekday}</span>
-                <span class="text-xl leading-tight font-bold text-ink tabular-nums">{d.day}</span>
-                <span class="text-small text-muted">{d.month}</span>
-            </span>
-            <span class="min-w-0 flex-1 space-y-1 self-center">
-                <span class="block font-semibold text-ink">{e.title}</span>
-                <span class="flex flex-wrap gap-x-4 gap-y-1 text-small text-muted tabular-nums">
-                    {#if isMultiDay(e)}
-                        <span class="flex items-center gap-1"><Icon name="calendar" size={14} />{formatDateRange(e)}</span>
-                    {/if}
-                    {#if timeOf(e)}
-                        <span class="flex items-center gap-1"><Icon name="clock" size={14} />{timeOf(e)}</span>
-                    {/if}
-                    {#if e.location}
-                        <span class="flex min-w-0 items-center gap-1"
-                            ><Icon name="map-pin" size={14} /><span class="truncate">{e.location}</span></span
-                        >
-                    {/if}
-                    {#if e.galleries.length}
-                        <span class="flex items-center gap-1 text-link"><Icon name="images" size={14} />Bilder</span>
-                    {/if}
+        <a href={`/termine/${e.key}`} class="tl">
+            <span class="dbox"><span class="wd">{d.weekday}</span><span class="dn">{d.day}</span><span class="mo">{d.month.replace('.', '')}</span></span>
+            <span style="min-width: 0">
+                <span class="t">{e.title}</span>
+                <span class="cap meta">
+                    {#if isMultiDay(e)}<span><Icon name="calendar" size={16} />{formatDateRange(e)}</span>{/if}
+                    {#if timeOf(e)}<span><Icon name="clock" size={16} />{timeOf(e)}</span>{/if}
+                    {#if e.location}<span><Icon name="map-pin" size={16} />{e.location}</span>{/if}
+                    {#if e.galleries.length}<span><Icon name="images" size={16} />Bilder</span>{/if}
                 </span>
-                {#if e.groups.length || e.tags.length}
-                    <span class="flex flex-wrap gap-1.5 pt-0.5">
-                        {#each e.groups as g (g.id)}<Chip label={g.name} color={g.color} />{/each}
-                        {#each e.tags as t (t)}<Chip label={t} />{/each}
-                    </span>
-                {/if}
             </span>
+            <span class="tags">
+                {#each e.groups as g (g.id)}<span class="tag on-cloud"><span class="dot" style="--g: {g.color ?? 'currentColor'}"></span><span>{g.name}</span></span>{/each}
+                {#each e.tags as t (t)}<span class="tag on-cloud"><span>{t}</span></span>{/each}
+            </span>
+            <Icon name="chevron-right" class="arrow" />
         </a>
     </li>
 {/snippet}
 
 {#snippet card(e: SiteEvent)}
-    {@const color = eventColor(e)}
     <li>
-        <a
-            href={`/termine/${e.key}`}
-            class="group flex h-full flex-col border border-line bg-surface transition-colors hover:border-muted"
-        >
-            <span class="h-1.5 {color ? '' : 'bg-brand'}" style={color ? `background-color: ${color}` : ''}></span>
-            <span class="flex flex-1 flex-col gap-2 p-4">
-                <span class="text-small font-medium text-muted tabular-nums">{formatDateRange(e)}</span>
-                <span class="text-lg leading-snug font-semibold text-ink transition-colors group-hover:text-link">{e.title}</span>
-                <span class="flex flex-col gap-1 text-small text-muted tabular-nums">
-                    {#if timeOf(e)}<span class="flex items-center gap-1.5"><Icon name="clock" size={14} />{timeOf(e)}</span>{/if}
-                    {#if e.location}
-                        <span class="flex min-w-0 items-center gap-1.5"
-                            ><Icon name="map-pin" size={14} /><span class="truncate">{e.location}</span></span
-                        >
-                    {/if}
-                </span>
-                {#if e.description}
-                    <span class="line-clamp-3 text-base text-body">{e.description}</span>
-                {/if}
-                <span class="mt-auto flex flex-wrap items-center gap-1.5 pt-2">
-                    {#each e.groups as g (g.id)}<Chip label={g.name} color={g.color} />{/each}
-                    {#each e.tags as t (t)}<Chip label={t} />{/each}
-                    {#if e.galleries.length}
-                        <span class="ml-auto flex items-center gap-1 text-small text-link"
-                            ><Icon name="images" size={14} />Bilder</span
-                        >
-                    {/if}
-                </span>
+        <a href={`/termine/${e.key}`} class="ecard">
+            <span class="cap tab strong" style="color: var(--color-ink)">{formatDateRange(e)}</span>
+            <span class="et">{e.title}</span>
+            <span class="cap meta">
+                {#if timeOf(e)}<span><Icon name="clock" size={16} />{timeOf(e)}</span>{/if}
+                {#if e.location}<span><Icon name="map-pin" size={16} /><span class="trunc">{e.location}</span></span>{/if}
+            </span>
+            {#if e.description}<span class="ed">{e.description}</span>{/if}
+            <span class="tags">
+                {#each e.groups as g (g.id)}<span class="tag on-cloud"><span class="dot" style="--g: {g.color ?? 'currentColor'}"></span><span>{g.name}</span></span>{/each}
+                {#each e.tags as t (t)}<span class="tag on-cloud"><span>{t}</span></span>{/each}
+                {#if e.galleries.length}<span class="tag on-cloud"><Icon name="images" size={14} /><span>Bilder</span></span>{/if}
             </span>
         </a>
     </li>
 {/snippet}
 
-<section class="site-container space-y-6 py-12">
-    <header class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-            <h1 class="text-display text-ink">Termine</h1>
-            <p class="mt-3 text-lede text-body">Gruppenstunden, Fahrten und Aktionen auf einen Blick.</p>
+<section class="site-container" aria-labelledby="h-termine">
+    <nav class="crumbs" aria-label="Brotkrümel"><a href="/">Start</a><Icon name="chevron-right" size={18} /><span aria-current="page">Termine</span></nav>
+    <div class="phead">
+        <h1 class="display" id="h-termine">Termine</h1>
+        <div class="side">
+            <p>Fahrten, Lager und besondere Aktionen des Stammes. Die wöchentlichen Gruppenstunden stehen bei den regelmäßigen Terminen.</p>
         </div>
-        <div class="inline-flex border border-line-strong bg-surface" role="group" aria-label="Ansicht">
+    </div>
+
+    <!-- Filter und Ansicht -->
+    <div class="tools">
+        <label class="search">
+            <span class="sr-only">Termine durchsuchen</span>
+            <Icon name="search" />
+            <input type="search" bind:value={q} name="q" autocomplete="off" placeholder="Termin oder Ort suchen …" class="field" />
+        </label>
+        <div class="seg" role="group" aria-label="Ansicht">
             {#each VIEWS as v (v.id)}
-                <button
-                    type="button"
-                    class="inline-flex h-10 items-center gap-2 px-3 text-small transition-colors {view === v.id
-                        ? 'bg-ink text-page'
-                        : 'text-body hover:bg-subtle'}"
-                    aria-pressed={view === v.id}
-                    on:click={() => setView(v.id)}
-                >
-                    <Icon name={v.icon} />
-                    <span class="hidden sm:inline">{v.label}</span>
-                    <span class="sr-only sm:hidden">{v.label}</span>
+                <button type="button" aria-pressed={view === v.id} on:click={() => setView(v.id)}>
+                    <Icon name={v.icon} size={18} /><span class="vl">{v.label}</span><span class="sr-only vs">{v.label}</span>
                 </button>
             {/each}
         </div>
-    </header>
-
-    <!-- Filter -->
-    <div class="space-y-3 border-y border-line py-4">
-        <div class="relative max-w-md">
-            <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted">
-                <Icon name="search" />
-            </span>
-            <input
-                type="search"
-                bind:value={q}
-                name="q"
-                autocomplete="off"
-                placeholder="Termin oder Ort suchen …"
-                aria-label="Termine durchsuchen"
-                class="field h-10"
-                style="padding-left: 2.25rem"
-            />
-        </div>
-        {#if groups.length}
-            <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Gruppen">
-                <span class="mr-1 text-small text-muted">Gruppen</span>
-                {#each groups as g (g.id)}
-                    {@const on = selectedGroups.includes(g.id)}
-                    <button
-                        type="button"
-                        class="inline-flex items-center gap-1.5 border px-3 py-1 text-small transition-colors {on
-                            ? 'border-ink bg-ink text-page'
-                            : 'border-line-strong bg-surface text-body hover:border-muted'}"
-                        aria-pressed={on}
-                        on:click={() => ((selectedGroups = toggle(selectedGroups, g.id)), (visibleCount = PAGE_SIZE))}
-                    >
-                        <span
-                            class="size-2.5 rounded-full {g.color ? '' : 'bg-muted'}"
-                            style={g.color ? `background-color: ${g.color}` : ''}
-                            aria-hidden="true"
-                        ></span>
-                        {g.name}
-                    </button>
-                {/each}
-            </div>
-        {/if}
-        {#if tags.length}
-            <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Themen">
-                <span class="mr-1 text-small text-muted">Themen</span>
-                {#each tags as t (t)}
-                    {@const on = selectedTags.includes(t)}
-                    <button
-                        type="button"
-                        class="border px-3 py-1 text-small transition-colors {on
-                            ? 'border-ink bg-ink text-page'
-                            : 'border-line-strong bg-surface text-body hover:border-muted'}"
-                        aria-pressed={on}
-                        on:click={() => ((selectedTags = toggle(selectedTags, t)), (visibleCount = PAGE_SIZE))}
-                    >
-                        {t}
-                    </button>
-                {/each}
-            </div>
-        {/if}
-        {#if filterActive}
-            <div class="flex items-center gap-3 text-small text-muted" role="status">
-                <span>{filtered.length} {filtered.length === 1 ? 'Termin' : 'Termine'} gefunden</span>
-                <button type="button" class="text-link" on:click={resetFilters}>
-                    Filter zurücksetzen
-                </button>
-            </div>
-        {/if}
     </div>
+    {#if groups.length || tags.length}
+        <div class="chips scroll filters" role="group" aria-label="Filter">
+            {#each groups as g (g.id)}
+                {@const on = selectedGroups.includes(g.id)}
+                <button type="button" class="chip" aria-pressed={on} on:click={() => ((selectedGroups = toggle(selectedGroups, g.id)), (visibleCount = PAGE_SIZE))}>
+                    <span class="dot" style="--g: {g.color ?? 'currentColor'}"></span>{g.name}
+                </button>
+            {/each}
+            {#each tags as t (t)}
+                {@const on = selectedTags.includes(t)}
+                <button type="button" class="chip" aria-pressed={on} on:click={() => ((selectedTags = toggle(selectedTags, t)), (visibleCount = PAGE_SIZE))}>{t}</button>
+            {/each}
+        </div>
+    {/if}
+    {#if filterActive}
+        <p class="cap found" role="status">
+            {filtered.length} {filtered.length === 1 ? 'Termin' : 'Termine'} gefunden ·
+            <button type="button" class="linkbtn" on:click={resetFilters}>Filter zurücksetzen</button>
+        </p>
+    {/if}
 
-    {#if view === 'kalender'}
-        <MonthCalendar items={calendarItems} {month} today={data.today} on:month={(e) => (month = e.detail)} />
-    {:else}
-        <!-- Regelmäßige Termine (Serien einmal zusammengefasst) -->
-        {#if series.length}
-            <section aria-labelledby="regelmaessig" class="space-y-3">
-                <h2 id="regelmaessig" class="flex items-center gap-2 text-section text-ink">
-                    <Icon name="repeat" size={20} class="text-muted" /> Regelmäßige Termine
-                </h2>
-                <ul class="grid gap-3 md:grid-cols-2">
-                    {#each series as s (s.id)}
-                        <li>
-                            <a
-                                href={`/termine/${s.next.key}`}
-                                class="flex h-full gap-3 border border-line bg-surface p-4 transition-colors hover:border-muted"
-                            >
-                                <span
-                                    class="w-1 shrink-0 {s.color ? '' : 'bg-brand'}"
-                                    style={s.color ? `background-color: ${s.color}` : ''}
-                                    aria-hidden="true"
-                                ></span>
-                                <span class="min-w-0 flex-1 space-y-1">
-                                    <span class="block font-semibold text-ink">{s.title}</span>
-                                    <span class="block text-small text-body tabular-nums">
-                                        {s.rhythm.charAt(0).toUpperCase() + s.rhythm.slice(1)}{s.time ? `, ${s.time}` : ''}
-                                    </span>
-                                    {#if s.location}
-                                        <span class="flex items-center gap-1 text-small text-muted">
-                                            <Icon name="map-pin" size={14} />{s.location}
-                                        </span>
-                                    {/if}
-                                    <span class="block text-small text-muted tabular-nums">Nächstes Treffen: {s.nextLabel}</span>
-                                    {#if s.groups.length}
-                                        <span class="flex flex-wrap gap-1.5 pt-1">
-                                            {#each s.groups as g (g.id)}<Chip label={g.name} color={g.color} />{/each}
-                                        </span>
-                                    {/if}
-                                </span>
-                            </a>
-                        </li>
-                    {/each}
-                </ul>
-            </section>
-        {/if}
-
-        <section aria-labelledby="kommend" class="space-y-3">
-            <h2 id="kommend" class="text-section text-ink">
-                {series.length ? 'Weitere Termine' : 'Kommende Termine'}
-            </h2>
-            {#if singles.upcoming.length === 0}
-                <p class="border border-dashed border-line-strong p-8 text-center text-muted">
-                    {filterActive ? 'Keine kommenden Termine zu diesem Filter.' : 'Gerade stehen keine weiteren Termine an.'}
-                </p>
-            {:else if view === 'liste'}
-                {#each groupByMonth(upcomingShown) as m (m.month)}
-                    <div>
-                        <h3 class="mb-2 text-sub text-ink">
-                            {formatMonth(m.month)}
-                        </h3>
-                        <ul class="divide-y divide-line border border-line bg-surface">
-                            {#each m.events as e (e.key)}
-                                {@render row(e)}
+    <div class="layout">
+        <div class="main">
+            {#if view === 'kalender'}
+                <MonthCalendar items={calendarItems} {month} today={data.today} on:month={(e) => (month = e.detail)} />
+            {:else}
+                <section aria-labelledby="kommend">
+                    <h2 id="kommend" class="sr-only">Kommende Termine</h2>
+                    {#if singles.upcoming.length === 0}
+                        <p class="empty">
+                            {filterActive ? 'Keine kommenden Termine zu diesem Filter.' : 'Gerade stehen keine besonderen Termine an. Die Gruppenstunde findet wie gewohnt statt.'}
+                        </p>
+                    {:else if view === 'liste'}
+                        {#each groupByMonth(upcomingShown) as m (m.month)}
+                            <div class="month">
+                                <h3>{formatMonth(m.month)}</h3>
+                                <ul class="tlist">
+                                    {#each m.events as e (e.key)}
+                                        {@render row(e)}
+                                    {/each}
+                                </ul>
+                            </div>
+                        {/each}
+                    {:else}
+                        <ul class="cards">
+                            {#each upcomingShown as e (e.key)}
+                                {@render card(e)}
                             {/each}
                         </ul>
-                    </div>
-                {/each}
-            {:else}
-                <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {#each upcomingShown as e (e.key)}
-                        {@render card(e)}
-                    {/each}
-                </ul>
+                    {/if}
+                    {#if singles.upcoming.length > visibleCount}
+                        <div class="morebar">
+                            <button type="button" class="pill soft" on:click={() => (visibleCount += PAGE_SIZE)}>
+                                Weitere Termine laden ({singles.upcoming.length - visibleCount})
+                            </button>
+                        </div>
+                    {/if}
+                </section>
+
+                {#if singles.past.length}
+                    <section aria-labelledby="vergangen" class="past">
+                        <button type="button" class="pill soft" aria-expanded={showPast} on:click={() => (showPast = !showPast)}>
+                            <Icon name={showPast ? 'chevron-up' : 'chevron-down'} size={18} />
+                            {showPast ? 'Vergangene Termine ausblenden' : `Vergangene Termine anzeigen (${singles.past.length})`}
+                        </button>
+                        {#if showPast}
+                            <h2 id="vergangen" class="h-xl" style="margin-top: 32px">Vergangene Termine</h2>
+                            {#each groupByMonth(singles.past) as m (m.month)}
+                                <div class="month dim">
+                                    <h3>{formatMonth(m.month)}</h3>
+                                    <ul class="tlist">
+                                        {#each m.events as e (e.key)}
+                                            {@render row(e)}
+                                        {/each}
+                                    </ul>
+                                </div>
+                            {/each}
+                        {:else}
+                            <h2 id="vergangen" class="sr-only">Vergangene Termine</h2>
+                        {/if}
+                    </section>
+                {/if}
             {/if}
-            {#if singles.upcoming.length > visibleCount}
-                <div class="text-center">
-                    <button
-                        type="button"
-                        class="border border-line-strong bg-surface px-4 py-2 text-ink transition-colors hover:bg-subtle"
-                        on:click={() => (visibleCount += PAGE_SIZE)}
-                    >
-                        Weitere Termine laden ({singles.upcoming.length - visibleCount})
-                    </button>
+        </div>
+
+        <aside aria-label="Regelmäßige Termine">
+            {#if series.length}
+                <div class="abox">
+                    <span class="ic" style="width: 48px; height: 48px"><Icon name="repeat" /></span>
+                    <h2>Regelmäßige Termine</h2>
+                    <ul class="weekly">
+                        {#each series as s (s.id)}
+                            <li>
+                                <a href={`/termine/${s.next.key}`}>
+                                    <span class="wn">{#if s.groups[0]}<span class="dot" style="--g: {s.groups[0].color ?? 'currentColor'}"></span>{/if}{s.title}</span>
+                                    <span class="cap tab">{s.rhythm.charAt(0).toUpperCase() + s.rhythm.slice(1)}{s.time ? `, ${s.time}` : ''}</span>
+                                    <span class="cap tab">Nächstes Treffen: {s.nextLabel}</span>
+                                </a>
+                            </li>
+                        {/each}
+                    </ul>
+                    <p>In den Schulferien fallen die Gruppenstunden aus.</p>
                 </div>
             {/if}
-        </section>
-
-        {#if singles.past.length}
-            <section aria-labelledby="vergangen" class="space-y-3 pt-2">
-                <button
-                    type="button"
-                    class="text-link"
-                    aria-expanded={showPast}
-                    on:click={() => (showPast = !showPast)}
-                >
-                    {showPast ? 'Vergangene Termine ausblenden' : `Vergangene Termine anzeigen (${singles.past.length})`}
-                </button>
-                {#if showPast}
-                    <h2 id="vergangen" class="text-section text-ink">Vergangene Termine</h2>
-                    {#each groupByMonth(singles.past) as m (m.month)}
-                        <div class="opacity-80">
-                            <h3 class="mb-2 text-sub text-ink">
-                                {formatMonth(m.month)}
-                            </h3>
-                            <ul class="divide-y divide-line border border-line bg-surface">
-                                {#each m.events as e (e.key)}
-                                    {@render row(e)}
-                                {/each}
-                            </ul>
-                        </div>
-                    {/each}
-                {:else}
-                    <h2 id="vergangen" class="sr-only">Vergangene Termine</h2>
-                {/if}
-            </section>
-        {/if}
-    {/if}
+            <div class="abox">
+                <span class="ic" style="width: 48px; height: 48px"><Icon name="question" /></span>
+                <h2>Neu dabei?</h2>
+                <p>Komm einfach zur Gruppenstunde deiner Altersgruppe. Die erste ist kostenlos und ohne Anmeldung.</p>
+                <a class="ulink" href="/#gruppen">Gruppe finden<Icon name="arrow-right" size={18} /></a>
+            </div>
+        </aside>
+    </div>
 </section>
+
+<style>
+    .tools {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 48px;
+    }
+    .search {
+        position: relative;
+        flex: 1 1 320px;
+        max-width: 480px;
+    }
+    .search :global(svg) {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-muted);
+    }
+    .search .field {
+        border-radius: 30px;
+        padding-left: 52px;
+    }
+    .filters {
+        margin-top: 12px;
+    }
+    .found {
+        margin-top: 12px;
+    }
+    .linkbtn {
+        border: 0;
+        background: none;
+        padding: 0;
+        font: inherit;
+        color: var(--color-ink);
+        font-weight: 500;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+    }
+    .vs {
+        display: none;
+    }
+    .layout {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 24px;
+        align-items: start;
+        margin-top: 32px;
+    }
+    .main {
+        grid-column: 1 / span 9;
+        min-width: 0;
+    }
+    aside {
+        grid-column: 10 / span 3;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .month + .month {
+        margin-top: 40px;
+    }
+    .month h3 {
+        font-size: 20px;
+        font-weight: 500;
+        margin-bottom: 14px;
+    }
+    .month.dim {
+        opacity: 0.8;
+        margin-top: 24px;
+    }
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 8px;
+    }
+    .ecard {
+        height: 100%;
+        background: var(--color-subtle);
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--color-ink);
+        transition: background 0.15s ease;
+    }
+    .ecard:hover {
+        background: var(--color-subtle-2);
+    }
+    .et {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 1.3;
+    }
+    .ecard .meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .ecard .meta > span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+    }
+    .trunc {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .ed {
+        color: var(--color-body);
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .ecard .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: auto;
+        padding-top: 6px;
+    }
+    .morebar {
+        display: flex;
+        justify-content: center;
+        margin-top: 32px;
+    }
+    .past {
+        margin-top: 48px;
+    }
+    .weekly {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+    .weekly a {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        background: var(--color-page);
+        padding: 12px 16px;
+        text-decoration: none;
+        color: var(--color-ink);
+        transition: background 0.15s ease;
+    }
+    .weekly a:hover {
+        background: var(--color-subtle-2);
+    }
+    .wn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+    }
+    @media (max-width: 62rem) {
+        .main,
+        aside {
+            grid-column: 1 / -1;
+        }
+        aside {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+    }
+    @media (max-width: 50rem) {
+        .tools {
+            margin-top: 32px;
+        }
+        .search {
+            max-width: none;
+        }
+        .vl {
+            display: none;
+        }
+        .vs {
+            display: inline;
+        }
+    }
+</style>

@@ -78,7 +78,7 @@
         <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
         <div
             bind:this={dialog}
-            class="relative max-h-full w-full max-w-md space-y-4 overflow-y-auto border border-line-strong bg-surface p-6 text-center"
+            class="relative max-h-full w-full max-w-md space-y-4 overflow-y-auto bg-page p-8 text-center"
             style="overscroll-behavior: contain"
             role="dialog"
             aria-modal="true"
@@ -88,13 +88,13 @@
         >
             <button
                 type="button"
-                class="absolute top-2 right-2 inline-flex size-10 items-center justify-center text-2xl text-muted transition-colors hover:bg-subtle hover:text-ink"
+                class="round absolute top-3 right-3 text-2xl"
                 aria-label="Teilen schließen"
                 on:click={() => onClose?.()}
             >
                 <span aria-hidden="true">×</span>
             </button>
-            <h2 id="share-title" class="mb-2 text-sub text-ink">Teilen</h2>
+            <h2 id="share-title" class="h-xl mb-2">Teilen</h2>
 
             {#if qrDataUrl}
                 <img
@@ -102,10 +102,10 @@
                     alt="QR-Code mit dem Link zu dieser Seite"
                     width="192"
                     height="192"
-                    class="mx-auto size-48 border border-line bg-[#fff] object-contain"
+                    class="mx-auto size-48 bg-[#fff] object-contain"
                 />
 
-                <div class="mt-4 flex items-center justify-between gap-2 border border-line bg-subtle p-2">
+                <div class="mt-4 flex items-center justify-between gap-2 rounded-[30px] bg-subtle py-1.5 pr-1.5 pl-5">
                     <label for="share-url" class="sr-only">Link</label>
                     <input
                         id="share-url"
@@ -116,7 +116,7 @@
                     />
                     <button
                         type="button"
-                        class="inline-flex size-9 shrink-0 items-center justify-center bg-ink text-page transition-colors hover:bg-body"
+                        class="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-on-ink transition-colors hover:bg-ink-hover"
                         aria-label="Link kopieren"
                         on:click={copyLink}
                     >
@@ -133,7 +133,7 @@
                 <div class="mt-2 flex justify-center gap-4">
                     <button
                         type="button"
-                        class="flex size-12 items-center justify-center bg-ink text-page transition-colors hover:bg-body"
+                        class="flex size-12 items-center justify-center rounded-full bg-ink text-on-ink transition-colors hover:bg-ink-hover"
                         aria-label="QR-Code herunterladen"
                         title="QR-Code herunterladen"
                         on:click={() => {
@@ -150,7 +150,7 @@
                     </button>
 
                     <a
-                        class="flex size-12 items-center justify-center bg-ink text-page transition-colors hover:bg-body"
+                        class="flex size-12 items-center justify-center rounded-full bg-ink text-on-ink transition-colors hover:bg-ink-hover"
                         aria-label="Per WhatsApp teilen"
                         title="Per WhatsApp teilen"
                         href={`https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`}
@@ -163,7 +163,7 @@
                     </a>
 
                     <a
-                        class="flex size-12 items-center justify-center bg-ink text-page transition-colors hover:bg-body"
+                        class="flex size-12 items-center justify-center rounded-full bg-ink text-on-ink transition-colors hover:bg-ink-hover"
                         aria-label="Per E-Mail teilen"
                         title="Per E-Mail teilen"
                         href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(whatsappMessage)}`}

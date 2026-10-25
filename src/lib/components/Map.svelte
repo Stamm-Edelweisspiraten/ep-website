@@ -2,9 +2,10 @@
     // Zwei-Klick-Karte (#31): Kacheln von tile.openstreetmap.org werden erst nach Klick auf „Karte laden“ geholt –
     // beim Seitenaufruf gehen keine Anfragen an Dritte. Die Wahl wird nicht gespeichert (kein Cookie, kein Storage).
     import { tick } from 'svelte';
+    import Icon from '$lib/components/Icon.svelte';
 
-    /** Höhe als Tailwind-Klasse */
-    export let height = 'h-[400px]';
+    /** Mindesthöhe in px */
+    export let height = 360;
 
     /** @type {HTMLDivElement | undefined} */
     let container;
@@ -42,26 +43,22 @@
     }
 </script>
 
-<!-- Karte -->
 {#if active}
-    <div bind:this={container} class="relative z-0 w-full {height} border border-line-strong" role="region" aria-label="Karte: Ev. Auferstehungsgemeinde Bremen-Hastedt"></div>
+    <div bind:this={container} class="relative z-0 w-full" style="height: {height}px" role="region" aria-label="Karte: Ev. Auferstehungsgemeinde Bremen-Hastedt"></div>
 {:else}
-    <div class="w-full {height} border border-line-strong bg-subtle flex items-center justify-center p-5">
-        <div class="max-w-md text-center space-y-2.5">
-            <button type="button" on:click={loadMap} disabled={loading}
-                    class="inline-flex items-center px-4 py-2 border border-line-strong bg-surface text-ink transition-colors hover:bg-page disabled:opacity-60">
-                {loading ? 'Karte wird geladen …' : 'Karte laden'}
-            </button>
-            <p class="text-small text-muted">
-                Lädt Kartendaten von OpenStreetMap; dabei wird deine IP-Adresse übertragen
-                (<a href="/datenschutz#m328" class="text-link">Datenschutz</a>).
-            </p>
-            {#if failed}
-                <p class="border-l-4 border-alert-line bg-alert px-3 py-1.5 text-small text-ink" role="alert">Die Karte konnte nicht geladen werden.</p>
-            {/if}
-            <p class="text-small">
-                <a href={osmLink} target="_blank" rel="noopener noreferrer" class="text-link">Auf openstreetmap.org öffnen</a>
-            </p>
+    <div class="mapbox" style="min-height: {height}px">
+        <span class="ic" style="width: 56px; height: 56px"><Icon name="map" size={24} /></span>
+        <p class="strong" style="color: var(--color-ink); font-size: 18px">Treffpunkt: Ev. Auferstehungsgemeinde</p>
+        <p>
+            Drakenburger Str. 42, 28207 Bremen. Die Karte lädt erst nach deinem Klick von OpenStreetMap, dabei wird deine
+            IP-Adresse übertragen (<a href="/datenschutz#m328" class="text-link">Datenschutz</a>).
+        </p>
+        <div class="acts" style="justify-content: center">
+            <button type="button" class="pill" on:click={loadMap} disabled={loading}>{loading ? 'Karte wird geladen …' : 'Karte laden'}</button>
+            <a class="pill canvas" href={osmLink} target="_blank" rel="noopener noreferrer">Auf openstreetmap.org<Icon name="external" size={16} /></a>
         </div>
+        {#if failed}
+            <p role="alert">Die Karte konnte nicht geladen werden.</p>
+        {/if}
     </div>
 {/if}

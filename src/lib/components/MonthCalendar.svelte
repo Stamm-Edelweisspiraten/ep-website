@@ -61,13 +61,12 @@
             `top: ${HEAD + seg.lane * LANE}rem`,
             `width: calc(${seg.span} * 100% + ${seg.span - 1}px - 6px)`
         ];
-        const fg = contrastTextColor(seg.item.color);
-        if (fg) parts.push(`background-color: ${seg.item.color}`, `color: ${fg}`);
+        if (contrastTextColor(seg.item.color)) parts.push(`--g: ${seg.item.color}`);
         return parts.join('; ');
     }
 
     function dotStyle(item: CalendarItem): string {
-        return contrastTextColor(item.color) ? `background-color: ${item.color}` : '';
+        return contrastTextColor(item.color) ? `--g: ${item.color}` : '';
     }
 
     function rangeText(item: CalendarItem): string {
@@ -94,88 +93,50 @@
     });
 </script>
 
-<div class="space-y-3">
-    <div class="flex flex-wrap items-center justify-between gap-2">
-        <h2 class="text-section text-ink" aria-live="polite">{label}</h2>
-        <div class="flex items-center gap-1">
-            <button
-                type="button"
-                class="h-9 border border-line-strong bg-surface px-3 text-small text-ink transition-colors hover:bg-subtle"
-                on:click={goToday}>Heute</button
-            >
-            <button
-                type="button"
-                class="inline-flex size-9 items-center justify-center border border-line-strong bg-surface text-ink transition-colors hover:bg-subtle"
-                aria-label="Vorheriger Monat"
-                on:click={() => go(-1)}><Icon name="chevron-left" /></button
-            >
-            <button
-                type="button"
-                class="inline-flex size-9 items-center justify-center border border-line-strong bg-surface text-ink transition-colors hover:bg-subtle"
-                aria-label="Nächster Monat"
-                on:click={() => go(1)}><Icon name="chevron-right" /></button
-            >
+<div class="mc">
+    <div class="calhead">
+        <h2 class="h-xl" aria-live="polite">{label}</h2>
+        <div class="acts">
+            <button type="button" class="pill soft sm" on:click={goToday}>Heute</button>
+            <button type="button" class="round" aria-label="Vorheriger Monat" on:click={() => go(-1)}><Icon name="chevron-left" /></button>
+            <button type="button" class="round" aria-label="Nächster Monat" on:click={() => go(1)}><Icon name="chevron-right" /></button>
         </div>
     </div>
 
     <!-- Raster ab 640 px -->
-    <div class="hidden border border-line bg-surface sm:block" role="table" aria-label="Kalender {label}">
-        <div class="grid grid-cols-7 border-b border-line bg-subtle" role="row">
+    <div class="grid-wrap" role="table" aria-label="Kalender {label}">
+        <div class="wrow" role="row">
             {#each WEEKDAY_LABELS as wd (wd)}
-                <div class="px-2 py-1.5 text-[13px] font-medium text-muted" role="columnheader">{wd}</div>
+                <div class="wh" role="columnheader">{wd}</div>
             {/each}
         </div>
         {#each weeks as week (week.days[0])}
-            <div class="grid grid-cols-7 border-b border-line last:border-b-0" role="row">
+            <div class="wrow" role="row">
                 {#each week.days as date, col (date)}
                     {@const inMonth = monthOf(date) === month}
                     {@const isToday = date === today}
                     {@const hidden = week.hidden[col] ?? 0}
-                    <div
-                        class="relative min-h-[8rem] border-r border-line last:border-r-0 {inMonth
-                            ? ''
-                            : 'bg-subtle/70'} {isToday ? 'bg-notice' : ''}"
-                        role="cell"
-                        aria-label={formatLongDate(date)}
-                    >
-                        <div class="flex h-7 items-center px-1.5">
-                            <span
-                                class="inline-flex size-6 items-center justify-center rounded-full text-[13px] tabular-nums {isToday
-                                    ? 'bg-brand font-semibold text-page'
-                                    : inMonth
-                                      ? 'text-ink'
-                                      : 'text-muted'}"
-                                aria-hidden="true">{Number(date.slice(8, 10))}</span
-                            >
+                    <div class="cell {inMonth ? '' : 'out'}" role="cell" aria-label={formatLongDate(date)}>
+                        <div class="num-row">
+                            <span class="num {isToday ? 'today' : ''}" aria-hidden="true">{Number(date.slice(8, 10))}</span>
                             {#if isToday}<span class="sr-only">Heute</span>{/if}
                         </div>
                         {#each week.segments.filter((s) => s.startCol === col) as seg (calendarItemKey(seg.item))}
-                            {@const time = seg.continuesBefore ? '' : formatItemTime(seg.item)}
                             <a
                                 href={asItem(seg.item).href}
-                                class="absolute left-[3px] z-10 flex h-[1.3rem] items-center gap-1 overflow-hidden px-1.5 text-[13px] leading-none transition-[filter] hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-focus {contrastTextColor(
-                                    seg.item.color
-                                )
-                                    ? ''
-                                    : 'bg-brand text-page'}"
+                                class="ev {contrastTextColor(seg.item.color) ? 'colored' : ''}"
                                 style={barStyle(seg)}
                                 aria-label={describeItem(seg.item)}
                                 title={describeItem(seg.item)}
                             >
-                                {#if time}<span class="shrink-0 tabular-nums opacity-85">{time}</span>{/if}
-                                {#if seg.item.recurring}<Icon name="repeat" size={11} class="opacity-80" />{/if}
-                                <span class="truncate font-medium">{seg.item.title}</span>
+                                {#if seg.item.recurring}<Icon name="repeat" size={12} />{/if}
+                                <span class="tt">{seg.item.title}</span>
                             </a>
                         {/each}
                         {#if hidden > 0}
-                            <div
-                                class="absolute left-[3px] z-20"
-                                style="top: {HEAD + MAX_LANES * LANE}rem"
-                                data-day-popup
-                            >
+                            <div class="more" style="top: {HEAD + MAX_LANES * LANE}rem" data-day-popup>
                                 <button
                                     type="button"
-                                    class="h-5 px-1.5 text-[13px] text-muted transition-colors hover:bg-subtle hover:text-ink"
                                     aria-expanded={openDay === date}
                                     aria-label="{hidden} weitere Termine am {formatLongDate(date)}"
                                     on:click={() => (openDay = openDay === date ? null : date)}
@@ -183,33 +144,15 @@
                                     +{hidden} weitere
                                 </button>
                                 {#if openDay === date}
-                                    <div
-                                        class="absolute top-6 left-0 w-64 border border-line-strong bg-surface p-2 {col >= 5
-                                            ? '-translate-x-[calc(100%-6rem)]'
-                                            : ''}"
-                                    >
-                                        <p class="mb-1 px-1 text-[13px] font-semibold text-body">
-                                            {formatDayLabel(date)}
-                                        </p>
-                                        <ul class="space-y-0.5">
+                                    <div class="pop {col >= 5 ? 'left' : ''}">
+                                        <p class="pt">{formatDayLabel(date)}</p>
+                                        <ul>
                                             {#each itemsOnDay(items, date) as item (calendarItemKey(item))}
                                                 <li>
-                                                    <a
-                                                        href={asItem(item).href}
-                                                        class="flex items-center gap-2 px-1.5 py-1 text-small text-ink transition-colors hover:bg-subtle"
-                                                        aria-label={describeItem(item)}
-                                                    >
-                                                        <span
-                                                            class="size-2.5 shrink-0 rounded-full bg-brand"
-                                                            style={dotStyle(item)}
-                                                            aria-hidden="true"
-                                                        ></span>
-                                                        {#if formatItemTime(item)}
-                                                            <span class="shrink-0 text-[13px] text-muted tabular-nums"
-                                                                >{formatItemTime(item)}</span
-                                                            >
-                                                        {/if}
-                                                        <span class="truncate">{item.title}</span>
+                                                    <a href={asItem(item).href} aria-label={describeItem(item)}>
+                                                        <span class="cdot" style={dotStyle(item)}></span>
+                                                        {#if formatItemTime(item)}<span class="cap tab">{formatItemTime(item)}</span>{/if}
+                                                        <span class="tt">{item.title}</span>
                                                     </a>
                                                 </li>
                                             {/each}
@@ -225,48 +168,32 @@
     </div>
 
     <!-- Agenda unter 640 px -->
-    <div class="sm:hidden">
+    <div class="agenda">
         {#if agenda.length === 0}
-            <p class="border border-dashed border-line-strong p-6 text-center text-muted">
-                Keine Termine in diesem Monat.
-            </p>
+            <p class="empty">Keine Termine in diesem Monat.</p>
         {:else}
-            <ul class="space-y-3" aria-label="Termine {label}">
+            <ul class="days" aria-label="Termine {label}">
                 {#each agenda as day (day.date)}
                     {@const isToday = day.date === today}
-                    <li class="border border-line bg-surface">
-                        <h3 class="border-b border-line px-3 py-1.5 text-small font-semibold text-ink">
+                    <li class="aday">
+                        <h3>
                             {formatDayLabel(day.date)}
-                            {#if isToday}
-                                <span class="ml-1 bg-brand px-1.5 py-0.5 text-[13px] font-medium text-page"
-                                    >Heute</span
-                                >
-                            {/if}
+                            {#if isToday}<span class="tag on-cloud today-tag">Heute</span>{/if}
                         </h3>
-                        <ul class="divide-y divide-line">
+                        <ul>
                             {#each day.items as item (calendarItemKey(item))}
                                 <li>
-                                    <a
-                                        href={item.href}
-                                        class="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-subtle"
-                                        aria-label={describeItem(item)}
-                                    >
-                                        <span
-                                            class="h-8 w-1 shrink-0 bg-brand"
-                                            style={dotStyle(item)}
-                                            aria-hidden="true"
-                                        ></span>
-                                        <span class="min-w-0 flex-1">
-                                            <span class="flex min-w-0 items-center gap-1.5 font-medium text-ink">
-                                                {#if item.recurring}<Icon name="repeat" size={13} class="text-muted" />{/if}
-                                                <span class="truncate">{item.title}</span>
+                                    <a href={item.href} aria-label={describeItem(item)}>
+                                        <span class="cdot" style={dotStyle(item)}></span>
+                                        <span class="body">
+                                            <span class="name">
+                                                {#if item.recurring}<Icon name="repeat" size={14} />{/if}<span class="tt">{item.title}</span>
                                             </span>
                                             {#if formatItemTime(item) || rangeText(item)}
-                                                <span class="block text-small text-muted tabular-nums">
-                                                    {[rangeText(item), formatItemTime(item)].filter(Boolean).join(' · ')}
-                                                </span>
+                                                <span class="cap tab" style="display: block">{[rangeText(item), formatItemTime(item)].filter(Boolean).join(' · ')}</span>
                                             {/if}
                                         </span>
+                                        <Icon name="chevron-right" size={18} />
                                     </a>
                                 </li>
                             {/each}
@@ -277,3 +204,200 @@
         {/if}
     </div>
 </div>
+
+<style>
+    .calhead {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+    .grid-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .wrow {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 4px;
+    }
+    .wh {
+        font-size: 13px;
+        color: var(--color-muted);
+        padding: 0 8px 2px;
+    }
+    .cell {
+        position: relative;
+        min-height: 8rem;
+        background: var(--color-subtle);
+        min-width: 0;
+    }
+    .cell.out {
+        background: transparent;
+        color: var(--color-muted);
+    }
+    .num-row {
+        display: flex;
+        height: 1.75rem;
+        align-items: center;
+        padding: 0 6px;
+    }
+    .num {
+        display: inline-flex;
+        width: 24px;
+        height: 24px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 13px;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+    }
+    .num.today {
+        background: var(--color-ink);
+        color: var(--color-on-ink);
+    }
+    .ev {
+        position: absolute;
+        left: 3px;
+        z-index: 10;
+        display: flex;
+        height: 1.3rem;
+        align-items: center;
+        gap: 4px;
+        overflow: hidden;
+        padding: 0 6px;
+        font-size: 13px;
+        line-height: 1;
+        background: var(--color-page);
+        color: var(--color-ink);
+        text-decoration: none;
+        transition: background 0.15s ease;
+    }
+    .ev.colored {
+        border-left: 3px solid var(--g);
+    }
+    .ev:hover {
+        background: var(--color-ink);
+        color: var(--color-on-ink);
+    }
+    .tt {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 500;
+    }
+    .more {
+        position: absolute;
+        left: 3px;
+        z-index: 20;
+    }
+    .more > button {
+        height: 20px;
+        padding: 0 6px;
+        border: 0;
+        background: none;
+        font-size: 13px;
+        color: var(--color-muted);
+        cursor: pointer;
+    }
+    .more > button:hover {
+        color: var(--color-ink);
+        text-decoration: underline;
+    }
+    .pop {
+        position: absolute;
+        top: 24px;
+        left: 0;
+        width: 16rem;
+        background: var(--color-page);
+        outline: 1px solid var(--color-line-strong);
+        padding: 8px;
+    }
+    .pop.left {
+        transform: translateX(calc(-100% + 6rem));
+    }
+    .pt {
+        padding: 2px 6px 6px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .pop a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px;
+        font-size: 15px;
+        text-decoration: none;
+        color: var(--color-ink);
+    }
+    .pop a:hover {
+        background: var(--color-subtle);
+    }
+    .cdot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex: none;
+        background: var(--g, var(--color-ink));
+    }
+    .agenda {
+        display: none;
+    }
+    .days {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .aday {
+        background: var(--color-subtle);
+        padding: 12px;
+    }
+    .aday h3 {
+        font-size: 15px;
+        font-weight: 600;
+        padding: 2px 4px 8px;
+        display: flex;
+        align-items: center;
+    }
+    .today-tag {
+        height: 24px;
+        margin-left: 6px;
+    }
+    .aday ul {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .aday a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        background: var(--color-page);
+        text-decoration: none;
+        color: var(--color-ink);
+        min-height: 48px;
+    }
+    .body {
+        min-width: 0;
+        flex: 1;
+    }
+    .name {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+    }
+    @media (max-width: 40rem) {
+        .grid-wrap {
+            display: none;
+        }
+        .agenda {
+            display: block;
+        }
+    }
+</style>

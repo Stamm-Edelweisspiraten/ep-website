@@ -4,9 +4,10 @@
           content="Datenschutzerklärung des Stamms Edelweißpiraten – Informationen zur Verarbeitung personenbezogener Daten gemäß DSGVO."/>
 </svelte:head>
 
-<section class="site-container py-12">
-<div class="max-w-3xl">
-    <h1 class="text-display text-ink">Datenschutzerklärung</h1>
+<section class="site-container legal-page">
+<nav class="crumbs" aria-label="Brotkrümel"><a href="/">Start</a><span aria-hidden="true">›</span><span aria-current="page">Datenschutz</span></nav>
+<div class="legal-doc">
+    <h1 class="display legal-title">Datenschutzerklärung</h1>
     <p class="mt-3 text-lede text-body">Welche personenbezogenen Daten wir verarbeiten, wofür und welche Rechte Sie haben.</p>
     <p class="mt-2 mb-3 text-small text-muted">Stand: 25. Oktober 2026</p>
     <h2 class="mt-10 mb-2 text-section text-ink">Inhaltsübersicht</h2>

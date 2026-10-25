@@ -4,9 +4,10 @@
 </svelte:head>
 
 
-<section class="site-container py-12">
-<div class="max-w-3xl">
-    <h1 class="text-display text-ink">Impressum</h1>
+<section class="site-container legal-page">
+<nav class="crumbs" aria-label="Brotkrümel"><a href="/">Start</a><span aria-hidden="true">›</span><span aria-current="page">Impressum</span></nav>
+<div class="legal-doc">
+    <h1 class="display legal-title">Impressum</h1>
     <p class="mt-3 text-lede text-body">Angaben zum Anbieter dieser Website und zu unseren Onlinepräsenzen.</p>
     <h2 id="m46" class="section-gap mb-2 text-section text-ink">Diensteanbieter</h2>
     <p>Stamm Edelweißpiraten</p>

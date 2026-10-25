@@ -1,7 +1,8 @@
 <script lang="ts">
-    // Schlichte Terminliste (Startseite, Gruppenseite): Datum links, Titel mit Uhrzeit/Ort/Gruppen rechts.
-    import { formatDateRange, formatTimeRange, isMultiDay } from '$lib/dates';
+    // Terminliste (Startseite, Gruppenseite, Termine): Datumsblock links, Titel mit Uhrzeit/Ort, Gruppen rechts.
+    import { dayParts, formatDateRange, formatTimeRange, isMultiDay } from '$lib/dates';
     import type { SiteEvent } from '$lib/site-types';
+    import Icon from '$lib/components/Icon.svelte';
 
     export let events: SiteEvent[] | null;
     /** Text, wenn nichts ansteht */
@@ -9,29 +10,40 @@
     /** Gruppen anzeigen (auf der Gruppenseite überflüssig) */
     export let showGroups = true;
 
-    function meta(e: SiteEvent) {
-        const parts = [
-            formatTimeRange(e.startsTime, e.endsTime, isMultiDay(e)),
-            e.location ?? ''
-        ];
-        if (showGroups) parts.push(e.groups.length ? e.groups.map((g) => g.name).join(', ') : '');
-        return parts.filter(Boolean).join(' · ');
+    function when(e: SiteEvent) {
+        const t = formatTimeRange(e.startsTime, e.endsTime, isMultiDay(e));
+        return isMultiDay(e) ? [formatDateRange(e), t].filter(Boolean).join(' · ') : t;
     }
+    const mo = (d: string) => dayParts(d).month.replace('.', '');
 </script>
 
 {#if events === null}
-    <p class="border-t border-line py-3 text-muted">Die Termine konnten gerade nicht geladen werden. Alle Termine findest du im <a href="/termine" class="text-link">Kalender</a>.</p>
+    <p class="empty">Die Termine konnten gerade nicht geladen werden. Alle Termine findest du im <a href="/termine" class="text-link">Kalender</a>.</p>
 {:else if events.length === 0}
-    <p class="border-t border-line py-3 text-muted">{emptyText}</p>
+    <p class="empty">{emptyText}</p>
 {:else}
-    <ul>
+    <ul class="tlist">
         {#each events as e (e.key)}
-            <li class="grid gap-x-6 border-t border-line py-3 sm:grid-cols-[10rem_minmax(0,1fr)]">
-                <span class="font-semibold text-ink tabular-nums">{formatDateRange(e)}</span>
-                <span>
-                    <a href="/termine/{encodeURIComponent(e.key)}" class="font-semibold text-ink transition-colors hover:text-link hover:underline">{e.title}</a>
-                    {#if meta(e)}<br /><span class="text-small text-muted tabular-nums">{meta(e)}</span>{/if}
-                </span>
+            {@const d = dayParts(e.startsOn)}
+            <li>
+                <a class="tl" href="/termine/{encodeURIComponent(e.key)}">
+                    <span class="dbox"><span class="wd">{d.weekday}</span><span class="dn">{d.day}</span><span class="mo">{mo(e.startsOn)}</span></span>
+                    <span style="min-width: 0">
+                        <span class="t">{e.title}</span>
+                        {#if when(e) || e.location}
+                            <span class="cap meta">
+                                {#if when(e)}<span><Icon name="clock" size={16} />{when(e)}</span>{/if}
+                                {#if e.location}<span><Icon name="map-pin" size={16} />{e.location}</span>{/if}
+                            </span>
+                        {/if}
+                    </span>
+                    <span class="tags">
+                        {#if showGroups}
+                            {#each e.groups as g (g.id)}<span class="tag on-cloud"><span class="dot" style="--g: {g.color ?? 'currentColor'}"></span><span>{g.name}</span></span>{/each}
+                        {/if}
+                    </span>
+                    <Icon name="chevron-right" class="arrow" />
+                </a>
             </li>
         {/each}
     </ul>
