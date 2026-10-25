@@ -226,14 +226,10 @@ export async function fetchContactChallenge(): Promise<ContactChallenge> {
 	return ((await res.json()) as { data: ContactChallenge }).data;
 }
 
-/**
- * Anfrage in den Posteingang legen. Wiederholungen bei Aussetzern sind unbedenklich: dieselbe Aufgabe kann das
- * Backend nur einmal einlösen, eine zweite Zustellung beantwortet es mit 409 (= schon angekommen).
- * Wirft `BackendError` (422 = Spam-Schutz/Eingaben abgelehnt, Text in `message`).
- */
-export async function submitContact(input: ContactSubmission): Promise<void> {
+/** POST an einen Posteingangs-Endpunkt (Kontakt/Probestunde); 409 = Aufgabe schon eingelöst (= angekommen) */
+async function postToInbox<T>(endpoint: string, input: unknown): Promise<T | null> {
 	const { baseUrl, apiKey } = config();
-	const path = buildPath(CONTACT_BASE);
+	const path = buildPath(endpoint);
 	let res: Response;
 	try {
 		res = await fetchWithRetry(
@@ -258,12 +254,47 @@ export async function submitContact(input: ContactSubmission): Promise<void> {
 		console.error(`[backend] ${path}: nicht erreichbar`, e instanceof Error ? e.message : e);
 		throw new BackendError(503, 'Backend nicht erreichbar');
 	}
-	if (res.ok || res.status === 409) return;
+	if (res.status === 409) return null;
+	if (res.ok) return ((await res.json().catch(() => null)) as { data?: T } | null)?.data ?? null;
 	const body = (await res.json().catch(() => null)) as { error?: { message?: string } } | null;
 	const message = body?.error?.message ?? '';
 	if (res.status === 401 || res.status === 403) logAuthProblem(res.status, path, message);
 	else if (res.status !== 422) console.error(`[backend] ${path}: HTTP ${res.status}`);
 	throw new BackendError(res.status, message || `Backend antwortet mit ${res.status}`);
+}
+
+/**
+ * Anfrage in den Posteingang legen. Wiederholungen bei Aussetzern sind unbedenklich: dieselbe Aufgabe kann das
+ * Backend nur einmal einlösen, eine zweite Zustellung beantwortet es mit 409 (= schon angekommen).
+ * Wirft `BackendError` (422 = Spam-Schutz/Eingaben abgelehnt, Text in `message`).
+ */
+export async function submitContact(input: ContactSubmission): Promise<void> {
+	await postToInbox(CONTACT_BASE, input);
+}
+
+export interface TrialSubmission {
+	childName: string;
+	childAge: number;
+	name: string;
+	email: string;
+	phone: string;
+	message: string;
+	/** Slug der gewählten Gruppe, leer = passend zum Alter */
+	groupSlug: string;
+	pow: ContactSubmission['pow'];
+}
+
+/**
+ * Probestunden-Anfrage ins Postfach der passenden Gruppe (`messages` `POST /website/trial`, gleicher Scope und
+ * gleiche Spam-Schutz-Aufgabe wie das Kontaktformular). Liefert den Slug der Gruppe, an die sie ging
+ * (`null` = keine passende Gruppe oder bei Wiederholung unbekannt). Fehler wie `submitContact`.
+ */
+export async function submitTrial(input: TrialSubmission): Promise<string | null> {
+	const data = await postToInbox<{ group: string | null }>(
+		'/api/v1/modules/messages/website/trial',
+		input
+	);
+	return data?.group ?? null;
 }
 
 /** Bild aus dem Backend holen (für den Bild-Proxy); `null` bei 404. */

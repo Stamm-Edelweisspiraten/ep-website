@@ -52,7 +52,7 @@
         <h1 class="display" id="h-gruppe">{group.name}</h1>
         {#if group.teaser}<p class="lede">{group.teaser}</p>{/if}
         <div class="acts">
-            <a class="pill" href="#kontakt">Probestunde ausmachen<Icon name="arrow-right" size={18} /></a>
+            <a class="pill" href="/probestunde?gruppe={encodeURIComponent(group.slug)}">Probestunde ausmachen<Icon name="arrow-right" size={18} /></a>
             <a class="pill soft" href="/termine?gruppe={encodeURIComponent(group.name)}"><Icon name="calendar" size={18} />Termine der {group.typeLabel}</a>
         </div>
     </div>

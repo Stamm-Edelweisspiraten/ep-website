@@ -105,6 +105,91 @@ export function parseContactForm(form: FormData): ParsedContact {
 	return { ok: true, spam, value: values };
 }
 
+// --- Probestunde ------------------------------------------------------------------------------------
+
+export const TRIAL_LIMITS = { childName: 100, ageMin: 3, ageMax: 30, message: 2000 } as const;
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+export interface TrialInput {
+	childName: string;
+	/** ganze Jahre; `NaN` bei ungültiger Eingabe (nur in `values`) */
+	childAge: number;
+	name: string;
+	email: string;
+	phone: string;
+	message: string;
+	/** Slug der gewählten Gruppe oder leer */
+	groupSlug: string;
+}
+
+export type TrialField = keyof TrialInput | 'consent';
+
+export type ParsedTrial =
+	| { ok: true; spam: boolean; value: TrialInput }
+	| { ok: false; errors: Partial<Record<TrialField, string>>; values: TrialInput };
+
+/** Probestunden-Formular prüfen; `knownSlugs` = Gruppen der Website (unbekannter Slug → passend zum Alter) */
+export function parseTrialForm(form: FormData, knownSlugs: string[] = []): ParsedTrial {
+	const ageText = oneLine(field(form, 'childAge'));
+	const slug = oneLine(field(form, 'group')).toLowerCase();
+	const values: TrialInput = {
+		childName: oneLine(field(form, 'childName')),
+		childAge: /^\d{1,2}$/.test(ageText) ? Number(ageText) : Number.NaN,
+		name: oneLine(field(form, 'name')),
+		email: oneLine(field(form, 'email')),
+		phone: oneLine(field(form, 'phone')),
+		message: field(form, 'message').replace(CONTROL_RE, '').replace(/\r\n?/g, '\n').trim(),
+		groupSlug: SLUG_RE.test(slug) && knownSlugs.includes(slug) ? slug : ''
+	};
+	const errors: Partial<Record<TrialField, string>> = {};
+	if (!values.childName) errors.childName = 'Bitte gib den Namen des Kindes an.';
+	else if (values.childName.length > TRIAL_LIMITS.childName) errors.childName = 'Der Name ist zu lang.';
+	if (!ageText) errors.childAge = 'Bitte gib das Alter an.';
+	else if (
+		!Number.isInteger(values.childAge) ||
+		values.childAge < TRIAL_LIMITS.ageMin ||
+		values.childAge > TRIAL_LIMITS.ageMax
+	) {
+		errors.childAge = `Bitte gib ein Alter zwischen ${TRIAL_LIMITS.ageMin} und ${TRIAL_LIMITS.ageMax} Jahren an.`;
+	}
+	if (!values.name) errors.name = 'Bitte gib deinen Namen an.';
+	else if (values.name.length > CONTACT_LIMITS.name) errors.name = 'Der Name ist zu lang.';
+	if (!values.email) errors.email = 'Bitte gib deine E-Mail-Adresse an.';
+	else if (values.email.length > CONTACT_LIMITS.email || !EMAIL_RE.test(values.email)) {
+		errors.email = 'Bitte gib eine gültige E-Mail-Adresse an.';
+	}
+	if (!values.phone) errors.phone = 'Bitte gib eine Telefonnummer an.';
+	else if (values.phone.length > CONTACT_LIMITS.phone || !PHONE_RE.test(values.phone)) {
+		errors.phone = 'Bitte gib eine gültige Telefonnummer an.';
+	}
+	if (values.message.length > TRIAL_LIMITS.message) {
+		errors.message = `Die Nachricht darf höchstens ${TRIAL_LIMITS.message} Zeichen lang sein.`;
+	}
+	if (field(form, 'consent') !== 'on' && field(form, 'consent') !== '1') {
+		errors.consent = 'Bitte bestätige die Hinweise zum Datenschutz.';
+	}
+	const spam = field(form, HONEYPOT_FIELD).trim() !== '';
+	if (Object.keys(errors).length > 0 && !spam) return { ok: false, errors, values };
+	return { ok: true, spam, value: values };
+}
+
+/** Probestunden-Anfrage als Kontaktnachricht (SMTP-Rückfall bei Ausfall des Backends) */
+export function trialAsContact(input: TrialInput, groupLabel: string | null): ContactInput {
+	return {
+		name: input.name,
+		email: input.email,
+		phone: input.phone,
+		message: [
+			'Anfrage für eine Probestunde',
+			'',
+			`Kind: ${input.childName}`,
+			`Alter: ${input.childAge} Jahre`,
+			`Gruppe: ${groupLabel ?? 'passend zum Alter (keine gewählt)'}`,
+			...(input.message ? ['', input.message] : [])
+		].join('\n')
+	};
+}
+
 /** RFC 2047 (B-Kodierung) für Kopfzeilen mit Umlauten */
 function encodeWord(text: string) {
 	return /^[\x20-\x7e]*$/.test(text)

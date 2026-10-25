@@ -123,7 +123,7 @@
     <div class="end">
         <ThemeToggle />
         <a class="round hide-m" href="/kontakt" aria-label="Kontakt" title="Kontakt"><Icon name="mail" /></a>
-        <a class="pill hide-m" href="/#gruppen">Probestunde</a>
+        <a class="pill hide-m" href="/probestunde">Probestunde</a>
         <button
             type="button"
             class="round menu"
@@ -152,7 +152,7 @@
             {#each [...links, ...about] as link (link.href)}
                 <a href={link.href} class="mi" aria-current={active(link.href, path) ? 'page' : undefined}>{link.label}</a>
             {/each}
-            <p style="margin-top: 20px"><a class="pill" href="/#gruppen">Probestunde</a></p>
+            <p style="margin-top: 20px"><a class="pill" href="/probestunde">Probestunde</a></p>
         </div>
     </nav>
 {/if}

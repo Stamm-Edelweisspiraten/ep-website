@@ -22,10 +22,10 @@
         <div class="fcta">
             <div>
                 <p class="display">Komm zur Probestunde</p>
-                <p class="sub">Einfach vorbeikommen, ohne Anmeldung und kostenlos. In der Ev. Auferstehungsgemeinde in Bremen-Hastedt.</p>
+                <p class="sub">Kostenlos und unverbindlich – sag uns kurz Bescheid, wir finden die passende Gruppe. In der Ev. Auferstehungsgemeinde in Bremen-Hastedt.</p>
             </div>
             <div class="acts">
-                <a class="pill white" href="/#gruppen">Gruppe finden<Icon name="arrow-right" size={18} /></a>
+                <a class="pill white" href="/probestunde">Probestunde anfragen<Icon name="arrow-right" size={18} /></a>
                 <a class="pill dim" href="/kontakt">Frage stellen</a>
             </div>
         </div>
