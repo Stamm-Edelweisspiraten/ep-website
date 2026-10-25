@@ -1,6 +1,6 @@
 <script lang="ts">
     import QRCode from 'qrcode';
-    import { onMount } from 'svelte';
+    import { tick } from 'svelte';
 
     export let url: string = '';
     export let title: string = '';
@@ -9,9 +9,28 @@
     export let onClose: () => void;
 
     let qrDataUrl = '';
+    let copied = false;
+    let copyFailed = false;
+    let dialog: HTMLDivElement | undefined;
+    let returnFocus: HTMLElement | null = null;
+    let wasOpen = false;
 
     $: if (open && url) {
         generateQR();
+    }
+
+    // Fokus beim Öffnen in den Dialog, beim Schließen zurück zum auslösenden Element
+    $: if (open !== wasOpen) {
+        wasOpen = open;
+        if (open) {
+            returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+            copied = false;
+            copyFailed = false;
+            tick().then(() => dialog?.focus());
+        } else {
+            returnFocus?.focus();
+            returnFocus = null;
+        }
     }
 
     async function generateQR() {
@@ -28,67 +47,128 @@
 
         qrDataUrl = qrCanvas.toDataURL();
     }
+
+    async function copyLink() {
+        try {
+            await navigator.clipboard.writeText(url);
+            copied = true;
+            copyFailed = false;
+        } catch {
+            copyFailed = true;
+        }
+    }
+
+    function onKeydown(event: KeyboardEvent) {
+        if (open && event.key === 'Escape') {
+            event.preventDefault();
+            onClose?.();
+        }
+    }
 </script>
 
+<svelte:window on:keydown={onKeydown} />
+
 {#if open}
-    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" on:click={() => onClose?.()}>
-        <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md text-center relative space-y-4" on:click|stopPropagation>
-            <button class="absolute top-2 right-3 text-2xl text-gray-500 hover:text-red-600" on:click={() => onClose?.()}>×</button>
-            <h2 class="text-xl font-bold mb-2">Teilen</h2>
+    <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+    <div
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+        style="overscroll-behavior: contain"
+        on:click={() => onClose?.()}
+    >
+        <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
+        <div
+            bind:this={dialog}
+            class="relative max-h-full w-full max-w-md space-y-4 overflow-y-auto border border-line-strong bg-surface p-6 text-center"
+            style="overscroll-behavior: contain"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="share-title"
+            tabindex="-1"
+            on:click|stopPropagation
+        >
+            <button
+                type="button"
+                class="absolute top-2 right-2 inline-flex size-10 items-center justify-center text-2xl text-muted transition-colors hover:bg-subtle hover:text-ink"
+                aria-label="Teilen schließen"
+                on:click={() => onClose?.()}
+            >
+                <span aria-hidden="true">×</span>
+            </button>
+            <h2 id="share-title" class="mb-2 text-sub text-ink">Teilen</h2>
 
             {#if qrDataUrl}
-                <img src={qrDataUrl} alt="QR Code" class="mx-auto rounded shadow w-48 h-48 object-contain" />
+                <img
+                    src={qrDataUrl}
+                    alt="QR-Code mit dem Link zu dieser Seite"
+                    width="192"
+                    height="192"
+                    class="mx-auto size-48 border border-line bg-[#fff] object-contain"
+                />
 
-                <div class="bg-gray-100 rounded p-2 flex items-center justify-between gap-2 mt-4">
-                    <input readonly value={url} class="flex-1 bg-transparent outline-none text-sm truncate" />
+                <div class="mt-4 flex items-center justify-between gap-2 border border-line bg-subtle p-2">
+                    <label for="share-url" class="sr-only">Link</label>
+                    <input
+                        id="share-url"
+                        readonly
+                        value={url}
+                        class="min-w-0 flex-1 truncate bg-transparent text-small text-body"
+                        on:focus={(e) => e.currentTarget.select()}
+                    />
                     <button
-                            class="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
-                            on:click={async () => {
-                        await navigator.clipboard.writeText(url);
-                        alert('Link kopiert!');
-                    }}
+                        type="button"
+                        class="inline-flex size-9 shrink-0 items-center justify-center bg-ink text-page transition-colors hover:bg-body"
+                        aria-label="Link kopieren"
+                        on:click={copyLink}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                             <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
                             <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
                         </svg>
                     </button>
                 </div>
+                <p class="min-h-[1.5em] text-small text-muted" role="status">
+                    {#if copied}Link kopiert!{:else if copyFailed}Kopieren nicht möglich – bitte Link markieren.{/if}
+                </p>
 
-                <div class="flex justify-center gap-4 mt-6">
+                <div class="mt-2 flex justify-center gap-4">
                     <button
-                            class="w-12 h-12 bg-neutral-900 rounded-full flex items-center justify-center hover:bg-neutral-600"
-                            title="QR-Code herunterladen"
-                            on:click={() => {
-                        const link = document.createElement('a');
-                        link.href = qrDataUrl;
-                        link.download = 'edelweisspiraten-qr.png';
-                        link.click();
-                    }}
+                        type="button"
+                        class="flex size-12 items-center justify-center bg-ink text-page transition-colors hover:bg-body"
+                        aria-label="QR-Code herunterladen"
+                        title="QR-Code herunterladen"
+                        on:click={() => {
+                            const link = document.createElement('a');
+                            link.href = qrDataUrl;
+                            link.download = 'edelweisspiraten-qr.png';
+                            link.click();
+                        }}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                             <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
                             <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
                         </svg>
                     </button>
 
                     <a
-                            class="w-12 h-12 bg-neutral-900 rounded-full flex items-center justify-center hover:bg-green-600"
-                            title="Per WhatsApp teilen"
-                            href={`https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`}
-                            target="_blank"
+                        class="flex size-12 items-center justify-center bg-ink text-page transition-colors hover:bg-body"
+                        aria-label="Per WhatsApp teilen"
+                        title="Per WhatsApp teilen"
+                        href={`https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                             <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592"/>
                         </svg>
                     </a>
 
                     <a
-                            class="w-12 h-12 bg-neutral-900 rounded-full flex items-center justify-center hover:bg-blue-600"
-                            title="Per E-Mail teilen"
-                            href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(whatsappMessage)}`}
+                        class="flex size-12 items-center justify-center bg-ink text-page transition-colors hover:bg-body"
+                        aria-label="Per E-Mail teilen"
+                        title="Per E-Mail teilen"
+                        href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(whatsappMessage)}`}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
                             <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
                         </svg>
                     </a>

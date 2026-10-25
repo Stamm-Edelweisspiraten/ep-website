@@ -96,22 +96,22 @@
 
 <div class="space-y-3">
     <div class="flex flex-wrap items-center justify-between gap-2">
-        <h2 class="text-xl font-semibold text-gray-900" aria-live="polite">{label}</h2>
+        <h2 class="text-section text-ink" aria-live="polite">{label}</h2>
         <div class="flex items-center gap-1">
             <button
                 type="button"
-                class="h-9 border border-gray-300 bg-white px-3 text-sm hover:bg-gray-50"
+                class="h-9 border border-line-strong bg-surface px-3 text-small text-ink transition-colors hover:bg-subtle"
                 on:click={goToday}>Heute</button
             >
             <button
                 type="button"
-                class="inline-flex size-9 items-center justify-center border border-gray-300 bg-white hover:bg-gray-50"
+                class="inline-flex size-9 items-center justify-center border border-line-strong bg-surface text-ink transition-colors hover:bg-subtle"
                 aria-label="Vorheriger Monat"
                 on:click={() => go(-1)}><Icon name="chevron-left" /></button
             >
             <button
                 type="button"
-                class="inline-flex size-9 items-center justify-center border border-gray-300 bg-white hover:bg-gray-50"
+                class="inline-flex size-9 items-center justify-center border border-line-strong bg-surface text-ink transition-colors hover:bg-subtle"
                 aria-label="Nächster Monat"
                 on:click={() => go(1)}><Icon name="chevron-right" /></button
             >
@@ -119,32 +119,32 @@
     </div>
 
     <!-- Raster ab 640 px -->
-    <div class="hidden border border-gray-200 bg-white sm:block" role="table" aria-label="Kalender {label}">
-        <div class="grid grid-cols-7 border-b border-gray-200 bg-gray-50" role="row">
+    <div class="hidden border border-line bg-surface sm:block" role="table" aria-label="Kalender {label}">
+        <div class="grid grid-cols-7 border-b border-line bg-subtle" role="row">
             {#each WEEKDAY_LABELS as wd (wd)}
-                <div class="px-2 py-1.5 text-xs font-medium text-gray-500" role="columnheader">{wd}</div>
+                <div class="px-2 py-1.5 text-[13px] font-medium text-muted" role="columnheader">{wd}</div>
             {/each}
         </div>
         {#each weeks as week (week.days[0])}
-            <div class="grid grid-cols-7 border-b border-gray-200 last:border-b-0" role="row">
+            <div class="grid grid-cols-7 border-b border-line last:border-b-0" role="row">
                 {#each week.days as date, col (date)}
                     {@const inMonth = monthOf(date) === month}
                     {@const isToday = date === today}
                     {@const hidden = week.hidden[col] ?? 0}
                     <div
-                        class="relative min-h-[8rem] border-r border-gray-200 last:border-r-0 {inMonth
+                        class="relative min-h-[8rem] border-r border-line last:border-r-0 {inMonth
                             ? ''
-                            : 'bg-gray-50/70'} {isToday ? 'bg-blue-50/60' : ''}"
+                            : 'bg-subtle/70'} {isToday ? 'bg-notice' : ''}"
                         role="cell"
                         aria-label={formatLongDate(date)}
                     >
                         <div class="flex h-7 items-center px-1.5">
                             <span
-                                class="inline-flex size-6 items-center justify-center rounded-full text-xs tabular-nums {isToday
-                                    ? 'bg-blue-700 font-semibold text-white'
+                                class="inline-flex size-6 items-center justify-center rounded-full text-[13px] tabular-nums {isToday
+                                    ? 'bg-brand font-semibold text-page'
                                     : inMonth
-                                      ? 'text-gray-800'
-                                      : 'text-gray-400'}"
+                                      ? 'text-ink'
+                                      : 'text-muted'}"
                                 aria-hidden="true">{Number(date.slice(8, 10))}</span
                             >
                             {#if isToday}<span class="sr-only">Heute</span>{/if}
@@ -153,13 +153,11 @@
                             {@const time = seg.continuesBefore ? '' : formatItemTime(seg.item)}
                             <a
                                 href={asItem(seg.item).href}
-                                class="absolute left-[3px] z-10 flex h-[1.3rem] items-center gap-1 overflow-hidden px-1.5 text-xs leading-none hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-700 {contrastTextColor(
+                                class="absolute left-[3px] z-10 flex h-[1.3rem] items-center gap-1 overflow-hidden px-1.5 text-[13px] leading-none transition-[filter] hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-focus {contrastTextColor(
                                     seg.item.color
                                 )
                                     ? ''
-                                    : 'bg-blue-700 text-white'} {seg.continuesBefore
-                                    ? 'rounded-l-none'
-                                    : 'rounded-l-sm'} {seg.continuesAfter ? 'rounded-r-none' : 'rounded-r-sm'}"
+                                    : 'bg-brand text-page'}"
                                 style={barStyle(seg)}
                                 aria-label={describeItem(seg.item)}
                                 title={describeItem(seg.item)}
@@ -177,7 +175,7 @@
                             >
                                 <button
                                     type="button"
-                                    class="h-5 px-1.5 text-xs text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                                    class="h-5 px-1.5 text-[13px] text-muted transition-colors hover:bg-subtle hover:text-ink"
                                     aria-expanded={openDay === date}
                                     aria-label="{hidden} weitere Termine am {formatLongDate(date)}"
                                     on:click={() => (openDay = openDay === date ? null : date)}
@@ -186,11 +184,11 @@
                                 </button>
                                 {#if openDay === date}
                                     <div
-                                        class="absolute top-6 left-0 w-64 border border-gray-200 bg-white p-2 shadow-lg {col >= 5
+                                        class="absolute top-6 left-0 w-64 border border-line-strong bg-surface p-2 {col >= 5
                                             ? '-translate-x-[calc(100%-6rem)]'
                                             : ''}"
                                     >
-                                        <p class="mb-1 px-1 text-xs font-semibold text-gray-700">
+                                        <p class="mb-1 px-1 text-[13px] font-semibold text-body">
                                             {formatDayLabel(date)}
                                         </p>
                                         <ul class="space-y-0.5">
@@ -198,16 +196,16 @@
                                                 <li>
                                                     <a
                                                         href={asItem(item).href}
-                                                        class="flex items-center gap-2 px-1.5 py-1 text-sm hover:bg-gray-50"
+                                                        class="flex items-center gap-2 px-1.5 py-1 text-small text-ink transition-colors hover:bg-subtle"
                                                         aria-label={describeItem(item)}
                                                     >
                                                         <span
-                                                            class="size-2.5 shrink-0 rounded-full bg-blue-700"
+                                                            class="size-2.5 shrink-0 rounded-full bg-brand"
                                                             style={dotStyle(item)}
                                                             aria-hidden="true"
                                                         ></span>
                                                         {#if formatItemTime(item)}
-                                                            <span class="shrink-0 text-xs text-gray-500 tabular-nums"
+                                                            <span class="shrink-0 text-[13px] text-muted tabular-nums"
                                                                 >{formatItemTime(item)}</span
                                                             >
                                                         {/if}
@@ -229,42 +227,42 @@
     <!-- Agenda unter 640 px -->
     <div class="sm:hidden">
         {#if agenda.length === 0}
-            <p class="border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
+            <p class="border border-dashed border-line-strong p-6 text-center text-muted">
                 Keine Termine in diesem Monat.
             </p>
         {:else}
             <ul class="space-y-3" aria-label="Termine {label}">
                 {#each agenda as day (day.date)}
                     {@const isToday = day.date === today}
-                    <li class="border border-gray-200 bg-white">
-                        <h3 class="border-b border-gray-200 px-3 py-1.5 text-sm font-semibold text-gray-800">
+                    <li class="border border-line bg-surface">
+                        <h3 class="border-b border-line px-3 py-1.5 text-small font-semibold text-ink">
                             {formatDayLabel(day.date)}
                             {#if isToday}
-                                <span class="ml-1 rounded-full bg-blue-700 px-1.5 py-0.5 text-[0.7rem] font-medium text-white"
+                                <span class="ml-1 bg-brand px-1.5 py-0.5 text-[13px] font-medium text-page"
                                     >Heute</span
                                 >
                             {/if}
                         </h3>
-                        <ul class="divide-y divide-gray-100">
+                        <ul class="divide-y divide-line">
                             {#each day.items as item (calendarItemKey(item))}
                                 <li>
                                     <a
                                         href={item.href}
-                                        class="flex items-center gap-3 px-3 py-2.5 text-sm hover:bg-gray-50"
+                                        class="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-subtle"
                                         aria-label={describeItem(item)}
                                     >
                                         <span
-                                            class="h-8 w-1 shrink-0 rounded-full bg-blue-700"
+                                            class="h-8 w-1 shrink-0 bg-brand"
                                             style={dotStyle(item)}
                                             aria-hidden="true"
                                         ></span>
                                         <span class="min-w-0 flex-1">
-                                            <span class="flex min-w-0 items-center gap-1.5 font-medium text-gray-900">
-                                                {#if item.recurring}<Icon name="repeat" size={13} class="text-gray-400" />{/if}
+                                            <span class="flex min-w-0 items-center gap-1.5 font-medium text-ink">
+                                                {#if item.recurring}<Icon name="repeat" size={13} class="text-muted" />{/if}
                                                 <span class="truncate">{item.title}</span>
                                             </span>
                                             {#if formatItemTime(item) || rangeText(item)}
-                                                <span class="block text-xs text-gray-500 tabular-nums">
+                                                <span class="block text-small text-muted tabular-nums">
                                                     {[rangeText(item), formatItemTime(item)].filter(Boolean).join(' · ')}
                                                 </span>
                                             {/if}

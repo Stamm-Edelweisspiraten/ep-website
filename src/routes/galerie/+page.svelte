@@ -51,8 +51,8 @@
     onMount(() => (ready = true));
 
     const chipClass = (on: boolean) =>
-        `rounded border px-3 py-1 text-sm transition ${
-            on ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+        `border px-3 py-1 text-small transition-colors ${
+            on ? 'border-ink bg-ink text-page' : 'border-line-strong bg-surface text-body hover:border-muted'
         }`;
 </script>
 
@@ -61,26 +61,29 @@
     <meta name="description" content="Bilder von Fahrten, Lagern und Aktionen des Stammes Edelweißpiraten." />
 </svelte:head>
 
-<section class="mx-auto max-w-6xl space-y-6 px-6 py-12">
+<section class="site-container space-y-6 py-12">
     <header>
-        <h1 class="text-3xl font-bold text-gray-900">Galerie</h1>
-        <p class="mt-1 text-gray-600">Einblicke in unsere Fahrten, Lager und Aktionen.</p>
+        <h1 class="text-display text-ink">Galerie</h1>
+        <p class="mt-3 text-lede text-body">Einblicke in unsere Fahrten, Lager und Aktionen.</p>
     </header>
 
-    <div class="space-y-3 border-y border-gray-200 py-4">
+    <div class="space-y-3 border-y border-line py-4">
         <div class="relative max-w-md">
-            <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"><Icon name="search" /></span>
+            <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted"><Icon name="search" /></span>
             <input
                 type="search"
                 bind:value={q}
+                name="q"
+                autocomplete="off"
                 placeholder="Galerie suchen …"
                 aria-label="Galerien durchsuchen"
-                class="h-10 w-full border border-gray-300 pr-3 pl-9 text-sm focus:border-blue-700 focus:outline-none"
+                class="field h-10"
+                style="padding-left: 2.25rem"
             />
         </div>
         {#if years.length > 1}
             <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Jahr">
-                <span class="mr-1 text-sm text-gray-500">Jahr</span>
+                <span class="mr-1 text-small text-muted">Jahr</span>
                 <button type="button" class={chipClass(!year)} aria-pressed={!year} on:click={() => (year = '')}>Alle</button>
                 {#each years as y (y)}
                     <button type="button" class={chipClass(year === y)} aria-pressed={year === y} on:click={() => (year = year === y ? '' : y)}>{y}</button>
@@ -89,7 +92,7 @@
         {/if}
         {#if groups.length}
             <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Gruppe">
-                <span class="mr-1 text-sm text-gray-500">Gruppe</span>
+                <span class="mr-1 text-small text-muted">Gruppe</span>
                 {#each groups as g (g.id)}
                     <button
                         type="button"
@@ -98,7 +101,7 @@
                         on:click={() => (group = group === g.id ? '' : g.id)}
                     >
                         <span
-                            class="size-2.5 rounded-full {g.color ? '' : 'bg-gray-400'}"
+                            class="size-2.5 rounded-full {g.color ? '' : 'bg-muted'}"
                             style={g.color ? `background-color: ${g.color}` : ''}
                             aria-hidden="true"
                         ></span>
@@ -108,11 +111,11 @@
             </div>
         {/if}
         {#if filterActive}
-            <div class="flex items-center gap-3 text-sm text-gray-600">
+            <div class="flex items-center gap-3 text-small text-muted" role="status">
                 <span>{filtered.length} {filtered.length === 1 ? 'Galerie' : 'Galerien'} gefunden</span>
                 <button
                     type="button"
-                    class="text-blue-700 underline hover:text-blue-900"
+                    class="text-link"
                     on:click={() => ((year = ''), (group = ''), (q = ''))}>Filter zurücksetzen</button
                 >
             </div>
@@ -125,9 +128,9 @@
                 <li>
                     <a
                         href={`/galerie/${g.id}`}
-                        class="group flex h-full flex-col overflow-hidden border border-gray-200 bg-white transition hover:border-gray-400"
+                        class="group flex h-full flex-col overflow-hidden border border-line bg-surface transition-colors hover:border-muted"
                     >
-                        <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                        <div class="relative aspect-[4/3] overflow-hidden bg-subtle">
                             {#if g.cover}
                                 <img
                                     src={g.cover.url}
@@ -136,18 +139,18 @@
                                     height={g.cover.height}
                                     loading="lazy"
                                     decoding="async"
-                                    class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                    class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                 />
                             {:else}
-                                <span class="flex h-full items-center justify-center text-gray-400"><Icon name="image" size={40} /></span>
+                                <span class="flex h-full items-center justify-center text-muted"><Icon name="image" size={40} /></span>
                             {/if}
-                            <span class="absolute right-2 bottom-2 inline-flex items-center gap-1 bg-black/65 px-2 py-0.5 text-xs text-white">
-                                <Icon name="images" size={12} />{g.imageCount}
+                            <span class="absolute right-2 bottom-2 inline-flex items-center gap-1 bg-black/65 px-2 py-0.5 text-small text-white tabular-nums">
+                                <Icon name="images" size={14} />{g.imageCount}<span class="sr-only"> {g.imageCount === 1 ? 'Bild' : 'Bilder'}</span>
                             </span>
                         </div>
                         <div class="flex flex-1 flex-col gap-1.5 p-4">
-                            <h2 class="line-clamp-2 font-semibold text-gray-900 group-hover:text-blue-800">{g.title}</h2>
-                            <p class="text-sm text-gray-500">{formatDateRange({ startsOn: g.date, endsOn: g.endDate })}</p>
+                            <h2 class="line-clamp-2 text-lg leading-snug font-semibold text-ink transition-colors group-hover:text-link">{g.title}</h2>
+                            <p class="text-small text-muted tabular-nums">{formatDateRange({ startsOn: g.date, endsOn: g.endDate })}</p>
                             {#if g.groups.length}
                                 <div class="mt-auto flex flex-wrap gap-1.5 pt-2">
                                     {#each g.groups as x (x.id)}<Chip label={x.name} color={x.color} />{/each}
@@ -159,7 +162,7 @@
             {/each}
         </ul>
     {:else}
-        <p class="border border-dashed border-gray-300 p-8 text-center text-gray-500">
+        <p class="border border-dashed border-line-strong p-8 text-center text-muted">
             {filterActive ? 'Keine Galerie zu diesem Filter.' : 'Noch keine Bilder veröffentlicht.'}
         </p>
     {/if}

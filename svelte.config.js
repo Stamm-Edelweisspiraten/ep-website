@@ -3,8 +3,10 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /**
  * Content-Security-Policy (#67, 01b-13). `mode: 'auto'` ergänzt Nonces für SvelteKits eigene Inline-Skripte
- * (alle Seiten werden zur Laufzeit gerendert → Header). Inhalte aus dem Backend sind Freitext; ohne
- * `{@html}` gibt es keine XSS-Senke, die CSP ist die zweite Verteidigungslinie.
+ * (alle Seiten werden zur Laufzeit gerendert → Header). Inhalte aus dem Backend sind Freitext – einzige
+ * `{@html}`-Stellen sind Blog-Beiträge und Antworten der häufigen Fragen (`FaqList.svelte`, `blog/[slug]`); deren
+ * HTML wird vorher serverseitig in `src/lib/server/rich-text.ts` auf eine Whitelist bereinigt (keine Skripte,
+ * Ereignis-Attribute oder fremden Bildquellen). Die CSP ist die zweite Verteidigungslinie.
  * - Karten-Kacheln (Zwei-Klick-Karte) von `*.tile.openstreetmap.org`, alles andere vom eigenen Origin
  *   (Bilder laufen über den Proxy `/bilder/…`).
  * - `style-src 'unsafe-inline'`: Svelte-Übergänge und einige `style=`-Attribute; keine Skripte.

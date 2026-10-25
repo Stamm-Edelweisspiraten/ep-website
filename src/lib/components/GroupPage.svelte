@@ -27,15 +27,15 @@
     />
 </svelte:head>
 
-<div class="mx-auto max-w-5xl px-6 pt-12">
+<div class="site-container pt-12">
     <header class="grid items-center gap-4 border-b border-line pb-8 {group.image ? 'grid-cols-[96px_minmax(0,1fr)] sm:grid-cols-[180px_minmax(0,1fr)] sm:gap-9' : ''}">
         {#if group.image}
             <img src={group.image} alt="Gruppenbild {group.name}" width="180" height="180" class="h-auto w-full" />
         {/if}
         <div>
             <p class="text-muted">{group.typeLabel}</p>
-            <h1 class="group-name text-3xl font-bold leading-tight sm:text-[40px]" style="--g: {group.color}">{group.name}</h1>
-            {#if group.teaser}<p class="mt-2">{group.teaser}</p>{/if}
+            <h1 class="group-name text-display" style="--g: {group.color}">{group.name}</h1>
+            {#if group.teaser}<p class="mt-3 text-lede text-body">{group.teaser}</p>{/if}
         </div>
     </header>
 
@@ -43,7 +43,7 @@
         <dl class="grid gap-x-4 gap-y-2 pt-8 sm:grid-cols-[10rem_minmax(0,1fr)]">
             {#each facts as f (f.label)}
                 <dt class="text-muted">{f.label}</dt>
-                <dd class="text-ink">{f.value}</dd>
+                <dd class="text-ink tabular-nums">{f.value}</dd>
             {/each}
             {#if group.contactEmail}
                 <dt class="text-muted">Kontakt</dt>
@@ -53,22 +53,22 @@
     {/if}
 
     {#if group.description}
-        <section class="pt-10">
-            <h2 class="mb-3 text-[26px] font-bold text-ink">Das sind wir</h2>
-            <p class="max-w-3xl leading-relaxed whitespace-pre-line">{group.description}</p>
+        <section class="section-gap">
+            <h2 class="mb-3 text-section text-ink">Das sind wir</h2>
+            <p class="max-w-3xl text-base leading-relaxed whitespace-pre-line text-body">{group.description}</p>
         </section>
     {/if}
 
-    <section class="pt-10">
-        <h2 class="mb-3 text-[26px] font-bold text-ink">Nächste Termine</h2>
+    <section class="section-gap">
+        <h2 class="mb-3 text-section text-ink">Nächste Termine</h2>
         <EventList {events} showGroups={false} emptyText="Gerade stehen keine besonderen Termine an – die Gruppenstunde findet wie gewohnt statt." />
         <p class="border-t border-line pt-3">
             <a href="/termine?gruppe={encodeURIComponent(group.name)}" class="text-link">Alle Termine der {group.typeLabel}</a>
         </p>
     </section>
 
-    <section class="pt-10">
-        <h2 class="mb-3 text-[26px] font-bold text-ink">Kontakt</h2>
+    <section class="section-gap">
+        <h2 class="mb-3 text-section text-ink">Kontakt</h2>
         {#if group.contactEmail}
             <p>Bei Fragen schreib der Gruppenleitung: <span class="text-ink">{group.contactEmail}</span></p>
             <EmailButtons email={group.contactEmail} />
@@ -77,8 +77,8 @@
         {/if}
     </section>
 
-    <section class="pt-10">
-        <h2 class="mb-3 text-[26px] font-bold text-ink">Treffpunkt</h2>
+    <section class="section-gap">
+        <h2 class="mb-3 text-section text-ink">Treffpunkt</h2>
         <Map height="h-[320px]" />
     </section>
 </div>

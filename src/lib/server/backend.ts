@@ -7,7 +7,7 @@
  * Umgebung:
  * - `WEBSITE_API_URL` – Basis-URL des Backends ohne abschließenden Schrägstrich (Standard `http://app:3000`)
  * - `WEBSITE_API_KEY` – API-Key mit den Scopes `events.website.read`, `galleries.website.read`, `members.website.read`,
- *   `offices.website.read` („Unser Team“)
+ *   `offices.website.read` („Unser Team“), `website.content.read` (Banner, häufige Fragen, Blog)
  */
 import { env } from '$env/dynamic/private';
 import type {
@@ -16,7 +16,13 @@ import type {
 	BackendGallery,
 	BackendGalleryDetail,
 	BackendGroup,
-	BackendOffice
+	BackendOffice,
+	BackendBanner,
+	BackendFaq,
+	BackendPost,
+	BackendPostImage,
+	BackendPostPage,
+	BackendPostSummary
 } from './backend-types';
 import { fetchEventWindows, type EventPageFetcher } from './event-pages';
 import { EVENT_KEY_RE, UUID_RE, createCachedLoader } from './cache';
@@ -28,8 +34,16 @@ import type {
 	SiteGalleryDetail,
 	SiteGalleryRef,
 	SiteGroupRef,
-	SiteOffice
+	SiteOffice,
+	SiteBanner,
+	SiteFaq,
+	SitePost,
+	SitePostImage,
+	SitePostPage,
+	SitePostSummary
 } from '../site-types';
+import { renderRichText } from './rich-text';
+import { todayBerlin } from '../dates';
 
 export type { BackendGroup } from './backend-types';
 
@@ -104,7 +118,8 @@ function logAuthProblem(status: number, path: string, message: string) {
 			? `API-Key ${prefix}… wird nicht akzeptiert (unbekannt, widerrufen, abgelaufen oder Konto deaktiviert). ` +
 				'In Administration → API-Keys prüfen bzw. neuen Key anlegen und WEBSITE_API_KEY im Website-Dienst ersetzen.'
 			: `API-Key ${prefix}… fehlt ein Recht für ${path}. Benötigte Scopes: events.website.read ` +
-				'galleries.website.read members.website.read offices.website.read (und das Konto muss sie selbst haben).';
+				'galleries.website.read members.website.read offices.website.read website.content.read ' +
+				'(und das Konto muss sie selbst haben).';
 	console.error(`[backend] ${hint}${message ? ` Backend: „${message}“` : ''}`);
 }
 
@@ -689,4 +704,190 @@ export async function isKnownGalleryImage(galleryId: string, imageId: string): P
 	} catch {
 		return true;
 	}
+}
+
+// --- Inhalte der Website: Banner, häufige Fragen, Blog (Modul `website`) ----------------------------
+
+const CONTENT = '/api/v1/modules/website/website';
+/** Beiträge je Seite auf `/blog` */
+export const POSTS_PER_PAGE = 12;
+/** Adresse eines Beitrags (wie `SLUG_PATTERN` im Backend) */
+export const POST_SLUG_RE = /^(?=.{1,80}$)[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const SAFE_LINK_RE = /^(\/(?!\/)[^\s]*|https?:\/\/[^\s]+|mailto:[^\s]+)$/i;
+const MAX_TAG_LENGTH = 40;
+
+/** Banner/Hinweise, die gerade laufen (in der Reihenfolge des Intern-Bereichs). */
+export async function fetchBanners(): Promise<SiteBanner[]> {
+	const banners = await getJson<BackendBanner[]>(`${CONTENT}/banners`);
+	return banners.map((b) => {
+		const linkUrl = b.linkUrl && SAFE_LINK_RE.test(b.linkUrl) ? b.linkUrl : null;
+		return {
+			id: b.id,
+			title: b.title?.trim() || null,
+			text: b.text,
+			level: b.level === 'important' ? 'important' : 'info',
+			placement: b.placement === 'home' ? 'home' : 'bar',
+			linkUrl,
+			linkLabel: linkUrl ? b.linkLabel?.trim() || null : null,
+			linkExternal: !!linkUrl && /^https?:\/\//i.test(linkUrl),
+			dismissible: b.dismissible,
+			dismissKey: `${b.id}:${b.updatedAt}`
+		};
+	});
+}
+
+/** Aktive häufige Fragen (Antworten serverseitig bereinigt). */
+export async function fetchFaqs(): Promise<SiteFaq[]> {
+	const faqs = await getJson<BackendFaq[]>(`${CONTENT}/faqs`);
+	return faqs.map((f) => ({
+		id: f.id,
+		question: f.question,
+		answerHtml: renderRichText(f.answerHtml),
+		featured: f.featured
+	}));
+}
+
+export function postImageUrl(slug: string, imageId: string, variant: 'thumb' | 'web') {
+	return `/bilder/blog/${encodeURIComponent(slug)}/${encodeURIComponent(imageId)}/${variant}`;
+}
+
+function postImage(slug: string, img: BackendPostImage, variant: 'thumb' | 'web'): SitePostImage {
+	return {
+		url: postImageUrl(slug, img.id, variant),
+		width: img.width,
+		height: img.height,
+		alt: img.alt?.trim() ?? ''
+	};
+}
+
+function toSitePostSummary(p: BackendPostSummary): SitePostSummary {
+	const at = new Date(p.publishedAt);
+	return {
+		slug: p.slug,
+		href: `/blog/${p.slug}`,
+		title: p.title,
+		teaser: p.teaser?.trim() || null,
+		publishedOn: Number.isNaN(at.getTime()) ? p.publishedAt.slice(0, 10) : todayBerlin(at),
+		publishedAt: p.publishedAt,
+		cover: p.cover ? postImage(p.slug, p.cover, 'thumb') : null,
+		tags: [...p.tags],
+		authorName: p.authorName?.trim() || null
+	};
+}
+
+/**
+ * Veröffentlichte Beiträge, neueste zuerst (`page` ab 1, `POSTS_PER_PAGE` je Seite), optional nur ein Thema.
+ * Ist das Modul im Intern-Bereich nicht aktiv (404), gibt es einfach keine Beiträge.
+ */
+export async function fetchPosts(
+	opts: { tag?: string | null; page?: number; limit?: number } = {}
+): Promise<SitePostPage> {
+	const limit = Math.min(Math.max(1, Math.floor(opts.limit ?? POSTS_PER_PAGE)), 100);
+	const page = Math.max(1, Math.floor(Number(opts.page) || 1));
+	const tag = opts.tag?.trim().slice(0, MAX_TAG_LENGTH) || undefined;
+	let data: BackendPostPage;
+	try {
+		data = await getJson<BackendPostPage>(`${CONTENT}/posts`, {
+			limit,
+			offset: (page - 1) * limit,
+			tag
+		});
+	} catch (e) {
+		if (e instanceof BackendError && e.status === 404) {
+			return { items: [], total: 0, tags: [], page: 1, pages: 1 };
+		}
+		throw e;
+	}
+	return {
+		items: data.items.map(toSitePostSummary),
+		total: data.total,
+		tags: data.tags.map((t) => ({ tag: t.tag, count: t.count })),
+		page,
+		pages: Math.max(1, Math.ceil(data.total / limit))
+	};
+}
+
+/** Rohdaten eines Beitrags; `null`, wenn unbekannt (404/422 werden 60 s gemerkt). */
+async function getPost(slug: string): Promise<BackendPost | null> {
+	if (!POST_SLUG_RE.test(slug)) return null; // zufällige Adressen erreichen das Backend nicht
+	try {
+		return await getJson<BackendPost>(`${CONTENT}/posts/${encodeURIComponent(slug)}`);
+	} catch (e) {
+		if (e instanceof BackendError && (e.status === 404 || e.status === 422)) return null;
+		throw e;
+	}
+}
+
+/** Nächstes Vorkommen eines Termins ab heute (bei Serien), sonst das erste */
+function eventLink(events: BackendEvent[], id: string): SitePost['event'] {
+	const matches = events.filter((e) => e.id === id);
+	if (!matches.length) return null;
+	const day = today();
+	const pick =
+		matches.find((e) => (e.endsOn ?? e.startsOn) >= day) ?? matches[matches.length - 1]!;
+	return { key: eventKey(pick), title: pick.title, startsOn: pick.startsOn };
+}
+
+/**
+ * Ein veröffentlichter Beitrag mit bereinigtem Text; `null`, wenn unbekannt. Verknüpfungen erscheinen nur, wenn
+ * Gruppe/Termin/Galerie auf der Website selbst öffentlich gelistet sind (sonst still weggelassen).
+ */
+export async function fetchPost(slug: string): Promise<SitePost | null> {
+	const post = await getPost(slug);
+	if (!post) return null;
+	const images = new Map(post.images.map((i) => [i.id.toLowerCase(), i]));
+	const [groups, events, galleries] = await Promise.all([
+		post.groupIds.length ? listGroups() : Promise.resolve([] as BackendGroup[]),
+		post.eventId ? listEvents().catch(() => [] as BackendEvent[]) : Promise.resolve([]),
+		post.galleryId ? listGalleries().catch(() => [] as BackendGallery[]) : Promise.resolve([])
+	]);
+	const gallery = post.galleryId
+		? galleries.find((g) => g.id === post.galleryId && g.imageCount > 0)
+		: undefined;
+	return {
+		...toSitePostSummary(post),
+		coverLarge: post.cover ? postImage(post.slug, post.cover, 'web') : null,
+		bodyHtml: renderRichText(post.bodyHtml, {
+			images,
+			imageUrl: (id, variant) => postImageUrl(post.slug, id, variant)
+		}),
+		groups: post.groupIds
+			.map((id) => groups.find((g) => g.id === id))
+			.filter((g): g is BackendGroup => !!g)
+			.map((g) => ({
+				id: g.id,
+				name: g.name,
+				color: safeColor(g.color),
+				href: `/${g.type}/${g.slug}`
+			})),
+		event: post.eventId ? eventLink(events, post.eventId) : null,
+		gallery: gallery ? { id: gallery.id, title: gallery.title } : null,
+		updatedAt: post.updatedAt
+	};
+}
+
+/** Gehört das Bild zu einem veröffentlichten Beitrag? (für den Bild-Proxy; im Zweifel `true`) */
+export async function isKnownPostImage(slug: string, imageId: string): Promise<boolean> {
+	if (!POST_SLUG_RE.test(slug) || !UUID_RE.test(imageId)) return false;
+	try {
+		const post = await getPost(slug);
+		return !!post && post.images.some((img) => img.id.toLowerCase() === imageId.toLowerCase());
+	} catch {
+		return true;
+	}
+}
+
+/** Bild eines Beitrags aus dem Backend (für den Bild-Proxy); `null` bei 404. */
+export async function fetchPostImage(
+	slug: string,
+	imageId: string,
+	variant: 'thumb' | 'web'
+): Promise<Response | null> {
+	const path = buildPath(
+		`${CONTENT}/posts/${encodeURIComponent(slug)}/images/${encodeURIComponent(imageId)}/${variant}`
+	);
+	const res = await request(path, 'image/*');
+	if (res.status === 404) return null;
+	if (!res.ok) throw new BackendError(res.status, `Bild nicht abrufbar (${res.status})`);
+	return res;
 }

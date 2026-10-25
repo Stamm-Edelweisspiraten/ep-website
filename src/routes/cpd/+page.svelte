@@ -3,30 +3,33 @@
     <meta name="description" content="Wir sind ein Stamm der CPD in der Landesmark Achter'n Diek im Gau Bremen. Überblick über Bund und Geschichte der Christlichen Pfadfinderschaft Deutschlands." />
 </svelte:head>
 
-<section class="max-w-5xl mx-auto px-6 py-12 space-y-8">
+<section class="site-container py-12 space-y-8">
     <!-- Bund-Block -->
-    <h1 class="text-3xl font-bold">Christliche Pfadfinderschaft Deutschlands (CPD)</h1>
-    <div class="bg-white border border-gray-200 p-8 w-full flex flex-col md:flex-row gap-6 items-start rounded">
+    <header>
+        <h1 class="text-display text-ink">Christliche Pfadfinderschaft Deutschlands (CPD)</h1>
+        <p class="mt-3 text-lede text-body">Wir sind ein Stamm der CPD in der Landesmark Achter'n Diek im Gau Bremen.</p>
+    </header>
+    <div class="bg-surface border border-line p-8 w-full flex flex-col md:flex-row gap-6 items-start">
         <div class="flex-1 space-y-2">
-            <p class="text-gray-700"><span class="font-semibold">Name</span></p>
-            <p class="text-sm text-gray-600">Christliche Pfadfinderschaft Deutschlands e.V. (CPD)</p>
+            <p class="text-body"><span class="font-semibold">Name</span></p>
+            <p class="text-base text-ink">Christliche Pfadfinderschaft Deutschlands e.V. (CPD)</p>
         </div>
         <div class="w-full md:w-1/3 flex-shrink-0">
-            <img src="/kreuzlilie.avif" alt="Kreuzlilie der CPD e.V." class="w-full h-auto object-cover rounded" />
+            <img src="/kreuzlilie.avif" alt="Kreuzlilie der CPD e.V." width="1295" height="1656" decoding="async" class="w-full h-auto object-cover" />
         </div>
     </div>
 
     <!-- Geschichte: Akkordeon -->
-    <h2 class="text-2xl font-bold">Geschichte der CPD – Überblick</h2>
-    <p class="text-sm text-gray-600">Ein Auszug wichtiger Stationen des Bundes, nach Epochen gegliedert.</p>
+    <h2 class="section-gap text-section text-ink">Geschichte der CPD – Überblick</h2>
+    <p class="text-base text-body">Ein Auszug wichtiger Stationen des Bundes, nach Epochen gegliedert.</p>
 
     <div class="space-y-4">
         <!-- Ur-CP (vor 1921) -->
-        <details class="group border border-gray-200 rounded p-4">
-            <summary class="cursor-pointer font-semibold text-lg">Ur-CP (vor 1921)</summary>
-            <div class="mt-3 space-y-3 text-gray-800">
+        <details class="group border border-line p-4">
+            <summary class="cursor-pointer text-lg font-semibold text-ink transition-colors hover:text-link">Ur-CP (vor 1921)</summary>
+            <div class="mt-3 space-y-3 text-body">
                 <div>
-                    <h3 class="font-semibold">1909</h3>
+                    <h3 class="font-semibold text-ink tabular-nums">1909</h3>
                     <ul class="list-disc ml-6">
                         <li>Erste Anfänge der CP innerhalb des CVJM in Stuttgart</li>
                         <li>Erster Gründer: Johann Knehr</li>
@@ -35,14 +38,14 @@
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-semibold">1912</h3>
+                    <h3 class="font-semibold text-ink tabular-nums">1912</h3>
                     <ul class="list-disc ml-6">
                         <li>Erste Satzung der CP von Pastor Köhler</li>
                         <li>Erste Formen einer einheitlichen Tracht (Kluft)</li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-semibold">1919</h3>
+                    <h3 class="font-semibold text-ink tabular-nums">1919</h3>
                     <ul class="list-disc ml-6">
                         <li>Kleinste Form heißt Gruppe, Gruppenführer kann nur ein Oberpfadfinder sein</li>
                         <li>Das Pfadfinderkreuz (von Lt. Lohse im Krieg entworfen) wird eingeführt</li>
@@ -53,11 +56,11 @@
         </details>
 
         <!-- Historische CPD (1921–1945) -->
-        <details class="group border border-gray-200 rounded p-4">
-            <summary class="cursor-pointer font-semibold text-lg">Historische CPD (1921–1945)</summary>
-            <div class="mt-3 space-y-3 text-gray-800">
+        <details class="group border border-line p-4">
+            <summary class="cursor-pointer text-lg font-semibold text-ink transition-colors hover:text-link">Historische CPD (1921–1945)</summary>
+            <div class="mt-3 space-y-3 text-body">
                 <div>
-                    <h3 class="font-semibold">1921</h3>
+                    <h3 class="font-semibold text-ink tabular-nums">1921</h3>
                     <ul class="list-disc ml-6">
                         <li>Anerkennung innerhalb des CVJM wird erkämpft</li>
                         <li>Führertagung in Neudietendorf (9./10. Juni)</li>
@@ -67,7 +70,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-semibold">1922–1929</h3>
+                    <h3 class="font-semibold text-ink tabular-nums">1922–1929</h3>
                     <ul class="list-disc ml-6">
                         <li>Einführung von Ausweis, Proben, Reichsliederbuch, Ehrenpfadfinderschaft</li>
                         <li>Neue Ständearbeit: Jungpfadfinder, Pfadfinder, Knappe, Späher</li>
@@ -80,7 +83,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-semibold">1931–1934</h3>
+                    <h3 class="font-semibold text-ink tabular-nums">1931–1934</h3>
                     <ul class="list-disc ml-6">
                         <li>Langemarck bei Wettmar erworben & eingeweiht (1931)</li>
                         <li>Erste einheitliche Probenordnung; Gedanken zum Kreuzpfadfinder (1932)</li>
@@ -90,7 +93,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-semibold">1935–1944</h3>
+                    <h3 class="font-semibold text-ink tabular-nums">1935–1944</h3>
                     <ul class="list-disc ml-6">
                         <li>Bruderschaftstreffen (Dassel, Bethel)</li>
                         <li>1937: Verbot, Auflösung, Untergrundarbeit; Aufgabe Langemarck</li>
@@ -102,9 +105,9 @@
         </details>
 
         <!-- Nachkriegs-CPD (1946–1973) -->
-        <details class="group border border-gray-200 rounded p-4">
-            <summary class="cursor-pointer font-semibold text-lg">Nachkriegs-CPD (1946–1973)</summary>
-            <div class="mt-3 space-y-3 text-gray-800">
+        <details class="group border border-line p-4">
+            <summary class="cursor-pointer text-lg font-semibold text-ink transition-colors hover:text-link">Nachkriegs-CPD (1946–1973)</summary>
+            <div class="mt-3 space-y-3 text-body">
                 <ul class="list-disc ml-6">
                     <li>1946: Führertagung Hannover; „Hohensolmser Erklärung“</li>
                     <li>1947: heika (Heinrich Karsch) wird Bundesführer; Zeitschrift „Jungenland“</li>
@@ -119,9 +122,9 @@
         </details>
 
         <!-- Verbands-Phase im VCP (1973–1976) -->
-        <details class="group border border-gray-200 rounded p-4">
-            <summary class="cursor-pointer font-semibold text-lg">Verbands-Phase im VCP (1973–1976)</summary>
-            <div class="mt-3 text-gray-800">
+        <details class="group border border-line p-4">
+            <summary class="cursor-pointer text-lg font-semibold text-ink transition-colors hover:text-link">Verbands-Phase im VCP (1973–1976)</summary>
+            <div class="mt-3 text-body">
                 <ul class="list-disc ml-6">
                     <li>Arbeitskreise Nord/West; spätere Landesmarken & EJ tyrker</li>
                     <li>1974: „Falkenhagener Erklärung“</li>
@@ -130,9 +133,9 @@
         </details>
 
         <!-- Neue CPD (1976–1996) -->
-        <details class="group border border-gray-200 rounded p-4">
-            <summary class="cursor-pointer font-semibold text-lg">Neue CPD (1976–1996)</summary>
-            <div class="mt-3 text-gray-800 space-y-3">
+        <details class="group border border-line p-4">
+            <summary class="cursor-pointer text-lg font-semibold text-ink transition-colors hover:text-link">Neue CPD (1976–1996)</summary>
+            <div class="mt-3 text-body space-y-3">
                 <ul class="list-disc ml-6">
                     <li>1976: Gründungsthing CPD e.V. in Falkenhagen; Rüdiger Elsell Bundesführer</li>
                     <li>1977: Deutscher Pfadfinderring (DPR) mit KPE & DPV</li>
@@ -145,9 +148,9 @@
         </details>
 
         <!-- Heutige CPD (seit 1996) -->
-        <details class="group border border-gray-200 rounded p-4" open>
-            <summary class="cursor-pointer font-semibold text-lg">Heutige CPD (seit 1996)</summary>
-            <div class="mt-3 text-gray-800 space-y-3">
+        <details class="group border border-line p-4" open>
+            <summary class="cursor-pointer text-lg font-semibold text-ink transition-colors hover:text-link">Heutige CPD (seit 1996)</summary>
+            <div class="mt-3 text-body space-y-3">
                 <ul class="list-disc ml-6">
                     <li>1996: Gründungsthing der wiedervereinigten CPD in St. Goarshausen; Beginn neuer Landesmark-Strukturen</li>
                     <li>1997–2005: Aufbau Bundeshof Birkenfelde; Bundesfeste & Bundesfeuer</li>

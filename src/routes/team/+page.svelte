@@ -29,10 +29,10 @@
     />
 </svelte:head>
 
-<div class="mx-auto max-w-5xl px-6 pt-12">
+<div class="site-container pt-12 md:pt-16">
     <header class="max-w-3xl">
-        <h1 class="text-3xl font-bold text-ink sm:text-[36px]">Unser Team</h1>
-        <p class="mt-3 leading-relaxed">
+        <h1 class="text-display text-ink">Unser Team</h1>
+        <p class="mt-3 text-lede">
             Hinter dem Stamm stehen viele Ehrenamtliche. Hier siehst du, wer sich um welche Aufgabe kümmert und wen du bei
             Fragen ansprechen kannst. Fragen zu einer Gruppe beantworten die Gruppenleitungen – die Adressen stehen auf den
             Gruppenseiten und unter <a href="/kontakt" class="text-link">Kontakt</a>.
@@ -43,8 +43,8 @@
         <p class="mt-10 border-t border-line pt-6 text-muted">Hier stellen wir bald unser Team vor.</p>
     {:else}
         {#each data.offices as office (office.id)}
-            <section class="mt-12 border-t border-line-strong pt-7" aria-labelledby="amt-{office.id}">
-                <h2 id="amt-{office.id}" class="text-[26px] font-bold text-brand">{office.name}</h2>
+            <section class="section-gap border-t border-line-strong pt-8" aria-labelledby="amt-{office.id}">
+                <h2 id="amt-{office.id}" class="text-section text-brand">{office.name}</h2>
                 {#if office.description}
                     <p class="mt-1.5 max-w-3xl leading-relaxed whitespace-pre-line">{office.description}</p>
                 {/if}
@@ -72,7 +72,7 @@
                                     />
                                 {:else}
                                     <span
-                                        class="flex size-14 items-center justify-center rounded-full bg-gray-200 text-2xl font-semibold text-gray-600 sm:size-[72px]"
+                                        class="flex size-14 items-center justify-center rounded-full bg-subtle text-2xl font-semibold text-muted sm:size-[72px]"
                                         aria-hidden="true">{person.firstName.charAt(0).toUpperCase()}</span
                                     >
                                 {/if}
@@ -106,7 +106,7 @@
             </section>
         {/each}
         {#if people === 0}
-            <p class="mt-10 text-sm text-muted">
+            <p class="mt-10 text-small text-muted">
                 Die Personen hinter den Ämtern stellen sich hier vor, sobald sie zugestimmt haben.
             </p>
         {/if}

@@ -1,5 +1,5 @@
 /**
- * Bild-Proxy mit Cache: Galerie- und Gruppenbilder werden je Cache-Dauer nur einmal beim Backend geholt
+ * Bild-Proxy mit Cache: Galerie-, Gruppen-, Team- und Blog-Bilder werden je Cache-Dauer nur einmal beim Backend geholt
  * (siehe `image-cache.ts`). Umgebung: `IMAGE_CACHE_MB` (Standard 48, 0 = aus), `IMAGE_CACHE_TTL_SEC` (Standard 3600).
  */
 import { env } from '$env/dynamic/private';
@@ -7,8 +7,10 @@ import {
 	fetchGroupImage,
 	fetchGroups,
 	fetchImage,
+	fetchPostImage,
 	fetchTeamAvatar,
 	isKnownGalleryImage,
+	isKnownPostImage,
 	teamAvatarVersion
 } from './backend';
 import { createImageCache, readImage, type CachedImage } from './image-cache';
@@ -59,4 +61,19 @@ export async function teamImage(userId: string): Promise<CachedImage | null> {
 	const version = await teamAvatarVersion(userId);
 	if (version === null) return null;
 	return cache.get(`t:${userId}:${version}`, async () => readImage(await fetchTeamAvatar(userId)));
+}
+
+/**
+ * Bild eines Blog-Beitrags (`thumb`/`web`). Nur Bilder, die zum veröffentlichten Beitrag gehören, erreichen das
+ * Backend (Beitrag liegt im JSON-Cache); Bild-IDs sind unveränderlich, daher reicht der Schlüssel je ID.
+ */
+export function blogImage(
+	slug: string,
+	imageId: string,
+	variant: 'thumb' | 'web'
+): Promise<CachedImage | null> {
+	return cache.get(`b:${slug}:${imageId}:${variant}`, async () => {
+		if (!(await isKnownPostImage(slug, imageId))) return null;
+		return readImage(await fetchPostImage(slug, imageId, variant));
+	});
 }

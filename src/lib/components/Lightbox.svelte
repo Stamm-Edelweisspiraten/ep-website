@@ -60,6 +60,7 @@
 
 <div
     class="fixed inset-0 z-50 flex flex-col bg-black text-white"
+    style="overscroll-behavior: contain"
     role="dialog"
     aria-modal="true"
     aria-label="Bildansicht"
@@ -67,12 +68,12 @@
     on:touchstart={(e) => (touchStartX = e.changedTouches[0]?.screenX ?? 0)}
     on:touchend={handleTouchEnd}
 >
-    <div class="flex items-center justify-between px-4 py-3 text-sm">
+    <div class="flex items-center justify-between px-4 py-3 text-small">
         <span class="tabular-nums text-white/80" aria-live="polite">{current + 1} / {images.length}</span>
         <button
             type="button"
             bind:this={closeButton}
-            class="inline-flex size-10 items-center justify-center rounded-full hover:bg-white/10"
+            class="inline-flex size-10 items-center justify-center transition-colors hover:bg-white/10"
             aria-label="Schließen"
             on:click={close}><Icon name="x" size={26} /></button
         >
@@ -82,7 +83,7 @@
         {#if images.length > 1}
             <button
                 type="button"
-                class="absolute left-2 z-10 inline-flex size-12 items-center justify-center rounded-full bg-black/40 hover:bg-white/15"
+                class="absolute left-2 z-10 inline-flex size-12 items-center justify-center bg-black/40 transition-colors hover:bg-white/15"
                 aria-label="Vorheriges Bild"
                 on:click={prev}><Icon name="chevron-left" size={30} /></button
             >
@@ -95,14 +96,14 @@
         {#if images.length > 1}
             <button
                 type="button"
-                class="absolute right-2 z-10 inline-flex size-12 items-center justify-center rounded-full bg-black/40 hover:bg-white/15"
+                class="absolute right-2 z-10 inline-flex size-12 items-center justify-center bg-black/40 transition-colors hover:bg-white/15"
                 aria-label="Nächstes Bild"
                 on:click={next}><Icon name="chevron-right" size={30} /></button
             >
         {/if}
     </div>
 
-    <div class="min-h-12 px-4 py-3 text-center text-sm text-white/85">
+    <div class="min-h-12 px-4 py-3 text-center text-base text-white/85">
         {#if image?.caption}{image.caption}{/if}
     </div>
 

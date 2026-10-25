@@ -1,5 +1,5 @@
 <footer class="mt-16 border-t border-line-strong bg-subtle">
-    <div class="mx-auto flex max-w-5xl flex-col justify-between gap-6 px-6 py-8 text-[15px] text-muted md:flex-row">
+    <div class="site-container flex flex-col justify-between gap-6 py-10 text-small text-muted md:flex-row">
         <div class="space-y-0.5">
             <p class="font-bold text-ink">Stamm Edelweißpiraten</p>
             <p>Ev. Auferstehungsgemeinde · Drakenburger Str. 42 · 28207 Bremen</p>

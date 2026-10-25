@@ -44,22 +44,22 @@
 
 <!-- Karte -->
 {#if active}
-    <div bind:this={container} class="relative z-0 w-full {height} border border-line-strong"></div>
+    <div bind:this={container} class="relative z-0 w-full {height} border border-line-strong" role="region" aria-label="Karte: Ev. Auferstehungsgemeinde Bremen-Hastedt"></div>
 {:else}
     <div class="w-full {height} border border-line-strong bg-subtle flex items-center justify-center p-5">
         <div class="max-w-md text-center space-y-2.5">
             <button type="button" on:click={loadMap} disabled={loading}
-                    class="inline-flex items-center px-4 py-2 border border-gray-400 bg-surface text-ink rounded hover:bg-page transition disabled:opacity-60">
+                    class="inline-flex items-center px-4 py-2 border border-line-strong bg-surface text-ink transition-colors hover:bg-page disabled:opacity-60">
                 {loading ? 'Karte wird geladen …' : 'Karte laden'}
             </button>
-            <p class="text-sm text-muted">
+            <p class="text-small text-muted">
                 Lädt Kartendaten von OpenStreetMap; dabei wird deine IP-Adresse übertragen
-                (<a href="/datenschutz#m328" class="underline">Datenschutz</a>).
+                (<a href="/datenschutz#m328" class="text-link">Datenschutz</a>).
             </p>
             {#if failed}
-                <p class="text-sm text-red-700">Die Karte konnte nicht geladen werden.</p>
+                <p class="border-l-4 border-alert-line bg-alert px-3 py-1.5 text-small text-ink" role="alert">Die Karte konnte nicht geladen werden.</p>
             {/if}
-            <p class="text-sm">
+            <p class="text-small">
                 <a href={osmLink} target="_blank" rel="noopener noreferrer" class="text-link">Auf openstreetmap.org öffnen</a>
             </p>
         </div>

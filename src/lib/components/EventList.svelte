@@ -27,10 +27,10 @@
     <ul>
         {#each events as e (e.key)}
             <li class="grid gap-x-6 border-t border-line py-3 sm:grid-cols-[10rem_minmax(0,1fr)]">
-                <span class="font-semibold text-ink">{formatDateRange(e)}</span>
+                <span class="font-semibold text-ink tabular-nums">{formatDateRange(e)}</span>
                 <span>
-                    <a href="/termine/{encodeURIComponent(e.key)}" class="font-semibold text-ink hover:text-link hover:underline">{e.title}</a>
-                    {#if meta(e)}<br /><span class="text-[15px] text-muted">{meta(e)}</span>{/if}
+                    <a href="/termine/{encodeURIComponent(e.key)}" class="font-semibold text-ink transition-colors hover:text-link hover:underline">{e.title}</a>
+                    {#if meta(e)}<br /><span class="text-small text-muted tabular-nums">{meta(e)}</span>{/if}
                 </span>
             </li>
         {/each}

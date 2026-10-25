@@ -17,11 +17,11 @@
 </script>
 
 <div class="mt-3 flex flex-wrap items-center gap-3">
-    <a href={`mailto:${email}`} class="inline-flex items-center rounded bg-blue-700 px-4 py-2 font-medium text-white hover:bg-blue-800">
+    <a href={`mailto:${email}`} class="inline-flex items-center bg-ink px-4 py-2 font-medium text-page transition-colors hover:bg-body">
         E-Mail senden
     </a>
-    <button type="button" on:click={copyEmail} class="inline-flex items-center rounded border border-gray-400 bg-surface px-4 py-2 text-ink hover:bg-subtle">
+    <button type="button" on:click={copyEmail} class="inline-flex items-center border border-line-strong bg-surface px-4 py-2 text-ink transition-colors hover:bg-subtle">
         {copied ? 'Kopiert' : 'Adresse kopieren'}
     </button>
-    {#if failed}<span class="text-sm text-muted">Kopieren nicht möglich – bitte Adresse markieren.</span>{/if}
+    {#if failed}<span class="text-small text-muted" role="status">Kopieren nicht möglich – bitte Adresse markieren.</span>{/if}
 </div>

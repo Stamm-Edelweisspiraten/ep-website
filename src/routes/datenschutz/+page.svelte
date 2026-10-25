@@ -4,36 +4,38 @@
           content="Datenschutzerklärung des Stamms Edelweißpiraten – Informationen zur Verarbeitung personenbezogener Daten gemäß DSGVO."/>
 </svelte:head>
 
-<section class="max-w-5xl mx-auto py-12 px-6">
-    <h1 class="font-bold text-2xl">Datenschutzerklärung</h1>
-    <p class="mb-3">Stand: 24. Oktober 2026</p>
-    <h2 class="font-bold text-xl">Inhaltsübersicht</h2>
+<section class="site-container py-12">
+<div class="max-w-3xl">
+    <h1 class="text-display text-ink">Datenschutzerklärung</h1>
+    <p class="mt-3 text-lede text-body">Welche personenbezogenen Daten wir verarbeiten, wofür und welche Rechte Sie haben.</p>
+    <p class="mt-2 mb-3 text-small text-muted">Stand: 25. Oktober 2026</p>
+    <h2 class="mt-10 mb-2 text-section text-ink">Inhaltsübersicht</h2>
     <ul class="index mb-4 mt-1">
-        <li><a class="index-link hover:text-blue-500" href="#m3">- Verantwortlicher</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#mOverview">- Übersicht der Verarbeitungen</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m2427">- Maßgebliche Rechtsgrundlagen</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m27">- Sicherheitsmaßnahmen</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m25">- Übermittlung von personenbezogenen Daten</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m24">- Internationale Datentransfers</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m12">- Allgemeine Informationen zur Datenspeicherung und Löschung</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m10">- Rechte der betroffenen Personen</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m225">- Bereitstellung des Onlineangebots und Webhosting</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m134">- Einsatz von Cookies</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m104">- Blogs und Publikationsmedien</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m182">- Kontakt- und Anfrageverwaltung</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m136">- Präsenzen in sozialen Netzwerken (Social Media)</a></li>
-        <li><a class="index-link hover:text-blue-500" href="#m328">- Plug-ins und eingebettete Funktionen sowie Inhalte</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m3">- Verantwortlicher</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#mOverview">- Übersicht der Verarbeitungen</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m2427">- Maßgebliche Rechtsgrundlagen</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m27">- Sicherheitsmaßnahmen</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m25">- Übermittlung von personenbezogenen Daten</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m24">- Internationale Datentransfers</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m12">- Allgemeine Informationen zur Datenspeicherung und Löschung</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m10">- Rechte der betroffenen Personen</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m225">- Bereitstellung des Onlineangebots und Webhosting</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m134">- Einsatz von Cookies</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m104">- Blogs und Publikationsmedien</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m182">- Kontakt- und Anfrageverwaltung</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m136">- Präsenzen in sozialen Netzwerken (Social Media)</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m328">- Plug-ins und eingebettete Funktionen sowie Inhalte</a></li>
     </ul>
-    <h2 id="m3" class="text-xl font-bold">Verantwortlicher</h2>
+    <h2 id="m3" class="mt-12 mb-2 text-section text-ink">Verantwortlicher</h2>
     <p>Philipp Hethey<br>Rockwinkeler Heerstraße 140<br>28355 Bremen</p>
     <p>E-Mail-Adresse: datenschutz@edelweisspiraten-bremen.de</p>
-    <p>Impressum: <a href="https://edelweißpiraten.de/impressum"
-                     target="_blank">https://edelweißpiraten.de/impressum</a></p>
+    <p>Impressum: <a class="text-link break-words" href="https://edelweißpiraten.de/impressum"
+                     target="_blank" rel="noopener noreferrer">https://edelweißpiraten.de/impressum</a></p>
 
-    <h2 id="mOverview" class="text-xl font-bold  mt-8">Übersicht der Verarbeitungen</h2>
+    <h2 id="mOverview" class="mt-12 mb-2 text-section text-ink">Übersicht der Verarbeitungen</h2>
     <p>Die nachfolgende Übersicht fasst die Arten der verarbeiteten Daten und die Zwecke ihrer Verarbeitung zusammen und
         verweist auf die betroffenen Personen.</p>
-    <h3 class="mt-2 font-bold">Arten der verarbeiteten Daten</h3>
+    <h3 class="mt-6 mb-1 text-sub text-ink">Arten der verarbeiteten Daten</h3>
     <ul>
         <li>Bestandsdaten.</li>
         <li>Kontaktdaten.</li>
@@ -42,12 +44,12 @@
         <li>Meta-, Kommunikations- und Verfahrensdaten.</li>
         <li>Protokolldaten.</li>
     </ul>
-    <h3 class="mt-2 font-bold">Kategorien betroffener Personen</h3>
+    <h3 class="mt-6 mb-1 text-sub text-ink">Kategorien betroffener Personen</h3>
     <ul>
         <li>Kommunikationspartner.</li>
         <li>Nutzer.</li>
     </ul>
-    <h3>Zwecke der Verarbeitung</h3>
+    <h3 class="mt-6 mb-1 text-sub text-ink">Zwecke der Verarbeitung</h3>
     <ul>
         <li>Kommunikation.</li>
         <li>Sicherheitsmaßnahmen.</li>
@@ -58,7 +60,7 @@
         <li>Öffentlichkeitsarbeit.</li>
     </ul>
 
-    <h2 id="m2427" class="text-xl font-bold  mt-8">Maßgebliche Rechtsgrundlagen</h2>
+    <h2 id="m2427" class="mt-12 mb-2 text-section text-ink">Maßgebliche Rechtsgrundlagen</h2>
     <p><strong>Maßgebliche Rechtsgrundlagen nach der DSGVO: </strong>Im Folgenden erhalten Sie eine Übersicht der
         Rechtsgrundlagen der DSGVO, auf deren Basis wir personenbezogene Daten verarbeiten. Bitte nehmen Sie zur
         Kenntnis, dass neben den Regelungen der DSGVO nationale Datenschutzvorgaben in Ihrem bzw. unserem Wohn- oder
@@ -96,7 +98,7 @@
         Geltung des Schweizer DSG weiterhin nach dem Schweizer DSG bestimmt.</p>
 
 
-    <h2 id="m27" class="text-xl font-bold  mt-8">Sicherheitsmaßnahmen</h2>
+    <h2 id="m27" class="mt-12 mb-2 text-section text-ink">Sicherheitsmaßnahmen</h2>
     <p>Wir treffen nach Maßgabe der gesetzlichen Vorgaben unter Berücksichtigung des Stands der Technik, der
         Implementierungskosten und der Art, des Umfangs, der Umstände und der Zwecke der Verarbeitung sowie der
         unterschiedlichen Eintrittswahrscheinlichkeiten und des Ausmaßes der Bedrohung der Rechte und Freiheiten
@@ -111,7 +113,7 @@
         Datenschutzes, durch Technikgestaltung und durch datenschutzfreundliche Voreinstellungen.</p>
 
 
-    <h2 id="m25" class="text-xl font-bold  mt-8">Übermittlung von personenbezogenen Daten</h2>
+    <h2 id="m25" class="mt-12 mb-2 text-section text-ink">Übermittlung von personenbezogenen Daten</h2>
     <p>Im Rahmen unserer Verarbeitung von personenbezogenen Daten kommt es vor, dass diese an andere Stellen,
         Unternehmen, rechtlich selbstständige Organisationseinheiten oder Personen übermittelt beziehungsweise ihnen
         gegenüber offengelegt werden. Zu den Empfängern dieser Daten können z. B. mit IT-Aufgaben beauftragte
@@ -120,7 +122,7 @@
         Vereinbarungen, die dem Schutz Ihrer Daten dienen, mit den Empfängern Ihrer Daten ab.</p>
 
 
-    <h2 id="m24" class="text-xl font-bold  mt-8">Internationale Datentransfers</h2>
+    <h2 id="m24" class="mt-12 mb-2 text-section text-ink">Internationale Datentransfers</h2>
     <p>Datenverarbeitung in Drittländern: Sofern wir Daten in ein Drittland (d. h. außerhalb der Europäischen Union (EU)
         oder des Europäischen Wirtschaftsraums (EWR)) übermitteln oder dies im Rahmen der Nutzung von Diensten Dritter
         oder der Offenlegung bzw. Übermittlung von Daten an andere Personen, Stellen oder Unternehmen geschieht (was
@@ -138,19 +140,19 @@
         bleiben.</p>
     <p>Bei den einzelnen Diensteanbietern informieren wir Sie darüber, ob sie nach dem DPF zertifiziert sind und ob
         Standardvertragsklauseln vorliegen. Weitere Informationen zum DPF und eine Liste der zertifizierten Unternehmen
-        finden Sie auf der Website des US-Handelsministeriums unter <a href="https://www.dataprivacyframework.gov/"
-                                                                       target="_blank">https://www.dataprivacyframework.gov/</a>
+        finden Sie auf der Website des US-Handelsministeriums unter <a class="text-link break-words" href="https://www.dataprivacyframework.gov/"
+                                                                       target="_blank" rel="noopener noreferrer">https://www.dataprivacyframework.gov/</a>
         (in englischer Sprache).</p>
     <p>Für Datenübermittlungen in andere Drittländer gelten entsprechende Sicherheitsmaßnahmen, insbesondere
         Standardvertragsklauseln, ausdrückliche Einwilligungen oder gesetzlich erforderliche Übermittlungen.
         Informationen zu Drittlandtransfers und geltenden Angemessenheitsbeschlüssen können Sie dem Informationsangebot
         der EU-Kommission entnehmen: <a
                 href="https://commission.europa.eu/law/law-topic/data-protection/international-dimension-data-protection_en?prefLang=de"
-                target="_blank">https://commission.europa.eu/law/law-topic/data-protection/international-dimension-data-protection_en?prefLang=de.</a>
+                target="_blank" rel="noopener noreferrer">https://commission.europa.eu/law/law-topic/data-protection/international-dimension-data-protection_en?prefLang=de.</a>
     </p>
 
 
-    <h2 id="m12" class="text-xl font-bold  mt-8">Allgemeine Informationen zur Datenspeicherung und Löschung</h2>
+    <h2 id="m12" class="mt-12 mb-2 text-section text-ink">Allgemeine Informationen zur Datenspeicherung und Löschung</h2>
     <p>Wir löschen personenbezogene Daten, die wir verarbeiten, gemäß den gesetzlichen Bestimmungen, sobald die
         zugrundeliegenden Einwilligungen widerrufen werden oder keine weiteren rechtlichen Grundlagen für die
         Verarbeitung bestehen. Dies betrifft Fälle, in denen der ursprüngliche Verarbeitungszweck entfällt oder die
@@ -201,7 +203,7 @@
     </ul>
 
 
-    <h2 id="m10" class="text-xl font-bold  mt-8">Rechte der betroffenen Personen</h2>
+    <h2 id="m10" class="mt-12 mb-2 text-section text-ink">Rechte der betroffenen Personen</h2>
     <p>Rechte der betroffenen Personen aus der DSGVO: Ihnen stehen als Betroffene nach der DSGVO verschiedene Rechte zu,
         die sich insbesondere aus Art. 15 bis 21 DSGVO ergeben:</p>
     <ul>
@@ -241,7 +243,7 @@
     </ul>
 
 
-    <h2 id="m225" class="text-xl font-bold  mt-8">Bereitstellung des Onlineangebots und Webhosting</h2>
+    <h2 id="m225" class="mt-12 mb-2 text-section text-ink">Bereitstellung des Onlineangebots und Webhosting</h2>
     <p>Wir verarbeiten die Daten der Nutzer, um ihnen unsere Online-Dienste zur Verfügung stellen zu können. Zu diesem
         Zweck verarbeiten wir die IP-Adresse des Nutzers, die notwendig ist, um die Inhalte und Funktionen unserer
         Online-Dienste an den Browser oder das Endgerät der Nutzer zu übermitteln.</p>
@@ -286,7 +288,7 @@
     </ul>
 
 
-    <h2 id="m134" class="text-xl font-bold  mt-8">Einsatz von Cookies</h2>
+    <h2 id="m134" class="mt-12 mb-2 text-section text-ink">Einsatz von Cookies</h2>
     <p>Unter dem Begriff „Cookies" werden Funktionen, die Informationen auf Endgeräten der Nutzer speichern und aus
         ihnen auslesen, verstanden. Cookies können ferner in Bezug auf unterschiedliche Anliegen Einsatz finden, etwa zu
         Zwecken der Funktionsfähigkeit, der Sicherheit und des Komforts von Onlineangeboten sowie der Erstellung von
@@ -301,7 +303,9 @@
         Wählst du über den Knopf in der Navigation ausdrücklich die helle oder dunkle Darstellung, speichern wir diese
         Wahl im Cookie „theme“ (Inhalt nur „light“ oder „dark“, Speicherdauer ein Jahr), damit die Seite beim nächsten
         Besuch gleich in deiner Darstellung erscheint. Die gewählte Ansicht der Terminseite (Kalender, Kacheln oder Liste)
-        merkt sich dein Browser im lokalen Speicher; dieser Eintrag bleibt auf deinem Gerät. Das Cookie wird mit jeder
+        merkt sich dein Browser im lokalen Speicher; ebenso, welche Hinweise (Banner) du über „Schließen“ ausgeblendet
+        hast (nur Kennung und Änderungszeitpunkt des Hinweises, damit er nicht erneut erscheint). Diese Einträge bleiben
+        auf deinem Gerät und werden nicht an uns übertragen. Das Cookie wird mit jeder
         Seitenanfrage an unseren Server übertragen, nur zur Wahl der Darstellung genutzt und nicht ausgewertet. Beides
         lässt sich jederzeit in den Browser-Einstellungen löschen. Rechtsgrundlage ist
         § 25 Abs. 2 Nr. 2 TDDDG (ausdrücklich gewünschte Funktion).</p>
@@ -341,7 +345,7 @@
         wird erst nach Ihrem Klick geladen; diese Wahl wird nicht gespeichert.</p>
 
 
-    <h2 id="m104" class="text-xl font-bold  mt-8">Blogs und Publikationsmedien</h2>
+    <h2 id="m104" class="mt-12 mb-2 text-section text-ink">Blogs und Publikationsmedien</h2>
     <p>Wir nutzen Blogs oder vergleichbare Mittel der Onlinekommunikation und Publikation (nachfolgend
         "Publikationsmedium"). Die Daten der Leser werden für die Zwecke des Publikationsmediums nur insoweit
         verarbeitet, als es für dessen Darstellung und die Kommunikation zwischen Autoren und Lesern oder aus Gründen
@@ -368,7 +372,7 @@
     </ul>
 
 
-    <h2 id="m182" class="text-xl font-bold  mt-8">Kontakt- und Anfrageverwaltung</h2>
+    <h2 id="m182" class="mt-12 mb-2 text-section text-ink">Kontakt- und Anfrageverwaltung</h2>
     <p>Bei der Kontaktaufnahme mit uns (z. B. per Post, Kontaktformular, E-Mail, Telefon oder via soziale Medien) sowie
         im Rahmen bestehender Nutzer- und Geschäftsbeziehungen werden die Angaben der anfragenden Personen verarbeitet,
         soweit dies zur Beantwortung der Kontaktanfragen und etwaiger angefragter Maßnahmen erforderlich ist.</p>
@@ -410,7 +414,7 @@
     </ul>
 
 
-    <h2 id="m136" class="text-xl font-bold  mt-8">Präsenzen in sozialen Netzwerken (Social Media)</h2>
+    <h2 id="m136" class="mt-12 mb-2 text-section text-ink">Präsenzen in sozialen Netzwerken (Social Media)</h2>
     <p>Wir unterhalten Onlinepräsenzen innerhalb sozialer Netzwerke und verarbeiten in diesem Rahmen Nutzerdaten, um mit
         den dort aktiven Nutzern zu kommunizieren oder Informationen über uns anzubieten.</p>
     <p>Wir weisen darauf hin, dass dabei Nutzerdaten außerhalb des Raumes der Europäischen Union verarbeitet werden
@@ -451,22 +455,22 @@
         <li><strong>Instagram: </strong>Soziales Netzwerk, ermöglicht das Teilen von Fotos und Videos, das Kommentieren
             und Favorisieren von Beiträgen, Nachrichtenversand, Abonnieren von Profilen und Seiten; <strong>Dienstanbieter:</strong>
             Meta Platforms Ireland Limited, Merrion Road, Dublin 4, D04 X2K5, Irland; <span class=""><strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO); </span><strong>Website:</strong>
-            <a href="https://www.instagram.com" target="_blank">https://www.instagram.com</a>; <strong>Datenschutzerklärung:</strong>
-            <a href="https://privacycenter.instagram.com/policy/" target="_blank">https://privacycenter.instagram.com/policy/</a>.
+            <a class="text-link break-words" href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">https://www.instagram.com</a>; <strong>Datenschutzerklärung:</strong>
+            <a class="text-link break-words" href="https://privacycenter.instagram.com/policy/" target="_blank" rel="noopener noreferrer">https://privacycenter.instagram.com/policy/</a>.
             <strong>Grundlage Drittlandtransfers:</strong> Data Privacy Framework (DPF), Data Privacy Framework (DPF).
         </li>
         <li><strong>YouTube: </strong>Soziales Netzwerk und Videoplattform; <strong>Dienstanbieter:</strong> Google
             Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland; <span
                     class=""><strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO); </span><strong>Datenschutzerklärung:</strong>
-            <a href="https://policies.google.com/privacy" target="_blank">https://policies.google.com/privacy</a>;
+            <a class="text-link break-words" href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy</a>;
             <strong>Grundlage Drittlandtransfers:</strong> Data Privacy Framework (DPF), Data Privacy Framework (DPF).
             <strong>Widerspruchsmöglichkeit (Opt-Out):</strong> <a
-                    href="https://myadcenter.google.com/personalizationoff" target="_blank">https://myadcenter.google.com/personalizationoff</a>.
+                    href="https://myadcenter.google.com/personalizationoff" target="_blank" rel="noopener noreferrer">https://myadcenter.google.com/personalizationoff</a>.
         </li>
     </ul>
 
 
-    <h2 id="m328" class="text-xl font-bold mt-8">Plug-ins und eingebettete Funktionen sowie Inhalte</h2>
+    <h2 id="m328" class="mt-12 mb-2 text-section text-ink">Plug-ins und eingebettete Funktionen sowie Inhalte</h2>
     <p>Wir binden Funktions- und Inhaltselemente in unser Onlineangebot ein, die von den Servern ihrer jeweiligen
         Anbieter (nachfolgend als „Drittanbieter" bezeichnet) bezogen werden. Derzeit ist das ausschließlich die Karte
         von OpenStreetMap auf der Start- und der Kontaktseite, und auch diese erst, nachdem Sie auf „Karte laden“
@@ -513,14 +517,15 @@
             können insbesondere IP-Adressen und Standortdaten der Nutzer gehören, die jedoch nicht ohne deren
             Einwilligung (im Regelfall im Rahmen der Einstellungen ihrer Endgeräte oder Browser vollzogen) erhoben
             werden. Dabei wird Ihre IP-Adresse an die OSMF (Vereinigtes Königreich, Angemessenheitsbeschluss der EU-Kommission) übermittelt; <strong>Dienstanbieter:</strong> OpenStreetMap Foundation (OSMF); <span class=""><strong>Rechtsgrundlagen:</strong> Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO) durch Klick auf „Karte laden“; </span><strong>Website:</strong>
-            <a href="https://www.openstreetmap.de" target="_blank">https://www.openstreetmap.de</a>. <strong>Datenschutzerklärung:</strong>
-            <a href="https://osmfoundation.org/wiki/Privacy_Policy" target="_blank">https://osmfoundation.org/wiki/Privacy_Policy</a>.
+            <a class="text-link break-words" href="https://www.openstreetmap.de" target="_blank" rel="noopener noreferrer">https://www.openstreetmap.de</a>. <strong>Datenschutzerklärung:</strong>
+            <a class="text-link break-words" href="https://osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener noreferrer">https://osmfoundation.org/wiki/Privacy_Policy</a>.
         </li>
     </ul>
 
 
-    <p class="seal mt-6 hover:text-blue-500"><a href="https://datenschutz-generator.de/"
+    <p class="seal mt-12 text-small text-muted"><a class="transition-colors hover:text-link hover:underline" href="https://datenschutz-generator.de/"
                        title="Rechtstext von Dr. Schwenke - für weitere Informationen bitte anklicken." target="_blank"
                        rel="noopener noreferrer nofollow">Erstellt mit kostenlosem Datenschutz-Generator.de von Dr.
         Thomas Schwenke</a></p>
+</div>
 </section>

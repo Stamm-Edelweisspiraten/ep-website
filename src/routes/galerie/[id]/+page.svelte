@@ -37,14 +37,15 @@
     <meta name="twitter:card" content={data.firstImage ? 'summary_large_image' : 'summary'} />
 </svelte:head>
 
-<section class="mx-auto max-w-6xl space-y-6 px-6 py-10">
+<section class="site-container space-y-6 py-10">
     <div class="flex items-center justify-between gap-3">
-        <a href="/galerie" class="inline-flex items-center gap-1.5 text-sm text-blue-700 hover:underline">
+        <a href="/galerie" class="inline-flex items-center gap-1.5 text-small text-link transition-colors hover:text-link-hover hover:underline">
             <Icon name="arrow-left" /> Alle Galerien
         </a>
         <button
             type="button"
-            class="inline-flex items-center gap-1.5 text-sm text-blue-700 hover:underline"
+            class="inline-flex items-center gap-1.5 text-small text-link transition-colors hover:text-link-hover hover:underline"
+            aria-haspopup="dialog"
             on:click={() => (shareOpen = true)}
         >
             <Icon name="share" /> Teilen
@@ -52,8 +53,8 @@
     </div>
 
     <header class="space-y-3">
-        <h1 class="text-3xl leading-tight font-bold text-gray-900">{g.title}</h1>
-        <p class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
+        <h1 class="text-display text-ink">{g.title}</h1>
+        <p class="flex flex-wrap items-center gap-x-4 gap-y-1 text-small text-muted tabular-nums">
             <span class="inline-flex items-center gap-1.5"><Icon name="calendar" size={14} />{dateText}</span>
             <span class="inline-flex items-center gap-1.5"
                 ><Icon name="images" size={14} />{g.imageCount} {g.imageCount === 1 ? 'Bild' : 'Bilder'}</span
@@ -65,13 +66,13 @@
             </div>
         {/if}
         {#if g.description}
-            <p class="max-w-3xl leading-relaxed whitespace-pre-line text-gray-800">{g.description}</p>
+            <p class="max-w-3xl text-base leading-relaxed whitespace-pre-line text-body">{g.description}</p>
         {/if}
         {#if g.events.length}
-            <p class="text-sm text-gray-600">
+            <p class="text-small text-muted">
                 Zum Termin:
                 {#each g.events as e, i (e.key)}
-                    <a href={`/termine/${e.key}`} class="text-blue-700 hover:underline">{e.title}</a
+                    <a href={`/termine/${e.key}`} class="text-link">{e.title}</a
                     >{i < g.events.length - 1 ? ', ' : ''}
                 {/each}
             </p>
@@ -84,7 +85,7 @@
             <li class="break-inside-avoid">
                 <button
                     type="button"
-                    class="group block w-full overflow-hidden bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+                    class="group block w-full overflow-hidden bg-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
                     aria-label={`${altOf(i)} vergrößern`}
                     on:click={() => (selectedIndex = i)}
                 >
@@ -95,11 +96,11 @@
                         height={img.height}
                         loading={i < 8 ? 'eager' : 'lazy'}
                         decoding="async"
-                        class="h-auto w-full transition duration-300 group-hover:scale-[1.03] group-hover:opacity-95"
+                        class="h-auto w-full transition-[transform,opacity] duration-300 group-hover:scale-[1.03] group-hover:opacity-95"
                     />
                 </button>
                 {#if img.description}
-                    <p class="mt-1 line-clamp-2 text-xs text-gray-600">{img.description}</p>
+                    <p class="mt-1 line-clamp-2 text-small text-muted" aria-hidden="true">{img.description}</p>
                 {/if}
             </li>
         {/each}

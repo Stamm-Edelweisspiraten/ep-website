@@ -18,6 +18,7 @@
     const links = [
         { href: '/termine', label: 'Termine' },
         { href: '/galerie', label: 'Galerie' },
+        { href: '/blog', label: 'Blog' },
         { href: '/team', label: 'Unser Team' },
         { href: '/cpd', label: 'CPD' },
         { href: '/kontakt', label: 'Kontakt' }
@@ -58,8 +59,8 @@
 <svelte:window on:keydown={handleKey} />
 
 <nav class="sticky top-0 z-50 border-b border-line bg-page" aria-label="Hauptmenü">
-    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-4 sm:px-6">
-        <a href="/" class="text-xl font-extrabold text-brand">Edelweißpiraten</a>
+    <div class="site-container flex h-16 items-center justify-between gap-6">
+        <a href="/" class="text-xl font-extrabold tracking-tight text-brand" translate="no">Edelweißpiraten</a>
 
         <!-- Desktop -->
         <div class="hidden items-center gap-6 md:flex">
@@ -138,18 +139,25 @@
     .nav-link {
         color: var(--color-body);
         padding: 0.5rem 0;
+        border-bottom: 2px solid transparent;
+        transition: color 0.15s ease, border-color 0.15s ease;
     }
     .nav-link:hover {
-        color: var(--color-link);
+        color: var(--color-ink);
+        border-bottom-color: var(--color-line-strong);
     }
     .nav-link.is-active {
         color: var(--color-ink);
-        font-weight: 600;
+        border-bottom-color: var(--color-brand);
     }
     .mobile-link {
         display: block;
         padding: 0.6rem 0;
         font-size: 1.0625rem;
         color: var(--color-ink);
+    }
+    .mobile-link[aria-current='page'] {
+        color: var(--color-brand);
+        font-weight: 600;
     }
 </style>

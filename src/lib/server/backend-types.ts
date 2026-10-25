@@ -102,3 +102,68 @@ export interface BackendOffice {
 	emails: { label: string | null; email: string }[];
 	holders: BackendOfficeHolder[];
 }
+
+// --- Inhalte der Website (Modul `website`, Scope `website.content.read`) -------------------------
+
+/** Laufender Banner/Hinweis: `bar` = Leiste auf allen Seiten, `home` = Kasten auf der Startseite */
+export interface BackendBanner {
+	id: string;
+	title: string | null;
+	text: string;
+	level: 'info' | 'important';
+	placement: 'bar' | 'home';
+	/** relativ `/…` oder https/mailto */
+	linkUrl: string | null;
+	linkLabel: string | null;
+	dismissible: boolean;
+	updatedAt: string;
+}
+
+export interface BackendFaq {
+	id: string;
+	question: string;
+	/** bereinigtes HTML (einfache Formatierung, Links) */
+	answerHtml: string;
+	/** auch auf der Startseite zeigen */
+	featured: boolean;
+}
+
+export interface BackendPostImage {
+	id: string;
+	width: number;
+	height: number;
+	alt: string | null;
+}
+
+export interface BackendPostSummary {
+	slug: string;
+	title: string;
+	teaser: string | null;
+	publishedAt: string;
+	cover: BackendPostImage | null;
+	tags: string[];
+	/** nur Vorname bzw. die eingetragene Anzeige */
+	authorName: string | null;
+}
+
+export interface BackendTagCount {
+	tag: string;
+	count: number;
+}
+
+/** Antwort von `GET /website/posts` */
+export interface BackendPostPage {
+	items: BackendPostSummary[];
+	total: number;
+	tags: BackendTagCount[];
+}
+
+export interface BackendPost extends BackendPostSummary {
+	/** bereinigtes HTML; Bilder als `<img data-image-id="…" alt="…">` (Maße in `images`) */
+	bodyHtml: string;
+	images: BackendPostImage[];
+	groupIds: string[];
+	eventId: string | null;
+	galleryId: string | null;
+	updatedAt: string;
+}

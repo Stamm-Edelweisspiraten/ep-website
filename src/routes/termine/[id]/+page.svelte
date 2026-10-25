@@ -35,30 +35,32 @@
     {#if ogImage}<meta property="og:image" content={`${data.origin}${ogImage}`} />{/if}
 </svelte:head>
 
-<section class="mx-auto max-w-4xl space-y-6 px-6 py-10">
+<section class="site-container py-10">
+<div class="mx-auto max-w-4xl space-y-6">
     <div class="flex items-center justify-between gap-3">
-        <a href="/termine" class="inline-flex items-center gap-1.5 text-sm text-blue-700 hover:underline">
+        <a href="/termine" class="inline-flex items-center gap-1.5 text-small text-link transition-colors hover:text-link-hover hover:underline">
             <Icon name="arrow-left" /> Alle Termine
         </a>
         <button
             type="button"
-            class="inline-flex items-center gap-1.5 text-sm text-blue-700 hover:underline"
+            class="inline-flex items-center gap-1.5 text-small text-link transition-colors hover:text-link-hover hover:underline"
+            aria-haspopup="dialog"
             on:click={() => (shareOpen = true)}
         >
             <Icon name="share" /> Teilen
         </button>
     </div>
 
-    <article class="border border-gray-200 bg-white">
-        <div class="h-2 {color ? '' : 'bg-blue-700'}" style={color ? `background-color: ${color}` : ''}></div>
+    <article class="border border-line bg-surface">
+        <div class="h-2 {color ? '' : 'bg-brand'}" style={color ? `background-color: ${color}` : ''} aria-hidden="true"></div>
         <div class="space-y-6 p-6 sm:p-8">
             <header class="space-y-3">
                 {#if e.recurring}
-                    <p class="inline-flex items-center gap-1.5 text-sm text-gray-500">
+                    <p class="inline-flex items-center gap-1.5 text-small text-muted">
                         <Icon name="repeat" size={14} /> Regelmäßiger Termin
                     </p>
                 {/if}
-                <h1 class="text-3xl leading-tight font-bold text-gray-900">{e.title}</h1>
+                <h1 class="text-display text-ink">{e.title}</h1>
                 {#if e.groups.length || e.tags.length}
                     <div class="flex flex-wrap gap-2">
                         {#each e.groups as g (g.id)}<Chip label={g.name} color={g.color} href={g.href} size="md" />{/each}
@@ -67,30 +69,30 @@
                 {/if}
             </header>
 
-            <dl class="grid gap-4 border-y border-gray-100 py-5 sm:grid-cols-3">
+            <dl class="grid gap-4 border-y border-line py-5 sm:grid-cols-3">
                 <div class="flex gap-3">
-                    <dt class="mt-0.5 text-gray-400"><Icon name="calendar" size={18} /><span class="sr-only">Datum</span></dt>
-                    <dd class="text-gray-800">{dateText}</dd>
+                    <dt class="mt-0.5 text-muted"><Icon name="calendar" size={18} /><span class="sr-only">Datum</span></dt>
+                    <dd class="text-ink tabular-nums">{dateText}</dd>
                 </div>
                 {#if timeText}
                     <div class="flex gap-3">
-                        <dt class="mt-0.5 text-gray-400"><Icon name="clock" size={18} /><span class="sr-only">Uhrzeit</span></dt>
-                        <dd class="text-gray-800">{timeText}</dd>
+                        <dt class="mt-0.5 text-muted"><Icon name="clock" size={18} /><span class="sr-only">Uhrzeit</span></dt>
+                        <dd class="text-ink tabular-nums">{timeText}</dd>
                     </div>
                 {/if}
                 {#if e.location}
                     <div class="flex gap-3">
-                        <dt class="mt-0.5 text-gray-400"><Icon name="map-pin" size={18} /><span class="sr-only">Ort</span></dt>
-                        <dd class="min-w-0 text-gray-800">
+                        <dt class="mt-0.5 text-muted"><Icon name="map-pin" size={18} /><span class="sr-only">Ort</span></dt>
+                        <dd class="min-w-0 text-ink">
                             <span class="block break-words">{e.location}</span>
                             {#if mapUrl}
                                 <a
                                     href={mapUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="mt-1 inline-flex items-center gap-1 text-sm text-blue-700 hover:underline"
+                                    class="mt-1 inline-flex items-center gap-1 text-small text-link transition-colors hover:text-link-hover hover:underline"
                                 >
-                                    In Karte öffnen <Icon name="external" size={13} />
+                                    In Karte öffnen <Icon name="external" size={13} /><span class="sr-only">(neues Fenster)</span>
                                 </a>
                             {/if}
                         </dd>
@@ -99,34 +101,36 @@
             </dl>
 
             {#if e.description}
-                <p class="leading-relaxed whitespace-pre-line text-gray-800">{e.description}</p>
+                <p class="text-base leading-relaxed whitespace-pre-line text-body">{e.description}</p>
             {/if}
 
             {#if e.galleries.length}
                 <section class="space-y-3" aria-labelledby="bilder">
-                    <h2 id="bilder" class="text-lg font-semibold text-gray-900">Bilder</h2>
+                    <h2 id="bilder" class="text-section text-ink">Bilder</h2>
                     <ul class="grid gap-4 sm:grid-cols-2">
                         {#each e.galleries as g (g.id)}
                             <li>
                                 <a
                                     href={`/galerie/${g.id}`}
-                                    class="group flex items-center gap-4 border border-gray-200 p-3 transition hover:shadow-sm"
+                                    class="group flex items-center gap-4 border border-line p-3 transition-colors hover:border-muted"
                                 >
                                     {#if g.coverUrl}
                                         <img
                                             src={g.coverUrl}
                                             alt=""
+                                            width="80"
+                                            height="80"
                                             loading="lazy"
                                             class="size-20 shrink-0 object-cover"
                                         />
                                     {:else}
-                                        <span class="flex size-20 shrink-0 items-center justify-center bg-gray-100 text-gray-400"
+                                        <span class="flex size-20 shrink-0 items-center justify-center bg-subtle text-muted"
                                             ><Icon name="image" size={24} /></span
                                         >
                                     {/if}
                                     <span class="min-w-0">
-                                        <span class="block font-medium text-gray-900 group-hover:text-blue-800">{g.title}</span>
-                                        <span class="text-sm text-gray-500">{g.imageCount} {g.imageCount === 1 ? 'Bild' : 'Bilder'}</span>
+                                        <span class="block font-medium text-ink transition-colors group-hover:text-link">{g.title}</span>
+                                        <span class="text-small text-muted tabular-nums">{g.imageCount} {g.imageCount === 1 ? 'Bild' : 'Bilder'}</span>
                                     </span>
                                 </a>
                             </li>
@@ -136,6 +140,7 @@
             {/if}
         </div>
     </article>
+</div>
 </section>
 
 <Share

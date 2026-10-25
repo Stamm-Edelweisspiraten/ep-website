@@ -59,22 +59,23 @@
     <meta name="robots" content="noindex" />
 </svelte:head>
 
-<section class="mx-auto max-w-2xl px-6 py-20 text-center">
-    <p class="text-base font-semibold text-gray-700">Fehler {status}</p>
+<section class="site-container py-20 text-center">
+<div class="mx-auto max-w-2xl">
+    <p class="text-small font-semibold text-muted tabular-nums">Fehler {status}</p>
     {#if notFound}
-        <h1 class="mt-2 text-3xl font-bold text-gray-900">Diese Seite gibt es nicht (mehr)</h1>
-        <p class="mt-3 text-gray-600">
+        <h1 class="mt-2 text-display text-ink">Diese Seite gibt es nicht (mehr)</h1>
+        <p class="mt-3 text-lede text-body">
             {$page.error?.message && $page.error.message !== 'Not Found'
                 ? $page.error.message
                 : 'Vielleicht wurde sie verschoben oder der Link ist veraltet.'}
         </p>
     {:else if unavailable}
-        <h1 class="mt-2 text-3xl font-bold text-gray-900">Gerade nicht erreichbar</h1>
-        <p class="mt-3 text-gray-600">
+        <h1 class="mt-2 text-display text-ink">Gerade nicht erreichbar</h1>
+        <p class="mt-3 text-lede text-body">
             {($page.error?.message ?? 'Die Daten konnten gerade nicht geladen werden').replace(/\.?$/, '.')} Meist ist das nach wenigen Sekunden
             wieder vorbei.
         </p>
-        <p class="mt-4 text-sm text-gray-500" aria-live="polite">
+        <p class="mt-4 text-small text-muted tabular-nums" aria-live="polite">
             {#if retrying}
                 Wird neu geladen …
             {:else if countdown > 0}
@@ -84,22 +85,23 @@
             {/if}
         </p>
     {:else}
-        <h1 class="mt-2 text-3xl font-bold text-gray-900">Da ist etwas schiefgegangen</h1>
-        <p class="mt-3 text-gray-600">{$page.error?.message ?? 'Unbekannter Fehler.'}</p>
+        <h1 class="mt-2 text-display text-ink">Da ist etwas schiefgegangen</h1>
+        <p class="mt-3 text-lede text-body">{$page.error?.message ?? 'Unbekannter Fehler.'}</p>
     {/if}
 
     <div class="mt-8 flex flex-wrap justify-center gap-3">
         {#if unavailable}
             <button
                 type="button"
-                class="bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 disabled:opacity-60"
+                class="bg-ink px-4 py-2 font-medium text-page transition-colors hover:bg-body disabled:opacity-60"
                 disabled={retrying}
                 on:click={() => ((attempt = 0), retry())}
             >
                 Jetzt erneut versuchen
             </button>
         {/if}
-        <a href="/" class="border border-gray-300 bg-white px-4 py-2 text-sm text-gray-800 hover:bg-gray-50">Zur Startseite</a>
-        <a href="/kontakt" class="border border-gray-300 bg-white px-4 py-2 text-sm text-gray-800 hover:bg-gray-50">Kontakt</a>
+        <a href="/" class="border border-line-strong bg-surface px-4 py-2 text-ink transition-colors hover:bg-subtle">Zur Startseite</a>
+        <a href="/kontakt" class="border border-line-strong bg-surface px-4 py-2 text-ink transition-colors hover:bg-subtle">Kontakt</a>
     </div>
+</div>
 </section>
