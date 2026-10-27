@@ -5,6 +5,7 @@
     import EmailButtons from '$lib/components/EmailButtons.svelte';
     import EventList from '$lib/components/EventList.svelte';
     import Icon from '$lib/components/Icon.svelte';
+    import Seo from '$lib/components/Seo.svelte';
     import { formatMonth } from '$lib/dates';
 
     /** @type {import('$lib/server/backend').Group} */
@@ -25,13 +26,12 @@
     $: others = ($page.data.groups ?? []).filter((/** @type {import('$lib/server/backend').Group} */ g) => g.slug !== group.slug);
 </script>
 
-<svelte:head>
-    <title>{group.name} – Stamm Edelweißpiraten</title>
-    <meta
-        name="description"
-        content={`${group.typeLabel} der Edelweißpiraten${group.ageRange ? ` (${group.ageRange})` : ''} in Bremen-Hastedt: ${group.teaser}`}
-    />
-</svelte:head>
+<Seo
+    title={`${group.name} – Stamm Edelweißpiraten`}
+    description={`${group.typeLabel} der Edelweißpiraten${group.ageRange ? ` (${group.ageRange})` : ''} in Bremen-Hastedt: ${group.teaser}`}
+    path={group.href}
+    breadcrumbs={[{ name: `${group.typeLabel} ${group.name}`, path: group.href }]}
+/>
 
 <div class="site-container">
     <nav class="crumbs" aria-label="Brotkrümel">
@@ -42,7 +42,14 @@
 <section class="site-container ghead" aria-labelledby="h-gruppe">
     <div class="gimg">
         {#if group.image}
-            <img src={group.image} alt="Gruppenbild {group.name}" width="500" height="500" />
+            <img
+                src={group.image}
+                srcset={group.thumb && group.thumb !== group.image ? `${group.thumb} 640w, ${group.image} 1600w` : undefined}
+                sizes="(max-width: 50rem) 90vw, 40vw"
+                alt="Gruppenbild {group.name}"
+                width="500"
+                height="500"
+            />
         {:else}
             <img src="/logo.avif" alt="" width="676" height="1000" class="seal" />
         {/if}
@@ -62,7 +69,7 @@
     <section class="site-container" aria-label="Kurzinfo">
         <dl class="facts" style="margin-top: 48px">
             {#each facts as f (f.label)}
-                <div class="fact"><span class="ic"><Icon name={f.icon} /></span><div><dt>{f.label}</dt><dd class="tab">{f.value}</dd></div></div>
+                <div class="fact"><dt><span class="ic" aria-hidden="true"><Icon name={f.icon} /></span>{f.label}</dt><dd class="tab">{f.value}</dd></div>
             {/each}
         </dl>
     </section>
@@ -128,7 +135,7 @@
         <div class="others">
             {#each others as o (o.slug)}
                 <a class="oc" href={o.href}>
-                    <span class="im">{#if o.image}<img src={o.image} alt="" width="120" height="120" loading="lazy" />{:else}<img src="/logo.avif" alt="" width="676" height="1000" class="seal" loading="lazy" />{/if}</span>
+                    <span class="im">{#if o.image}<img src={o.thumb ?? o.image} alt="" width="120" height="120" loading="lazy" decoding="async" />{:else}<img src="/logo.avif" alt="" width="676" height="1000" class="seal" loading="lazy" />{/if}</span>
                     <span>
                         <span class="n">{o.name}</span>
                         <span class="cap" style="display: block">{[o.typeLabel, o.ageRange].filter(Boolean).join(' · ')}</span>

@@ -37,6 +37,10 @@ export default {
 		paths: {
 			base: ''
 		},
+		// CSS inline in die Seite statt eigener (render-blockierender) Anfragen. Größte Datei ist das Layout-CSS (~34 KB
+		// roh; Leaflet-CSS lädt erst mit der Karte) – daher 40 000 Byte, damit auch sie inline kommt.
+		// `style-src 'unsafe-inline'` steht in der CSP, SvelteKit hängt dann keine Nonce an Stile.
+		inlineStyleThreshold: 40_000,
 		csp
 	},
 	preprocess: vitePreprocess()

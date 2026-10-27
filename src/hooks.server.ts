@@ -1,5 +1,7 @@
 import { redirect, type Handle } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 import { createRateLimiter } from '$lib/server/cache';
+import { compressResponse } from '$lib/server/compress';
 import { withSecurityHeaders } from '$lib/server/security-headers';
 
 // Eigenes Rate-Limit je Besucher-IP (#20): Alle Besucher*innen teilen sich beim Backend den Website-API-Key –
@@ -40,10 +42,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const choice = event.cookies.get('theme');
 	const themeClass = choice === 'dark' || choice === 'light' ? choice : '';
 	// Sicherheits-Header (#67, 01b-13); CSP der Seiten kommt aus kit.csp
-	return withSecurityHeaders(
+	const response = withSecurityHeaders(
 		await resolve(event, {
 			transformPageChunk: ({ html }) => html.replace('%ep.theme%', themeClass)
 		}),
 		{ https }
 	);
+	// Gzip für dynamische Antworten (HTML/JSON/XML/Text); `COMPRESS=0` schaltet ab (z. B. wenn der Proxy komprimiert)
+	return env.COMPRESS === '0' ? response : compressResponse(event.request, response);
 };

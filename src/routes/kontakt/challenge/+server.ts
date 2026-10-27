@@ -2,6 +2,7 @@
 // das Backend mit ihrem API-Key (der Key gelangt nie in den Browser). Nie zwischenspeichern – jede Aufgabe gilt einmal.
 import { json } from '@sveltejs/kit';
 import { fetchContactChallenge } from '$lib/server/backend';
+import { isTrapped } from '$lib/server/bot-trap';
 import { createRateLimiter } from '$lib/server/cache';
 import type { RequestHandler } from './$types';
 
@@ -17,6 +18,8 @@ export const GET: RequestHandler = async ({ getClientAddress }) => {
 	} catch {
 		// ohne IP gemeinsam zählen
 	}
+	// in die Bot-Falle getappt → keine Aufgabe mehr
+	if (isTrapped(ip)) return json({ error: 'Nicht erlaubt' }, { status: 403, headers: NO_STORE });
 	const limited = perIp.hit(ip);
 	if (!limited.allowed) {
 		return json({ error: 'Zu viele Anfragen' }, { status: 429, headers: NO_STORE });

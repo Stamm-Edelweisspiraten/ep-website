@@ -1,9 +1,15 @@
 <script lang="ts">
+    import Seo from '$lib/components/Seo.svelte';
+    import { faqPage } from '$lib/seo';
     import FaqList from '$lib/components/FaqList.svelte';
     import Icon from '$lib/components/Icon.svelte';
     import type { PageData } from './$types';
 
     export let data: PageData;
+
+    /** Jüngstes Mindestalter der Website-Gruppen, Rückfall 6 */
+    $: ages = data.groups.map((g) => g.ageMin).filter((n): n is number => n != null);
+    $: minAge = ages.length ? Math.min(...ages) : 6;
 
     let q = '';
     const fold = (t: string) =>
@@ -14,10 +20,13 @@
     $: shown = data.faqs.filter((f) => words.every((w) => fold(`${f.question} ${plain(f.answerHtml)}`).includes(w)));
 </script>
 
-<svelte:head>
-    <title>Häufige Fragen – Stamm Edelweißpiraten</title>
-    <meta name="description" content="Antworten auf häufige Fragen zu Gruppenstunden, Alter, Kosten und Ausrüstung beim Stamm Edelweißpiraten." />
-</svelte:head>
+<Seo
+    title="Häufige Fragen – Stamm Edelweißpiraten"
+    description="Antworten auf häufige Fragen zu Gruppenstunden, Alter, Kosten und Ausrüstung beim Stamm Edelweißpiraten."
+    path="/faq"
+    breadcrumbs={[{ name: 'Häufige Fragen', path: '/faq' }]}
+    jsonLd={data.faqs.length ? faqPage(data.faqs) : null}
+/>
 
 <section class="site-container" aria-labelledby="h-faq">
     <nav class="crumbs" aria-label="Brotkrümel"><a href="/">Start</a><Icon name="chevron-right" size={18} /><span aria-current="page">Häufige Fragen</span></nav>
@@ -56,7 +65,7 @@
             <div class="quick">
                 <h2>Auf einen Blick</h2>
                 <dl>
-                    <div><dt>Alter</dt><dd>ab 6 Jahren</dd></div>
+                    <div><dt>Alter</dt><dd>ab {minAge} Jahren</dd></div>
                     <div><dt>Probestunde</dt><dd>kostenlos</dd></div>
                     <div><dt>Jahresbeitrag</dt><dd>47 €</dd></div>
                     <div><dt>Treffpunkt</dt><dd>Drakenburger Str. 42</dd></div>

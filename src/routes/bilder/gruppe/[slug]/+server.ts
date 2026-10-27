@@ -11,7 +11,9 @@ export const GET: RequestHandler = async ({ params, url, request }) => {
 	const version = url.searchParams.get('v') ?? '';
 	if (!/^[A-Za-z0-9._-]{0,64}$/.test(version)) throw error(404, 'Nicht gefunden');
 
-	const img = await groupImage(params.slug).catch(() => {
+	// `?size=thumb` = kleine Fassung für Karten (640 px), sonst die volle (1600 px)
+	const size = url.searchParams.get('size') === 'thumb' ? 'thumb' : 'web';
+	const img = await groupImage(params.slug, size).catch(() => {
 		throw error(502, 'Bild konnte nicht geladen werden');
 	});
 	if (!img) throw error(404, 'Bild nicht gefunden');

@@ -1,7 +1,13 @@
-<svelte:head>
-    <title>Stamm Edelweißpiraten – Impressum</title>
-    <meta name="description" content="Impressum des Stamms Edelweißpiraten – Rechtliche Informationen und Kontaktdaten gemäß §5 TMG für unsere Pfadfinder-Website." />
-</svelte:head>
+<script>
+    import Seo from '$lib/components/Seo.svelte';
+</script>
+
+<Seo
+    title="Impressum – Stamm Edelweißpiraten"
+    description="Impressum des Stamms Edelweißpiraten – Rechtliche Informationen und Kontaktdaten gemäß §5 TMG für unsere Pfadfinder-Website."
+    path="/impressum"
+    breadcrumbs={[{ name: 'Impressum', path: '/impressum' }]}
+/>
 
 
 <section class="site-container legal-page">

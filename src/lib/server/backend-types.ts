@@ -68,8 +68,11 @@ export interface BackendGroup {
 	type: 'meute' | 'sippe';
 	/** Website-Text, sonst die interne Beschreibung */
 	description: string | null;
-	/** Freitext, z. B. „7 bis 10 Jahre“ */
+	/** Anzeigetext, z. B. „7 bis 10 Jahre“ oder „ab 11 Jahren“ */
 	ageRange: string | null;
+	/** Alter von/bis in Jahren (`null` = ohne Grenze bzw. ohne Angabe) */
+	ageMin: number | null;
+	ageMax: number | null;
 	meetingPlace: string | null;
 	/** 1 = Montag … 7 = Sonntag */
 	meetingWeekday: number | null;

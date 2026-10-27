@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from '$lib/components/Seo.svelte';
     import Icon from '$lib/components/Icon.svelte';
     import Lightbox from '$lib/components/Lightbox.svelte';
     import Share from '$lib/components/Share.svelte';
@@ -23,19 +24,15 @@
     $: long = g.title.length > 22;
 </script>
 
-<svelte:head>
-    <title>{g.title} – Galerie – Stamm Edelweißpiraten</title>
-    <meta name="description" content={summary || `Bilder von ${g.title}`} />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content={`Bilder von ${g.title}`} />
-    <meta property="og:description" content={summary} />
-    <meta property="og:url" content={data.pageUrl} />
-    {#if data.firstImage}
-        <meta property="og:image" content={data.firstImage} />
-        <meta property="og:image:alt" content={`Vorschaubild: ${g.title}`} />
-    {/if}
-    <meta name="twitter:card" content={data.firstImage ? 'summary_large_image' : 'summary'} />
-</svelte:head>
+<Seo
+    title={`${g.title} – Galerie – Stamm Edelweißpiraten`}
+    ogTitle={`Bilder von ${g.title}`}
+    description={summary || `Bilder von ${g.title}`}
+    path={`/galerie/${g.id}`}
+    image={g.cover?.url ?? null}
+    imageAlt={g.cover ? `Vorschaubild: ${g.title}` : null}
+    breadcrumbs={[{ name: 'Galerie', path: '/galerie' }, { name: g.title, path: `/galerie/${g.id}` }]}
+/>
 
 <section class="site-container" aria-labelledby="h-album">
     <nav class="crumbs" aria-label="Brotkrümel">

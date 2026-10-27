@@ -1,13 +1,9 @@
-<svelte:head>
-    <title>Probestunde anfragen – Stamm Edelweißpiraten</title>
-    <meta name="description"
-          content="Melde dein Kind zu einer kostenlosen Probestunde beim Stamm Edelweißpiraten in Bremen-Hastedt an. Wir finden die passende Gruppe zum Alter."/>
-</svelte:head>
 
 <script>
     import { page } from '$app/stores';
     import Icon from '$lib/components/Icon.svelte';
     import ContactGuard from '$lib/components/ContactGuard.svelte';
+    import Seo from '$lib/components/Seo.svelte';
     import { groupsForAge } from '$lib/age-range';
 
     export let data;
@@ -50,6 +46,13 @@
     $: sentGroup = groups.find((g) => g.slug === $page?.url?.searchParams?.get('gruppe')) ?? null;
 </script>
 
+<Seo
+    title="Probestunde anfragen – Stamm Edelweißpiraten"
+    description="Melde dein Kind zu einer kostenlosen Probestunde beim Stamm Edelweißpiraten in Bremen-Hastedt an. Wir finden die passende Gruppe zum Alter."
+    path="/probestunde"
+    breadcrumbs={[{ name: 'Probestunde', path: '/probestunde' }]}
+/>
+
 <section class="site-container" aria-labelledby="h-probe">
     <nav class="crumbs" aria-label="Brotkrümel"><a href="/">Start</a><Icon name="chevron-right" size={18} /><span aria-current="page">Probestunde</span></nav>
     <div class="phead">
@@ -84,6 +87,7 @@
                     <!-- Honeypot (Anti-Spam): für Menschen unsichtbar -->
                     <div class="hp" aria-hidden="true">
                         <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+                        <label>Bitte leer lassen <input type="text" name="fax" tabindex="-1" autocomplete="off" /></label>
                     </div>
 
                     <h2 class="h-xl full" id="h-kind"><span class="num">1</span>Das Kind</h2>

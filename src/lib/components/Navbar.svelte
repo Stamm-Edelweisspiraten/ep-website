@@ -69,7 +69,7 @@
 <svelte:window on:keydown={handleKey} />
 
 <header class="site-container nav">
-    <a class="mark" href="/" translate="no"><img src="/logo.avif" alt="" width="26" height="38" /><span>Edelweißpiraten</span></a>
+    <a class="mark" href="/" translate="no"><img src="/logo-sm.avif" alt="" width="26" height="38" /><span>Edelweißpiraten</span></a>
 
     <nav class="links" aria-label="Hauptmenü">
         <div class="dd" data-dropdown>

@@ -1,8 +1,13 @@
-<svelte:head>
-    <title>Stamm Edelweißpiraten – Datenschutz</title>
-    <meta name="description"
-          content="Datenschutzerklärung des Stamms Edelweißpiraten – Informationen zur Verarbeitung personenbezogener Daten gemäß DSGVO."/>
-</svelte:head>
+<script>
+    import Seo from '$lib/components/Seo.svelte';
+</script>
+
+<Seo
+    title="Datenschutz – Stamm Edelweißpiraten"
+    description="Datenschutzerklärung des Stamms Edelweißpiraten – Informationen zur Verarbeitung personenbezogener Daten gemäß DSGVO."
+    path="/datenschutz"
+    breadcrumbs={[{ name: 'Datenschutz', path: '/datenschutz' }]}
+/>
 
 <section class="site-container legal-page">
 <nav class="crumbs" aria-label="Brotkrümel"><a href="/">Start</a><span aria-hidden="true">›</span><span aria-current="page">Datenschutz</span></nav>

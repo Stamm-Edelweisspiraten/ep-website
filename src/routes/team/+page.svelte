@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from '$lib/components/Seo.svelte';
     // „Unser Team“: Ämter aus dem Intern-Bereich mit den Personen, die der Anzeige im Profil zugestimmt haben.
     // Es erscheinen nur Vornamen (der Nachname kommt gar nicht erst vom Backend).
     import { page } from '$app/stores';
@@ -24,13 +25,12 @@
     $: people = data.offices.reduce((sum, o) => sum + o.holders.length, 0);
 </script>
 
-<svelte:head>
-    <title>Unser Team – Stamm Edelweißpiraten</title>
-    <meta
-        name="description"
-        content="Wer im Stamm Edelweißpiraten welche Aufgabe übernimmt – Stammesführung, Kasse, Material und mehr. Alle ehrenamtlich."
-    />
-</svelte:head>
+<Seo
+    title="Unser Team – Stamm Edelweißpiraten"
+    description="Wer im Stamm Edelweißpiraten welche Aufgabe übernimmt – Stammesführung, Kasse, Material und mehr. Alle ehrenamtlich."
+    path="/team"
+    breadcrumbs={[{ name: 'Unser Team', path: '/team' }]}
+/>
 
 <section class="site-container" aria-labelledby="h-team">
     <nav class="crumbs" aria-label="Brotkrümel"><a href="/">Start</a><Icon name="chevron-right" size={18} /><span aria-current="page">Unser Team</span></nav>

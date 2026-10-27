@@ -45,12 +45,17 @@ export function galleryImage(
  * Unbekannte Slugs bzw. Gruppen ohne eigenes Bild → `null` ohne Backend-Abruf (Gruppenliste liegt im JSON-Cache);
  * die `?v=` der Anfrage zählt nicht, damit zufällige Werte keinen Abruf auslösen.
  */
-export async function groupImage(slug: string): Promise<CachedImage | null> {
+export async function groupImage(
+	slug: string,
+	size: 'web' | 'thumb' = 'web'
+): Promise<CachedImage | null> {
 	const groups = await fetchGroups(); // ohne Backend leer → dann direkt fragen
 	const group = groups.find((g) => g.slug === slug);
 	if (groups.length > 0 && !group?.image?.startsWith('/bilder/gruppe/')) return null;
 	const version = new URLSearchParams(group?.image?.split('?')[1] ?? '').get('v') ?? '';
-	return cache.get(`s:${slug}:${version}`, async () => readImage(await fetchGroupImage(slug)));
+	return cache.get(`s:${slug}:${version}:${size}`, async () =>
+		readImage(await fetchGroupImage(slug, size))
+	);
 }
 
 /**

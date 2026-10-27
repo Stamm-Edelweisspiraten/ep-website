@@ -372,6 +372,9 @@ export interface Group {
 	/** erster Satz der Beschreibung (Kacheln auf der Startseite) */
 	teaser: string;
 	ageRange: string;
+	/** Alter von/bis (für die Zuordnung bei der Probestunde) */
+	ageMin: number | null;
+	ageMax: number | null;
 	/** „Freitags“ */
 	weekday: string;
 	/** „16:30–18:00 Uhr“ */
@@ -383,6 +386,8 @@ export interface Group {
 	/** `#rrggbb`, Standard Wappenblau */
 	color: string;
 	image: string | null;
+	/** kleine Fassung (640 px) für Karten; bei statischen Bildern = `image` */
+	thumb: string | null;
 }
 
 function joinNames(names: string[]) {
@@ -394,6 +399,16 @@ function teaserOf(text: string) {
 	const first = text.split(/\n+/)[0]?.trim() ?? '';
 	const sentence = /^(.{20,}?[.!?])(\s|$)/.exec(first)?.[1] ?? first;
 	return sentence.length > 160 ? `${sentence.slice(0, 157).trimEnd()} …` : sentence;
+}
+
+function groupImageUrls(g: BackendGroup): Pick<Group, 'image' | 'thumb'> {
+	if (!g.imagePath) {
+		const fallback = STATIC_GROUP_IMAGES[g.slug] ?? null;
+		return { image: fallback, thumb: fallback };
+	}
+	const version = new URLSearchParams(g.imagePath.split('?')[1] ?? '').get('v') ?? '';
+	const image = `/bilder/gruppe/${encodeURIComponent(g.slug)}?v=${encodeURIComponent(version)}`;
+	return { image, thumb: `${image}&size=thumb` };
 }
 
 function toGroup(g: BackendGroup): Group {
@@ -415,17 +430,16 @@ function toGroup(g: BackendGroup): Group {
 		description,
 		teaser: teaserOf(description),
 		ageRange: g.ageRange ?? '',
+		// ältere Backends liefern noch keine Zahlen → Zuordnung über den Text (`groupAgeRange`)
+		ageMin: g.ageMin ?? null,
+		ageMax: g.ageMax ?? null,
 		weekday: day ? `${day}s` : '',
 		time,
 		meetingPlace: g.meetingPlace ?? '',
 		leaders: joinNames(g.leaders.map((l) => l.firstName)),
 		contactEmail: g.contactEmail,
 		color: safeColor(g.color) ?? '#33338c',
-		image: g.imagePath
-			? `/bilder/gruppe/${encodeURIComponent(g.slug)}?v=${encodeURIComponent(
-					new URLSearchParams(g.imagePath.split('?')[1] ?? '').get('v') ?? ''
-				)}`
-			: (STATIC_GROUP_IMAGES[g.slug] ?? null)
+		...groupImageUrls(g)
 	};
 }
 
@@ -453,9 +467,13 @@ export async function fetchGroup(slug: string): Promise<Group | null> {
 }
 
 /** Gruppenbild aus dem Backend (für den Bild-Proxy); `null` bei 404. */
-export async function fetchGroupImage(slug: string): Promise<Response | null> {
+export async function fetchGroupImage(
+	slug: string,
+	size: 'web' | 'thumb' = 'web'
+): Promise<Response | null> {
 	const path = buildPath(
-		`/api/v1/modules/members/website/groups/${encodeURIComponent(slug)}/image`
+		`/api/v1/modules/members/website/groups/${encodeURIComponent(slug)}/image`,
+		{ size: size === 'thumb' ? 'thumb' : undefined }
 	);
 	const res = await request(path, 'image/*');
 	if (res.status === 404) return null;

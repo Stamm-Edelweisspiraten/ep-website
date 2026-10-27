@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from '$lib/components/Seo.svelte';
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
     import { goto } from '$app/navigation';
@@ -52,10 +53,13 @@
     $: pictures = filtered.reduce((sum, g) => sum + g.imageCount, 0);
 </script>
 
-<svelte:head>
-    <title>Galerie – Stamm Edelweißpiraten</title>
-    <meta name="description" content="Bilder von Fahrten, Lagern und Aktionen des Stammes Edelweißpiraten." />
-</svelte:head>
+<Seo
+    title="Galerie – Stamm Edelweißpiraten"
+    description="Bilder von Fahrten, Lagern und Aktionen des Stammes Edelweißpiraten."
+    path="/galerie"
+    image={data.galleries[0]?.cover?.url ?? null}
+    breadcrumbs={[{ name: 'Galerie', path: '/galerie' }]}
+/>
 
 <section class="site-container" aria-labelledby="h-galerie">
     <nav class="crumbs" aria-label="Brotkrümel"><a href="/">Start</a><Icon name="chevron-right" size={18} /><span aria-current="page">Galerie</span></nav>

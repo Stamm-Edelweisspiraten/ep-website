@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Seo from '$lib/components/Seo.svelte';
     import Icon from '$lib/components/Icon.svelte';
     import { formatLongDate } from '$lib/dates';
     import type { PageData } from './$types';
@@ -23,11 +24,13 @@
     const initial = (name: string | null) => (name ?? '').trim().charAt(0).toUpperCase() || '·';
 </script>
 
-<svelte:head>
-    <title>{activeTag ? `${activeTag} – ` : ''}Blog – Stamm Edelweißpiraten</title>
-    <meta name="description" content="Berichte und Neuigkeiten aus dem Stamm Edelweißpiraten: Fahrten, Lager und Gruppenstunden." />
-    {#if data.page > 1 || activeTag}<meta name="robots" content="noindex, follow" />{/if}
-</svelte:head>
+<Seo
+    title={`${activeTag ? `${activeTag} – ` : ''}Blog – Stamm Edelweißpiraten`}
+    description="Berichte und Neuigkeiten aus dem Stamm Edelweißpiraten: Fahrten, Lager und Gruppenstunden."
+    path="/blog"
+    noindex={data.page > 1 || !!activeTag}
+    breadcrumbs={[{ name: 'Blog', path: '/blog' }]}
+/>
 
 <section class="site-container" aria-labelledby="h-blog">
     <nav class="crumbs" aria-label="Brotkrümel"><a href="/">Start</a><Icon name="chevron-right" size={18} /><span aria-current="page">Blog</span></nav>

@@ -6,6 +6,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { BackendError, fetchGroups, submitTrial } from '$lib/server/backend';
+import { isTrapped } from '$lib/server/bot-trap';
 import { createRateLimiter } from '$lib/server/cache';
 import {
 	buildContactMessage,
@@ -78,6 +79,8 @@ export const actions: Actions = {
 		}
 		const form = await request.formData().catch(() => null);
 		if (!form) return fail(400, { error: 'Ungültige Anfrage.', errors: {}, values: null });
+		// Bot-Falle (`lib/server/bot-trap.ts`): wie beim Honeypot neutral „Erfolg“, ohne Backend-Abruf
+		if (isTrapped(ip)) done(null);
 
 		const groups = await fetchGroups().catch(() => []);
 		const parsed = parseTrialForm(

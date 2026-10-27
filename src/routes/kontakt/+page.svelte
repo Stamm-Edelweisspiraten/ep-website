@@ -1,10 +1,12 @@
-<svelte:head>
-    <title>Kontakt – Stamm Edelweißpiraten</title>
-    <meta name="description"
-          content="Nimm Kontakt mit dem Stamm Edelweißpiraten auf. Hier findest du unser Formular, E-Mail-Adressen und den Treffpunkt in Bremen-Hastedt."/>
-</svelte:head>
+<Seo
+    title="Kontakt – Stamm Edelweißpiraten"
+    description="Nimm Kontakt mit dem Stamm Edelweißpiraten auf. Hier findest du unser Formular, E-Mail-Adressen und den Treffpunkt in Bremen-Hastedt."
+    path="/kontakt"
+    breadcrumbs={[{ name: 'Kontakt', path: '/kontakt' }]}
+/>
 
 <script>
+    import Seo from '$lib/components/Seo.svelte';
     import { page } from '$app/stores';
     import Map from '$lib/components/Map.svelte';
     import EmailButtons from '$lib/components/EmailButtons.svelte';
@@ -52,6 +54,7 @@
                     <!-- Honeypot (Anti-Spam): für Menschen unsichtbar -->
                     <div class="hp" aria-hidden="true">
                         <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+                        <label>Bitte leer lassen <input type="text" name="fax" tabindex="-1" autocomplete="off" /></label>
                     </div>
                     <div class="fld">
                         <label for="contact-name" class="label">Name</label>

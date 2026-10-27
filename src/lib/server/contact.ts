@@ -15,8 +15,13 @@
 import { randomUUID } from 'node:crypto';
 
 export const CONTACT_LIMITS = { name: 100, email: 254, phone: 40, message: 5000 } as const;
-/** Name des versteckten Honeypot-Felds (Menschen sehen es nicht, Bots füllen es aus) */
-export const HONEYPOT_FIELD = 'website';
+/**
+ * Versteckte Honeypot-Felder (Menschen sehen sie nicht, Bots füllen sie aus): `website` und `fax`
+ * (lockt Bots, die jedes E-Mail-Feld befüllen). Eines gefüllt → neutrale Erfolgsantwort ohne Versand.
+ */
+export const HONEYPOT_FIELDS = ['website', 'fax'] as const;
+/** @deprecated erstes Honeypot-Feld; besser `HONEYPOT_FIELDS` */
+export const HONEYPOT_FIELD = HONEYPOT_FIELDS[0];
 export const CONTACT_SUBJECT = 'Kontaktanfrage über die Website';
 /** Verstecktes Feld mit der Lösung der Spam-Schutz-Aufgabe (JSON, setzt `ContactGuard.svelte`) */
 export const POW_FIELD = 'pow';
@@ -71,6 +76,11 @@ function field(form: FormData, name: string) {
 	return typeof v === 'string' ? v : '';
 }
 
+/** `true`, wenn eines der Honeypot-Felder ausgefüllt ist */
+export function isHoneypotFilled(form: FormData): boolean {
+	return HONEYPOT_FIELDS.some((name) => field(form, name).trim() !== '');
+}
+
 /** Einzeiliger Text: Steuerzeichen und Zeilenumbrüche raus, Leerraum zusammenfassen */
 function oneLine(v: string) {
 	return v.replace(CONTROL_RE, '').replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -100,7 +110,7 @@ export function parseContactForm(form: FormData): ParsedContact {
 	if (field(form, 'consent') !== 'on' && field(form, 'consent') !== '1') {
 		errors.consent = 'Bitte bestätige die Hinweise zum Datenschutz.';
 	}
-	const spam = field(form, HONEYPOT_FIELD).trim() !== '';
+	const spam = isHoneypotFilled(form);
 	if (Object.keys(errors).length > 0 && !spam) return { ok: false, errors, values };
 	return { ok: true, spam, value: values };
 }
@@ -168,7 +178,7 @@ export function parseTrialForm(form: FormData, knownSlugs: string[] = []): Parse
 	if (field(form, 'consent') !== 'on' && field(form, 'consent') !== '1') {
 		errors.consent = 'Bitte bestätige die Hinweise zum Datenschutz.';
 	}
-	const spam = field(form, HONEYPOT_FIELD).trim() !== '';
+	const spam = isHoneypotFilled(form);
 	if (Object.keys(errors).length > 0 && !spam) return { ok: false, errors, values };
 	return { ok: true, spam, value: values };
 }

@@ -22,7 +22,7 @@
         <div class="fcta">
             <div>
                 <p class="display">Komm zur Probestunde</p>
-                <p class="sub">Kostenlos und unverbindlich – sag uns kurz Bescheid, wir finden die passende Gruppe. In der Ev. Auferstehungsgemeinde in Bremen-Hastedt.</p>
+                <p class="sub">Kostenlos und unverbindlich – sag uns kurz Bescheid, wir finden die passende Gruppe. In der Ev. Kirchengemeinde Bremen-Hastedt.</p>
             </div>
             <div class="acts">
                 <a class="pill white" href="/probestunde">Probestunde anfragen<Icon name="arrow-right" size={18} /></a>
@@ -33,7 +33,7 @@
         <div class="fgrid">
             <div class="fbox brand">
                 <div class="row">
-                    <img src="/logo.avif" alt="" width="44" height="65" loading="lazy" />
+                    <img src="/logo-sm.avif" alt="" width="44" height="65" loading="lazy" />
                     <div><b>Edelweißpiraten</b><p>Stamm der CPD in Bremen-Hastedt</p></div>
                 </div>
                 <p>Gruppenstunden, Fahrten und Lager für Kinder und Jugendliche in der Ev. Kirchengemeinde Bremen-Hastedt.</p>
@@ -62,7 +62,7 @@
             </nav>
             <div class="fbox kontakt">
                 <h2><Icon name="map-pin" size={18} />So findest du uns</h2>
-                <p>Ev. Auferstehungsgemeinde<br />Drakenburger Str. 42<br />28207 Bremen</p>
+                <p>Ev. Kirchengemeinde Bremen-Hastedt<br />Drakenburger Str. 42<br />28207 Bremen</p>
                 <a class="ln" href="/kontakt"><Icon name="mail" size={18} />Kontaktformular</a>
                 <a class="ln" href={route} target="_blank" rel="noopener noreferrer"><Icon name="map" size={18} />Route planen</a>
             </div>
@@ -75,6 +75,16 @@
                 <a href="/datenschutz">Datenschutz</a>
                 <a class="top" href="#inhalt" aria-label="Nach oben"><Icon name="chevron-up" /></a>
             </div>
+            <!-- Bot-Falle (lib/server/bot-trap.ts): für Menschen unsichtbar und nicht erreichbar, in robots.txt gesperrt -->
+            <a
+                class="trail"
+                href="/pfad-ins-unterholz"
+                rel="nofollow"
+                tabindex="-1"
+                aria-hidden="true"
+                data-sveltekit-reload
+                data-sveltekit-preload-data="off">Archiv</a
+            >
         </div>
     </div>
 </footer>
@@ -215,6 +225,13 @@
     }
     .legal a:hover {
         color: #fff;
+    }
+    .trail {
+        position: absolute;
+        left: -10000px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
     }
     .legal .top {
         width: 44px;

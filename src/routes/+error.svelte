@@ -1,6 +1,7 @@
 <script lang="ts">
     // Fehlerseite: bei 503 (Backend kurz nicht erreichbar) lädt sie die Daten nach einigen Sekunden selbst neu –
     // meist ist der Aussetzer dann vorbei (Neustart beim Deployment, kurze Last).
+    import Seo from '$lib/components/Seo.svelte';
     import { onDestroy, onMount } from 'svelte';
     import { invalidateAll } from '$app/navigation';
     import { page } from '$app/stores';
@@ -54,10 +55,7 @@
     });
 </script>
 
-<svelte:head>
-    <title>{notFound ? 'Seite nicht gefunden' : 'Gerade nicht erreichbar'} – Stamm Edelweißpiraten</title>
-    <meta name="robots" content="noindex" />
-</svelte:head>
+<Seo title={`${notFound ? 'Seite nicht gefunden' : 'Gerade nicht erreichbar'} – Stamm Edelweißpiraten`} noindex />
 
 <section class="site-container" style="padding-block: 64px 24px">
 <div style="max-width: 900px">

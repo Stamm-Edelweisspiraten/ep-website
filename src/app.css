@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "leaflet/dist/leaflet.css";
 /* Schriften selbst gehostet (keine Anfrage an Google): Bebas Neue für große Bildüberschriften, Inter für alles andere */
 @import "@fontsource/bebas-neue/index.css";
 @import "@fontsource-variable/inter/wght.css";
@@ -486,7 +485,8 @@ a.tag:hover {
 	flex-wrap: wrap;
 }
 
-/* Eckdaten-Kacheln */
+/* Eckdaten-Kacheln: <dl class="facts"><div class="fact"><dt><span class="ic">…</span>Label</dt><dd>…</dd></div></dl>
+   (Symbol steht im <dt>, damit die <dl> nur dt/dd-Gruppen enthält) */
 .facts {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -497,9 +497,12 @@ a.tag:hover {
 	padding: 24px;
 	display: flex;
 	flex-direction: column;
-	gap: 18px;
 }
 .fact dt {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 18px;
 	font-size: 15px;
 	color: var(--color-muted);
 }
@@ -722,6 +725,12 @@ html.dark .field-error {
 	inset: 0;
 	background: linear-gradient(to top, rgba(0, 0, 0, 0.64) 0%, rgba(0, 0, 0, 0.25) 40%, rgba(0, 0, 0, 0) 64%);
 }
+/* Startseite: helles Kornfeld → ganze Fläche abdunkeln, unten kräftiger (weiße Schrift ≥ 4,5:1) */
+.camp.hero .scrim {
+	background:
+		linear-gradient(to top, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.5) 45%, rgba(0, 0, 0, 0.2) 75%),
+		rgba(0, 0, 0, 0.22);
+}
 .camp .lock {
 	position: absolute;
 	left: clamp(20px, 3.3vw, 48px);
@@ -763,6 +772,8 @@ html.dark .field-error {
 	}
 	.fact {
 		padding: 18px;
+	}
+	.fact dt {
 		gap: 14px;
 	}
 	.fact dd {

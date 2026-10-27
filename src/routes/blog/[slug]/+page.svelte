@@ -1,4 +1,6 @@
 <script lang="ts">
+    import Seo from '$lib/components/Seo.svelte';
+    import { blogPosting } from '$lib/seo';
     import Icon from '$lib/components/Icon.svelte';
     import Share from '$lib/components/Share.svelte';
     import { formatLongDate } from '$lib/dates';
@@ -16,16 +18,32 @@
     $: initial = (p.authorName ?? '').trim().charAt(0).toUpperCase();
 </script>
 
+<Seo
+    title={`${p.title} – Blog – Stamm Edelweißpiraten`}
+    ogTitle={p.title}
+    description={summary || p.title}
+    path={p.href}
+    type="article"
+    image={ogImage}
+    imageAlt={p.coverLarge?.alt || null}
+    breadcrumbs={[{ name: 'Blog', path: '/blog' }, { name: p.title, path: p.href }]}
+    jsonLd={(base) =>
+        blogPosting({
+            base,
+            path: p.href,
+            title: p.title,
+            description: summary,
+            publishedAt: p.publishedAt,
+            updatedAt: p.updatedAt,
+            image: ogImage,
+            authorName: p.authorName,
+            tags: p.tags
+        })}
+/>
+
 <svelte:head>
-    <title>{p.title} – Blog – Stamm Edelweißpiraten</title>
-    <meta name="description" content={summary || p.title} />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content={p.title} />
-    {#if summary}<meta property="og:description" content={summary} />{/if}
-    <meta property="og:url" content={data.pageUrl} />
     <meta property="article:published_time" content={p.publishedAt} />
-    {#if ogImage}<meta property="og:image" content={`${data.origin}${ogImage}`} />{/if}
-    <link rel="canonical" href={data.pageUrl} />
+    {#if p.updatedAt}<meta property="article:modified_time" content={p.updatedAt} />{/if}
 </svelte:head>
 
 <article class="site-container" aria-labelledby="h-post">

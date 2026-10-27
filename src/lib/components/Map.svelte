@@ -22,7 +22,8 @@
         loading = true;
         failed = false;
         try {
-            const L = await import('leaflet');
+            // Leaflet-CSS erst mit der Karte laden (nicht im globalen, inline ausgelieferten CSS)
+            const [L] = await Promise.all([import('leaflet'), import('leaflet/dist/leaflet.css')]);
             active = true;
             await tick();
             const map = L.map(container).setView([lat, lng], zoom);
@@ -32,7 +33,7 @@
             }).addTo(map);
             L.marker([lat, lng])
                 .addTo(map)
-                .bindPopup('Ev. Auferstehungsgemeinde Bremen-Hastedt')
+                .bindPopup('Ev. Kirchengemeinde Bremen-Hastedt')
                 .openPopup();
         } catch {
             active = false;
@@ -44,11 +45,11 @@
 </script>
 
 {#if active}
-    <div bind:this={container} class="relative z-0 w-full" style="height: {height}px" role="region" aria-label="Karte: Ev. Auferstehungsgemeinde Bremen-Hastedt"></div>
+    <div bind:this={container} class="relative z-0 w-full" style="height: {height}px" role="region" aria-label="Karte: Ev. Kirchengemeinde Bremen-Hastedt"></div>
 {:else}
     <div class="mapbox" style="min-height: {height}px">
         <span class="ic" style="width: 56px; height: 56px"><Icon name="map" size={24} /></span>
-        <p class="strong" style="color: var(--color-ink); font-size: 18px">Treffpunkt: Ev. Auferstehungsgemeinde</p>
+        <p class="strong" style="color: var(--color-ink); font-size: 18px">Treffpunkt: Ev. Kirchengemeinde Bremen-Hastedt</p>
         <p>
             Drakenburger Str. 42, 28207 Bremen. Die Karte lädt erst nach deinem Klick von OpenStreetMap, dabei wird deine
             IP-Adresse übertragen (<a href="/datenschutz#m328" class="text-link">Datenschutz</a>).

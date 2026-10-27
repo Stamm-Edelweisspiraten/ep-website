@@ -1,4 +1,6 @@
 <script lang="ts">
+    import Seo from '$lib/components/Seo.svelte';
+    import { event as eventLd } from '$lib/seo';
     import Icon from '$lib/components/Icon.svelte';
     import Share from '$lib/components/Share.svelte';
     import EventList from '$lib/components/EventList.svelte';
@@ -24,15 +26,27 @@
     $: long = e.title.length > 22;
 </script>
 
-<svelte:head>
-    <title>{e.title} – Termine – Stamm Edelweißpiraten</title>
-    <meta name="description" content={summary || `${e.title} am ${dateText}`} />
-    <meta property="og:type" content="article" />
-    <meta property="og:title" content={e.title} />
-    <meta property="og:description" content={summary || dateText} />
-    <meta property="og:url" content={data.pageUrl} />
-    {#if ogImage}<meta property="og:image" content={`${data.origin}${ogImage}`} />{/if}
-</svelte:head>
+<Seo
+    title={`${e.title} – Termine – Stamm Edelweißpiraten`}
+    ogTitle={e.title}
+    description={summary || `${e.title} am ${dateText}`}
+    path={`/termine/${e.key}`}
+    image={ogImage}
+    breadcrumbs={[{ name: 'Termine', path: '/termine' }, { name: e.title, path: `/termine/${e.key}` }]}
+    jsonLd={(base) =>
+        eventLd({
+            base,
+            path: `/termine/${e.key}`,
+            title: e.title,
+            description: e.description,
+            startsOn: e.startsOn,
+            startsTime: e.startsTime,
+            endsOn: e.endsOn,
+            endsTime: e.endsTime,
+            location: e.location,
+            image: ogImage
+        })}
+/>
 
 <article class="site-container" aria-labelledby="h-termin">
     <nav class="crumbs" aria-label="Brotkrümel">
