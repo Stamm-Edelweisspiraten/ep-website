@@ -71,6 +71,7 @@
         <div class="legal">
             <p>© {new Date().getFullYear()} Stamm Edelweißpiraten · Christliche Pfadfinderschaft Deutschlands e. V.</p>
             <div class="r">
+                <a href="https://status.edelweisspiraten-bremen.de" target="_blank" rel="noopener noreferrer">Systemstatus<span class="sr-only"> (neues Fenster)</span></a>
                 <a href="/impressum">Impressum</a>
                 <a href="/datenschutz">Datenschutz</a>
                 <a class="top" href="#inhalt" aria-label="Nach oben"><Icon name="chevron-up" /></a>
