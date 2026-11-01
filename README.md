@@ -1,38 +1,30 @@
-# sv
+# Stammeswebsite der Edelweißpiraten
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Öffentliche Website (SvelteKit, `adapter-node`, Port 3001). Termine, Galerien, Gruppen, Ämter, Blog, FAQ, Banner und
+Kontaktformulare kommen **serverseitig** aus dem Intern-Bereich (Kalypzo Atrium mit den Modulen aus `ep-intern-modules`)
+über dessen Website-Endpunkte.
 
-## Creating a project
+Eigenes Repo seit 2026-11-01 (vorher Ordner `website/` im Intern-Repo, Historie übernommen).
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Konfiguration
 
-```bash
-# create a new project in the current directory
-npx sv create
+| Variable | Zweck |
+|---|---|
+| `WEBSITE_API_URL` | Adresse des Intern-Bereichs, z. B. `https://intern.edelweisspiraten-bremen.de` (Pflicht) |
+| `WEBSITE_API_KEY` | API-Key aus dem Intern-Bereich (Administration → API-Keys) mit den Website-Scopes, z. B. `events.website.read`, `galleries.website.read`, `offices.website.read`, `website.content.read`, `messages.website.contact` |
+| `ORIGIN` / `WEBSITE_ORIGIN` | Öffentliche Adresse der Website |
+| `CONTACT_TO`, `SMTP_*` | Rückfall für Kontaktformulare, falls das Backend nicht erreichbar ist |
 
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
+## Entwickeln
 
 ```bash
-npm run build
+npm ci
+npm run dev        # http://localhost:5173 (WEBSITE_API_URL/KEY in .env)
+npm test           # Unit-Tests (tests/)
+npm run check      # Typprüfung (wenige bekannte Altfehler, CI erlaubt bis 5)
+npm run build && node --env-file=.env build   # :3001
 ```
 
-You can preview the production build with `npm run preview`.
+## Deployment (Dokploy)
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Eigener Compose-Stack `docker-compose.dokploy.yml`, Domain auf Service `website`, Port 3001. Variablen wie oben.
