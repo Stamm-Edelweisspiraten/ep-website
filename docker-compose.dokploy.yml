@@ -1,0 +1,57 @@
+# Stammeswebsite als eigener Dokploy-Stack (seit der Trennung 2026-11-01; vorher Dienst `website` im Stack des Intern-Bereichs).
+# Domain in Dokploy auf Service `website`, Port 3001 legen.
+#
+# Das Backend (Kalypzo Atrium mit den Modulen aus ep-intern-modules) läuft in einem anderen Stack: Die Website ruft es über
+# seine öffentliche Adresse auf (WEBSITE_API_URL, z. B. https://intern.edelweisspiraten-bremen.de) – oder, wenn beide Stacks im
+# Dokploy-Netz liegen, über den Alias des App-Containers (`http://ep-intern-<env>-app:3000`).
+# API-Key: im Intern-Bereich unter Administration → API-Keys mit den Website-Scopes anlegen (siehe README).
+
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: '10m'
+      max-file: '5'
+
+x-hardening: &hardening
+  security_opt: ['no-new-privileges:true']
+  init: true
+
+services:
+  website:
+    <<: [*logging, *hardening]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      WEBSITE_API_URL: ${WEBSITE_API_URL:?WEBSITE_API_URL muss gesetzt sein (Adresse des Intern-Bereichs)}
+      WEBSITE_API_KEY: ${WEBSITE_API_KEY:-}
+      ORIGIN: ${WEBSITE_ORIGIN:-https://edelweisspiraten-bremen.de}
+      # Client-IP hinter dem Proxy (Rate-Limit je Besucher*in) und Kontaktformular per SMTP (#20/#31)
+      ADDRESS_HEADER: X-Forwarded-For
+      XFF_DEPTH: '1'
+      CONTACT_TO: ${CONTACT_TO:-}
+      SMTP_HOST: ${WEBSITE_SMTP_HOST:-}
+      SMTP_PORT: ${WEBSITE_SMTP_PORT:-587}
+      SMTP_SECURE: ${WEBSITE_SMTP_SECURE:-false}
+      SMTP_USER: ${WEBSITE_SMTP_USER:-}
+      SMTP_PASS: ${WEBSITE_SMTP_PASS:-}
+      SMTP_FROM: ${WEBSITE_SMTP_FROM:-}
+    expose: ['3001']
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    cap_drop: [ALL]
+    networks:
+      dokploy-network: {}
+    mem_limit: ${WEBSITE_MEM_LIMIT:-256m}
+    cpus: ${WEBSITE_CPUS:-0.5}
+    cpu_shares: 256
+    pids_limit: 128
+    stop_grace_period: 15s
+
+networks:
+  # von Dokploy bereitgestelltes Netz (Traefik)
+  dokploy-network:
+    external: true

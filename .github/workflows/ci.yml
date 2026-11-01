@@ -1,0 +1,42 @@
+# CI der Stammeswebsite (eigenes Repo seit 2026-11-01; Backend = Kalypzo Atrium mit Modulen aus ep-intern-modules)
+name: CI
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  website:
+    name: website (Check, Tests, Build, Audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Typprüfung (bekannte Altfehler, siehe README)
+        # Altcode meldet bekannte Fehler; der Schritt bricht erst ab, wenn es MEHR werden.
+        run: |
+          set +e
+          npx svelte-kit sync
+          npx svelte-check --tsconfig ./tsconfig.json --output machine > svelte-check.log
+          tail -n 1 svelte-check.log
+          errors=$(grep -E '^[0-9]+ COMPLETED' svelte-check.log | sed -E 's/.* ([0-9]+) ERRORS.*/\1/')
+          if [ -z "$errors" ]; then echo "svelte-check lieferte kein Ergebnis"; exit 1; fi
+          if [ "$errors" -gt 5 ]; then
+            grep ' ERROR ' svelte-check.log
+            echo "Mehr als die 5 bekannten Fehler: $errors"
+            exit 1
+          fi
+      - run: npm test
+      - run: npm run build
+      - name: Audit Laufzeitabhängigkeiten (High/Critical blockieren)
+        run: npm audit --omit=dev --audit-level=high
