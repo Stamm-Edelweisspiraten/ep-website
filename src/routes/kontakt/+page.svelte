@@ -1,6 +1,6 @@
 <Seo
-    title="Kontakt – Stamm Edelweißpiraten"
-    description="Nimm Kontakt mit dem Stamm Edelweißpiraten auf. Hier findest du unser Formular, E-Mail-Adressen und den Treffpunkt in Bremen-Hastedt."
+    title="Kontakt – Pfadfinder Edelweißpiraten Bremen"
+    description="Kontakt zu den Pfadfindern vom Stamm Edelweißpiraten: Formular, Ansprechpartner*innen und Treffpunkt in Bremen-Hastedt (Hemelingen)."
     path="/kontakt"
     breadcrumbs={[{ name: 'Kontakt', path: '/kontakt' }]}
 />
@@ -22,6 +22,17 @@
     $: errors = form?.errors ?? {};
     $: values = form?.values ?? null;
     $: sent = $page?.url?.searchParams?.get('success') === '1';
+
+    /** Stammesführung oben neben dem Formular, alle anderen Ämter als Kacheln darunter */
+    $: offices = data.offices ?? [];
+    $: lead = offices.find((o) => /stammesf(ü|ue)hr/i.test(o.name)) ?? null;
+    $: others = offices.filter((o) => o !== lead);
+
+    /** @param {string[]} names „A, B und C“ */
+    function joinNames(names) {
+        if (names.length <= 1) return names.join('');
+        return `${names.slice(0, -1).join(', ')} und ${names[names.length - 1]}`;
+    }
 </script>
 
 <section class="site-container" aria-labelledby="h-kontakt">
@@ -106,12 +117,24 @@
 
         <aside class="people" aria-labelledby="h-ansprech">
             <h2 class="h-xl" id="h-ansprech">Ansprechpartner*innen</h2>
-            <div class="pbox">
-                <h3>Stammesführung</h3>
-                <p class="k">Larissa, Lina und Matilda</p>
-                <p class="addr">stafues@edelweisspiraten-bremen.de</p>
-                <EmailButtons email="stafues@edelweisspiraten-bremen.de" onCloud />
-            </div>
+            <!-- Stammesführung (Amt aus dem Intern-Bereich, nur Vornamen mit Einwilligung); ohne Backend feste Adresse -->
+            {#if lead}
+                <div class="pbox">
+                    <h3>{lead.name}</h3>
+                    {#if lead.names.length}<p class="k">{joinNames(lead.names)}</p>{/if}
+                    {#each lead.emails as m, i (i)}
+                        {#if m.label && lead.emails.length > 1}<p class="k lbl">{m.label}</p>{/if}
+                        <p class="addr">{m.email}</p>
+                        <EmailButtons email={m.email} onCloud />
+                    {/each}
+                </div>
+            {:else}
+                <div class="pbox">
+                    <h3>Stammesführung</h3>
+                    <p class="addr">stafues@edelweisspiraten-bremen.de</p>
+                    <EmailButtons email="stafues@edelweisspiraten-bremen.de" onCloud />
+                </div>
+            {/if}
             <!-- Gruppen (aus dem Intern-Bereich) -->
             {#each data.groups as group (group.slug)}
                 <div class="pbox">
@@ -126,6 +149,29 @@
         </aside>
     </div>
 </section>
+
+{#if others.length}
+    <section class="site-container section-gap" aria-labelledby="h-aemter">
+        <div class="rowhead">
+            <h2 class="h-xl" id="h-aemter">Weitere Ansprechpartner*innen</h2>
+            <a class="ulink" href="/team">Unser Team<Icon name="arrow-right" size={18} /></a>
+        </div>
+        <ul class="otiles">
+            {#each others as office (office.id)}
+                <li class="otile">
+                    <h3>{office.name}</h3>
+                    {#if office.names.length}<p class="k">{joinNames(office.names)}</p>{/if}
+                    <div class="omails">
+                        {#each office.emails as m, i (i)}
+                            {#if m.label && office.emails.length > 1}<p class="k lbl">{m.label}</p>{/if}
+                            <EmailButtons email={m.email} onCloud compact />
+                        {/each}
+                    </div>
+                </li>
+            {/each}
+        </ul>
+    </section>
+{/if}
 
 <section class="site-container section-gap" id="karte" aria-labelledby="h-treffpunkt">
     <h2 id="h-treffpunkt" class="h-xl" style="margin-bottom: 24px">So findest du uns</h2>
@@ -256,9 +302,43 @@
         gap: 8px;
         align-items: flex-start;
     }
-    .pbox h3 {
+    .pbox h3,
+    .otile h3 {
         font-size: 17px;
         font-weight: 500;
+    }
+    .lbl {
+        font-size: 13px;
+        margin-top: 2px;
+    }
+    .addr {
+        font-size: 15px;
+        font-weight: 500;
+        overflow-wrap: anywhere;
+        margin-bottom: 4px;
+    }
+    .otiles {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+        gap: 8px;
+    }
+    .otile {
+        background: var(--color-subtle);
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
+    }
+    .omails {
+        margin-top: auto;
+        padding-top: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
     }
     .gl {
         display: inline-flex;
@@ -274,12 +354,6 @@
     .k {
         font-size: 15px;
         color: var(--color-body);
-    }
-    .addr {
-        font-size: 15px;
-        font-weight: 500;
-        overflow-wrap: anywhere;
-        margin-bottom: 4px;
     }
     .where {
         display: grid;

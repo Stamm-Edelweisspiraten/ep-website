@@ -55,7 +55,7 @@
 
 <Seo
     title="Galerie – Stamm Edelweißpiraten"
-    description="Bilder von Fahrten, Lagern und Aktionen des Stammes Edelweißpiraten."
+    description="Bilder von Fahrten, Lagern und Aktionen der Pfadfinder vom Stamm Edelweißpiraten aus Bremen."
     path="/galerie"
     image={data.galleries[0]?.cover?.url ?? null}
     breadcrumbs={[{ name: 'Galerie', path: '/galerie' }]}

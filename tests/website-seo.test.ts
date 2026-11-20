@@ -163,7 +163,7 @@ describe('robots.txt / sitemap.xml / llms.txt', () => {
 	it('robots.txt sperrt Aufgabe und Falle, erlaubt KI-Crawler, nennt die Sitemap', () => {
 		const txt = robotsTxt(BASE);
 		expect(txt).toContain(
-			'User-agent: *\nAllow: /\nDisallow: /kontakt/challenge\nDisallow: /pfad-ins-unterholz'
+			'User-agent: *\nAllow: /\nDisallow: /kontakt/challenge\nDisallow: /stats/\nDisallow: /pfad-ins-unterholz'
 		);
 		for (const bot of AI_CRAWLERS) expect(txt).toContain(`User-agent: ${bot}\nAllow: /`);
 		expect(txt).toContain(`Sitemap: ${BASE}/sitemap.xml`);

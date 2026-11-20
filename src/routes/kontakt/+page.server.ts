@@ -4,7 +4,7 @@
 // Rückfall bei Ausfall des Backends: Versand per SMTP an eine feste Adresse (#31), falls konfiguriert.
 import { fail, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { BackendError, submitContact } from '$lib/server/backend';
+import { BackendError, fetchTeam, submitContact } from '$lib/server/backend';
 import { isTrapped } from '$lib/server/bot-trap';
 import { createRateLimiter } from '$lib/server/cache';
 import {
@@ -14,7 +14,27 @@ import {
 	type ContactInput
 } from '$lib/server/contact';
 import { sendMail, type SmtpConfig } from '$lib/server/smtp';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
+
+/**
+ * Ansprechpartner*innen: Ämter aus dem Intern-Bereich (wie `/team`), nur solche mit E-Mail-Adresse.
+ * Ohne Backend `null` – die Seite zeigt dann die feste Adresse der Stammesführung.
+ */
+export const load: PageServerLoad = async () => {
+	const offices = await fetchTeam()
+		.then((list) =>
+			list
+				.filter((o) => o.emails.length > 0)
+				.map((o) => ({
+					id: o.id,
+					name: o.name,
+					names: o.holders.map((h) => h.firstName),
+					emails: o.emails
+				}))
+		)
+		.catch(() => null);
+	return { offices };
+};
 
 /** je Besucher-IP höchstens 5 Nachrichten in 10 Minuten */
 const perIp = createRateLimiter({ limit: 5, windowMs: 10 * 60_000 });

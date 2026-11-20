@@ -41,5 +41,7 @@ describe('Stammeswebsite: Sicherheits-Header', () => {
 		expect(csp.directives['frame-ancestors']).toEqual(['none']);
 		expect(csp.directives['script-src']).toEqual(['self']);
 		expect(csp.directives['object-src']).toEqual(['none']);
+		// iframes nur für die Zwei-Klick-Karte (Google Maps)
+		expect(csp.directives['frame-src']).toEqual(['https://maps.google.com', 'https://www.google.com']);
 	});
 });

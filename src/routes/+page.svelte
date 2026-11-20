@@ -63,8 +63,8 @@
 </script>
 
 <Seo
-    title="Stamm Edelweißpiraten – Pfadfinden in Bremen-Hastedt"
-    description={`Pfadfinder in Bremen-Hastedt – Gruppenstunden, Fahrten und Lager für Kinder und Jugendliche ab ${minAge} Jahren. Die erste Gruppenstunde ist kostenlos.`}
+    title="Pfadfinder Bremen-Hastedt & Hemelingen – Stamm Edelweißpiraten"
+    description={`Pfadfinder in Bremen: Der Stamm Edelweißpiraten (CPD) in Hastedt, Stadtteil Hemelingen – Gruppenstunden, Fahrten und Lager für Kinder und Jugendliche ab ${minAge} Jahren. Probestunde kostenlos.`}
     path="/"
     jsonLd={(base) => [organization(base), website(base)]}
 />
@@ -75,10 +75,10 @@
             src="/pfadfinder-1280.avif"
             srcset="/pfadfinder-1280.avif 1280w, /pfadfinder-2400.avif 2400w, /pfadfinder.avif 4896w"
             sizes="(max-width: 90rem) 100vw, 90rem"
-            alt="Schwarze Kohten und Banner der Edelweißpiraten am Rand eines Kornfelds vor hohen Bäumen" width="4896" height="3672" fetchpriority="high" decoding="async" />
+            alt="Schwarze Kohten und Banner der Pfadfinder Edelweißpiraten aus Bremen am Rand eines Kornfelds vor hohen Bäumen" width="4896" height="3672" fetchpriority="high" decoding="async" />
         <div class="scrim"></div>
         <div class="lock">
-            <h1 class="display" id="h-hero">Pfadfinden<br />in Hastedt</h1>
+            <h1 class="display" id="h-hero">Pfadfinder<br />in Hastedt</h1>
             <p>Gruppenstunden, Fahrten und Lager für Kinder und Jugendliche ab {minAge} Jahren. Die erste Gruppenstunde ist kostenlos und ohne Anmeldung.</p>
             <div class="acts" style="margin-top: 8px">
                 <a class="pill white" href="#gruppen">Gruppe finden<Icon name="arrow-right" size={18} /></a>
@@ -222,8 +222,9 @@
         <div class="txt">
             <h2 class="h-xl" id="h-ueber">Über uns</h2>
             <p>
-                Wir sind der Stamm Edelweißpiraten der Christlichen Pfadfinderschaft Deutschlands e. V. (CPD). Unser Zuhause ist
-                Bremen-Hastedt, wo wir eng mit der Ev. Kirchengemeinde Bremen-Hastedt zusammenarbeiten. Als Teil der CPD bieten wir
+                Wir sind die Pfadfinder vom Stamm Edelweißpiraten in der Christlichen Pfadfinderschaft Deutschlands e. V. (CPD). Unser Zuhause ist
+                Bremen-Hastedt im Stadtteil Hemelingen, wo wir eng mit der Ev. Kirchengemeinde Bremen-Hastedt zusammenarbeiten.
+                Zu uns kommen Kinder und Jugendliche aus Hastedt, Hemelingen und ganz Bremen. Als Teil der CPD bieten wir
                 Kindern und Jugendlichen eine lebendige Gemeinschaft, in der Abenteuer, Freundschaft und Verantwortung großgeschrieben werden.
             </p>
             <p>Jede und jeder ist willkommen – komm vorbei und mach mit!</p>

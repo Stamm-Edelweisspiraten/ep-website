@@ -390,6 +390,11 @@ export interface Group {
 	thumb: string | null;
 }
 
+/** Nur der erste Vorname („Anna Lena“ → „Anna“; Doppelnamen mit Bindestrich bleiben ganz). */
+export function onlyFirstName(name: string): string {
+	return name.trim().split(/\s+/)[0] ?? '';
+}
+
 function joinNames(names: string[]) {
 	if (names.length <= 1) return names.join('');
 	return `${names.slice(0, -1).join(', ')} und ${names[names.length - 1]}`;
@@ -436,7 +441,7 @@ function toGroup(g: BackendGroup): Group {
 		weekday: day ? `${day}s` : '',
 		time,
 		meetingPlace: g.meetingPlace ?? '',
-		leaders: joinNames(g.leaders.map((l) => l.firstName)),
+		leaders: joinNames(g.leaders.map((l) => onlyFirstName(l.firstName)).filter(Boolean)),
 		contactEmail: g.contactEmail,
 		color: safeColor(g.color) ?? '#33338c',
 		...groupImageUrls(g)
@@ -776,7 +781,7 @@ export async function fetchTeam(): Promise<SiteOffice[]> {
 			emails: o.emails,
 			holders: o.holders.map((h) => ({
 				id: h.id,
-				firstName: h.firstName,
+				firstName: onlyFirstName(h.firstName),
 				bio: h.bio?.trim() || null,
 				since: h.since,
 				imageUrl: h.avatarPath

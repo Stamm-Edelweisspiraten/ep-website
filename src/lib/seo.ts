@@ -10,6 +10,11 @@ export const SITE_LOCALE = 'de_DE';
 export const DEFAULT_OG_IMAGE = '/og-default.jpg';
 export const CONTACT_EMAIL = 'stafues@edelweisspiraten-bremen.de';
 export const INSTAGRAM_URL = 'https://instagram.com/edelweisspiraten_cpd';
+/** Eintrag des Stammes bei Google (Karte, Route, Suche) */
+export const GOOGLE_PLACE_QUERY = 'Stamm Edelweißpiraten, Drakenburger Str. 42, 28207 Hemelingen';
+export const GOOGLE_MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(GOOGLE_PLACE_QUERY)}`;
+/** Orte, für die wir Pfadfinden anbieten (Hastedt gehört zum Stadtteil Hemelingen) */
+export const AREAS = ['Bremen', 'Bremen-Hastedt', 'Bremen-Hemelingen'] as const;
 
 /** Treffpunkt der Gruppenstunden */
 export const MEETING_PLACE = {
@@ -17,7 +22,9 @@ export const MEETING_PLACE = {
 	streetAddress: 'Drakenburger Str. 42',
 	postalCode: '28207',
 	addressLocality: 'Bremen',
-	addressCountry: 'DE'
+	addressCountry: 'DE',
+	latitude: 53.064289,
+	longitude: 8.868496
 } as const;
 
 export type JsonLd = Record<string, unknown>;
@@ -64,7 +71,13 @@ function postalAddress() {
 
 /** Treffpunkt als `Place` */
 export function meetingPlace(): JsonLd {
-	return { '@type': 'Place', name: MEETING_PLACE.name, address: postalAddress() };
+	return {
+		'@type': 'Place',
+		name: MEETING_PLACE.name,
+		address: postalAddress(),
+		geo: { '@type': 'GeoCoordinates', latitude: MEETING_PLACE.latitude, longitude: MEETING_PLACE.longitude },
+		hasMap: GOOGLE_MAPS_URL
+	};
 }
 
 /** `@id` der Organisation (Verweis aus anderen Objekten) */
@@ -79,17 +92,24 @@ export function organization(base: string): JsonLd {
 		'@type': 'Organization',
 		'@id': organizationId(base),
 		name: SITE_NAME,
-		alternateName: 'Edelweißpiraten Bremen',
+		alternateName: ['Edelweißpiraten Bremen', 'Pfadfinder Edelweißpiraten', 'Pfadfinder Bremen-Hastedt'],
 		description:
-			'Pfadfinderstamm der Christlichen Pfadfinderschaft Deutschlands e. V. (CPD) in Bremen-Hastedt: ' +
-			'Gruppenstunden, Fahrten und Lager für Kinder und Jugendliche ab 6 Jahren.',
+			'Pfadfinder in Bremen: Pfadfinderstamm der Christlichen Pfadfinderschaft Deutschlands e. V. (CPD) in ' +
+			'Bremen-Hastedt (Stadtteil Hemelingen) – Gruppenstunden, Fahrten und Lager für Kinder und Jugendliche ab 6 Jahren.',
+		keywords: 'Pfadfinder, Pfadfinder Bremen, Pfadfinder Hastedt, Pfadfinder Hemelingen, Pfadfinden, CPD',
+		knowsAbout: ['Pfadfinden', 'Zeltlager', 'Fahrten', 'Jugendarbeit'],
+		areaServed: AREAS.map((name) => ({ '@type': 'Place', name })),
 		url: `${cleanBase(base)}/`,
 		logo: absoluteUrl(base, '/logo.avif'),
 		email: CONTACT_EMAIL,
 		address: postalAddress(),
 		location: meetingPlace(),
 		sameAs: [INSTAGRAM_URL],
-		memberOf: { '@type': 'Organization', name: 'Christliche Pfadfinderschaft Deutschlands e. V.' }
+		memberOf: [
+			{ '@type': 'Organization', name: 'Christliche Pfadfinderschaft Deutschlands e. V. (CPD)', url: 'https://c-p-d.info' },
+			{ '@type': 'Organization', name: 'Landesmark Achter’n Diek', url: 'https://achterndiek.net/' },
+			{ '@type': 'Organization', name: 'Gau Bremen', url: 'https://cpd-bremen.de' }
+		]
 	};
 }
 

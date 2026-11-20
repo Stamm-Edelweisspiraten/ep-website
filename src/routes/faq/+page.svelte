@@ -22,7 +22,7 @@
 
 <Seo
     title="Häufige Fragen – Stamm Edelweißpiraten"
-    description="Antworten auf häufige Fragen zu Gruppenstunden, Alter, Kosten und Ausrüstung beim Stamm Edelweißpiraten."
+    description="Pfadfinder in Bremen – Antworten auf häufige Fragen zu Gruppenstunden, Alter, Kosten und Ausrüstung beim Stamm Edelweißpiraten in Hastedt."
     path="/faq"
     breadcrumbs={[{ name: 'Häufige Fragen', path: '/faq' }]}
     jsonLd={data.faqs.length ? faqPage(data.faqs) : null}

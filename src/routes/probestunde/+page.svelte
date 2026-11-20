@@ -47,8 +47,8 @@
 </script>
 
 <Seo
-    title="Probestunde anfragen – Stamm Edelweißpiraten"
-    description="Melde dein Kind zu einer kostenlosen Probestunde beim Stamm Edelweißpiraten in Bremen-Hastedt an. Wir finden die passende Gruppe zum Alter."
+    title="Probestunde bei den Pfadfindern in Bremen – Stamm Edelweißpiraten"
+    description="Pfadfinder ausprobieren: Melde dein Kind zu einer kostenlosen Probestunde beim Stamm Edelweißpiraten in Bremen-Hastedt (Hemelingen) an. Wir finden die passende Gruppe zum Alter."
     path="/probestunde"
     breadcrumbs={[{ name: 'Probestunde', path: '/probestunde' }]}
 />

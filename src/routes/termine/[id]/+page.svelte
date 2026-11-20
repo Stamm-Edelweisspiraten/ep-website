@@ -19,7 +19,7 @@
               .join(' · ')
         : formatTimeRange(e.startsTime, e.endsTime);
     $: mapUrl = e.location
-        ? `https://www.openstreetmap.org/search?query=${encodeURIComponent(e.location)}`
+        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.location)}`
         : null;
     $: summary = e.description.replace(/\s+/g, ' ').trim().slice(0, 160);
     $: ogImage = e.galleries.find((g) => g.coverUrl)?.coverUrl ?? null;

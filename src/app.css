@@ -941,9 +941,6 @@ html.dark {
 html.dark .bg-white {
 	background-color: var(--color-page);
 }
-html.dark .leaflet-container {
-	filter: brightness(0.85);
-}
 
 /* Rechtstexte (Impressum, Datenschutz): eine gut lesbare Spalte unter einem großen Titel */
 .legal-doc {

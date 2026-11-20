@@ -1,5 +1,6 @@
 <script>
     import Icon from '$lib/components/Icon.svelte';
+    import { GOOGLE_PLACE_QUERY } from '$lib/seo';
 
     /**
      * Gruppen aus dem Intern-Bereich (Layout-Load)
@@ -14,7 +15,7 @@
         return [day, time].filter(Boolean).join(' ');
     }
 
-    const route = 'https://www.openstreetmap.org/search?query=Drakenburger%20Stra%C3%9Fe%2042%2C%2028207%20Bremen';
+    const route = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(GOOGLE_PLACE_QUERY)}`;
 </script>
 
 <footer class="sitefoot">
@@ -34,7 +35,7 @@
             <div class="fbox brand">
                 <div class="row">
                     <img src="/logo-sm.avif" alt="" width="44" height="65" loading="lazy" />
-                    <div><b>Edelweißpiraten</b><p>Stamm der CPD in Bremen-Hastedt</p></div>
+                    <div><b>Edelweißpiraten</b><p>Pfadfinder in Bremen-Hastedt</p></div>
                 </div>
                 <p>Gruppenstunden, Fahrten und Lager für Kinder und Jugendliche in der Ev. Kirchengemeinde Bremen-Hastedt.</p>
                 <div class="social">
@@ -42,6 +43,11 @@
                     <a href="/kontakt" aria-label="Kontakt"><Icon name="mail" /></a>
                     <a href="/blog/rss.xml" aria-label="RSS-Feed des Blogs"><Icon name="rss" /></a>
                 </div>
+                <ul class="verband" aria-label="Unser Verband">
+                    <li><a href="https://cpd-bremen.de" target="_blank" rel="noopener noreferrer">Gau Bremen<span class="sr-only"> (neues Fenster)</span></a></li>
+                    <li><a href="https://achterndiek.net/" target="_blank" rel="noopener noreferrer">Achter’n Diek<span class="sr-only"> (neues Fenster)</span></a></li>
+                    <li><a href="https://c-p-d.info" target="_blank" rel="noopener noreferrer">CPD<span class="sr-only"> (neues Fenster)</span></a></li>
+                </ul>
             </div>
             {#if groups.length}
                 <div class="fbox groups">
@@ -203,6 +209,17 @@
     }
     .kontakt {
         grid-column: span 3;
+    }
+    .verband {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 20px;
+    }
+    .fbox .verband a {
+        font-size: 14px;
     }
     .legal {
         display: flex;

@@ -26,7 +26,7 @@
 
 <Seo
     title={`${activeTag ? `${activeTag} – ` : ''}Blog – Stamm Edelweißpiraten`}
-    description="Berichte und Neuigkeiten aus dem Stamm Edelweißpiraten: Fahrten, Lager und Gruppenstunden."
+    description="Berichte und Neuigkeiten der Pfadfinder vom Stamm Edelweißpiraten aus Bremen: Fahrten, Lager und Gruppenstunden."
     path="/blog"
     noindex={data.page > 1 || !!activeTag}
     breadcrumbs={[{ name: 'Blog', path: '/blog' }]}

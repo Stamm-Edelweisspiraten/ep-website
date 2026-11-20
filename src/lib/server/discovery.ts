@@ -23,7 +23,7 @@ export const AI_CRAWLERS = [
 	'CCBot'
 ] as const;
 
-const DISALLOWED = ['/kontakt/challenge', BOT_TRAP_PATH];
+const DISALLOWED = ['/kontakt/challenge', '/stats/', BOT_TRAP_PATH];
 
 export function robotsTxt(base: string): string {
 	const block = (agent: string) => [
@@ -150,12 +150,14 @@ export function llmsTxt(
 	const lines: string[] = [
 		`# ${SITE_NAME}`,
 		'',
-		'> Pfadfinderstamm der Christlichen Pfadfinderschaft Deutschlands e. V. (CPD) in Bremen-Hastedt. ' +
+		'> Pfadfinder in Bremen: Pfadfinderstamm der Christlichen Pfadfinderschaft Deutschlands e. V. (CPD) in ' +
+			'Bremen-Hastedt (Stadtteil Hemelingen). ' +
 			'Wöchentliche Gruppenstunden, Fahrten und Zeltlager für Kinder und Jugendliche ab 6 Jahren. ' +
 			'Die erste Gruppenstunde (Probestunde) ist kostenlos und unverbindlich.',
 		'',
 		'Der Stamm gehört zur CPD (Landesmark Achter’n Diek, Gau Bremen). In der Gruppenstunde wird gespielt, gebaut, ' +
-			'gesungen und draußen getobt; mehrmals im Jahr geht es auf Fahrt und ins Zeltlager. Alle Leitungen arbeiten ehrenamtlich.',
+			'gesungen und draußen getobt; mehrmals im Jahr geht es auf Fahrt und ins Zeltlager. Alle Leitungen arbeiten ehrenamtlich. ' +
+			'Mitmachen können Kinder und Jugendliche aus Hastedt, Hemelingen und ganz Bremen.',
 		'',
 		'## Eckdaten',
 		'',

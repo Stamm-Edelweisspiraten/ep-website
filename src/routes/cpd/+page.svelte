@@ -129,11 +129,18 @@
 				{ year: '1977', text: ['Deutscher Pfadfinderring (DPR) mit KPE & DPV'] },
 				{
 					year: '1980–84',
-					text: ['Führungswechsel; innere Spannungen; Zavelsteiner Erklärung (1984)']
+					text: [
+						'Führungswechsel; innere Spannungen',
+						'1982: Spaltung der CPD; Gruppen in Bremen gründen die CPB als eigenen Bund',
+						'Zavelsteiner Erklärung (1984)'
+					]
 				},
 				{ year: '1986', text: ['Ring Christlicher Pfadfinderschaften (RCP) gegründet'] },
 				{ year: '1990–95', text: ['Annäherung CPD & CP 1921; gemeinsame Lager/Kurse'] },
-				{ year: '1995', text: ['Beschluss zur Wiedervereinigung'] }
+				{
+					year: '1995',
+					text: ['Die CPB aus Bremen tritt wieder in die CPD ein', 'Beschluss zur Wiedervereinigung von CPD und CP 1921']
+				}
 			]
 		},
 		{
@@ -144,7 +151,8 @@
 				{
 					year: '1996',
 					text: [
-						'Gründungsthing der wiedervereinigten CPD in St. Goarshausen; Beginn neuer Landesmark-Strukturen'
+						'Gründungsthing der wiedervereinigten CPD in St. Goarshausen',
+						'Neue Landesmarken im Norden: Achter’n Diek und Welfenland'
 					]
 				},
 				{ year: '1997–2005', text: ['Aufbau Bundeshof Birkenfelde; Bundesfeste & Bundesfeuer'] },
@@ -152,7 +160,48 @@
 					year: '2004',
 					text: ['Bundeslager „panta rei – alles fließt“; erste Bundesführerin (wadu)']
 				},
-				{ year: '2008', text: ['Bundeslager an den Gosheimer Baggerseen „Der Freiheit so nah“'] }
+				{ year: '2008', text: ['Bundeslager an den Gosheimer Baggerseen „Der Freiheit so nah“'] },
+				{
+					year: '2012',
+					text: [
+						'Bundeslager in Hellenthal (Eifel) „per limites“',
+						'100. Ausgabe der Gauzeitung „Der Specht“ (Gau Bremen)'
+					]
+				},
+				{ year: '2013', text: ['Meißnerlager: 100 Jahre Freideutscher Jugendtag am Hohen Meißner'] },
+				{ year: '2014', text: ['Neue Bundesordnung'] },
+				{
+					year: '2016',
+					text: ['Bundeslager in Beilstein „Zeit zu handeln“', '100 Jahre Meutenarbeit']
+				},
+				{
+					year: '2020',
+					text: [
+						'25 Jahre Gau Bremen in der CPD und 25 Jahre Wiedervereinigung von CPD und CPB',
+						'Corona-Pandemie: Die Arbeit im ganzen Bund ruht mehrere Monate'
+					]
+				},
+				{
+					year: '2021',
+					text: [
+						'100 Jahre CPD; das Bundeslager wird wegen Corona verschoben',
+						'25 Jahre Landesmarken Achter’n Diek und Welfenland',
+						'Neue Bundesprobenordnung'
+					]
+				},
+				{
+					year: '2022',
+					text: ['Bundeslager in Bennebostel bei Celle „Verbunden. 100 Jahre CPD“ – das Jubiläum wird nachgefeiert']
+				},
+				{ year: '2024', text: ['Jubiläum unseres Stammes Edelweißpiraten'] },
+				{ year: '2025', text: ['30 Jahre Wiedervereinigung von CPB und CPD'] },
+				{
+					year: '2026',
+					text: [
+						'Bundeslager in Hellenthal (Eifel) „Zwischen allen Zeiten“',
+						'30 Jahre Landesmarken Achter’n Diek und Welfenland'
+					]
+				}
 			]
 		}
 	];
@@ -202,19 +251,25 @@
 	<h2 class="h-xl" id="h-aufbau" style="margin-bottom: 24px">So sind wir aufgebaut</h2>
 	<ol class="chain">
 		<li class="step">
-			<span class="lv">Bund</span><span class="n">Christliche Pfadfinderschaft Deutschlands</span
-			><span class="ar" aria-hidden="true"><Icon name="chevron-right" size={18} /></span>
+			<span class="lv">Bund</span><span class="n">Christliche Pfadfinderschaft Deutschlands</span>
+			<a class="ulink ext" href="https://c-p-d.info" target="_blank" rel="noopener noreferrer"
+				>c-p-d.info<span class="sr-only"> (neues Fenster)</span></a
+			>
+			<span class="ar" aria-hidden="true"><Icon name="chevron-right" size={18} /></span>
 		</li>
 		<li class="step">
-			<span class="lv">Landesmark</span><span class="n">Achter'n Diek</span><span
-				class="ar"
-				aria-hidden="true"><Icon name="chevron-right" size={18} /></span
+			<span class="lv">Landesmark</span><span class="n">Achter'n Diek</span>
+			<a class="ulink ext" href="https://achterndiek.net/" target="_blank" rel="noopener noreferrer"
+				>achterndiek.net<span class="sr-only"> (neues Fenster)</span></a
 			>
+			<span class="ar" aria-hidden="true"><Icon name="chevron-right" size={18} /></span>
 		</li>
 		<li class="step">
-			<span class="lv">Gau</span><span class="n">Bremen</span><span class="ar" aria-hidden="true"
-				><Icon name="chevron-right" size={18} /></span
+			<span class="lv">Gau</span><span class="n">Bremen</span>
+			<a class="ulink ext" href="https://cpd-bremen.de" target="_blank" rel="noopener noreferrer"
+				>cpd-bremen.de<span class="sr-only"> (neues Fenster)</span></a
 			>
+			<span class="ar" aria-hidden="true"><Icon name="chevron-right" size={18} /></span>
 		</li>
 		<li class="step here">
 			<span class="lv">Stamm</span><span class="n">Edelweißpiraten</span><span class="cap"
@@ -327,6 +382,10 @@
 	.step.here .lv {
 		color: inherit;
 		opacity: 0.75;
+	}
+	.ext {
+		margin-top: auto;
+		align-self: flex-start;
 	}
 	.lv {
 		font-size: 14px;

@@ -27,8 +27,8 @@
 </script>
 
 <Seo
-    title={`${group.name} – Stamm Edelweißpiraten`}
-    description={`${group.typeLabel} der Edelweißpiraten${group.ageRange ? ` (${group.ageRange})` : ''} in Bremen-Hastedt: ${group.teaser}`}
+    title={`${group.name} – ${group.typeLabel} der Pfadfinder in Bremen-Hastedt`}
+    description={`${group.typeLabel} der Pfadfinder Edelweißpiraten${group.ageRange ? ` (${group.ageRange})` : ''} in Bremen-Hastedt/Hemelingen: ${group.teaser}`}
     path={group.href}
     breadcrumbs={[{ name: `${group.typeLabel} ${group.name}`, path: group.href }]}
 />

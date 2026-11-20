@@ -127,8 +127,8 @@
 </script>
 
 <Seo
-	title="Termine – Stamm Edelweißpiraten"
-	description="Gruppenstunden, Fahrten und Aktionen des Stammes Edelweißpiraten in Bremen-Hastedt."
+	title="Termine – Pfadfinder Edelweißpiraten Bremen"
+	description="Gruppenstunden, Fahrten, Lager und Aktionen der Pfadfinder vom Stamm Edelweißpiraten in Bremen-Hastedt und Hemelingen."
 	path="/termine"
 	breadcrumbs={[{ name: 'Termine', path: '/termine' }]}
 />

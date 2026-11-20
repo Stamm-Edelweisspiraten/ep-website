@@ -1,5 +1,6 @@
 <script>
     import Seo from '$lib/components/Seo.svelte';
+    import StatsOptOut from '$lib/components/StatsOptOut.svelte';
 </script>
 
 <Seo
@@ -14,7 +15,7 @@
 <div class="legal-doc">
     <h1 class="display legal-title">Datenschutzerklärung</h1>
     <p class="mt-3 text-lede text-body">Welche personenbezogenen Daten wir verarbeiten, wofür und welche Rechte Sie haben.</p>
-    <p class="mt-2 mb-3 text-small text-muted">Stand: 25. Oktober 2026</p>
+    <p class="mt-2 mb-3 text-small text-muted">Stand: 20. November 2026</p>
     <h2 class="mt-10 mb-2 text-section text-ink">Inhaltsübersicht</h2>
     <ul class="index mb-4 mt-1">
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m3">- Verantwortlicher</a></li>
@@ -26,6 +27,7 @@
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m12">- Allgemeine Informationen zur Datenspeicherung und Löschung</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m10">- Rechte der betroffenen Personen</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m225">- Bereitstellung des Onlineangebots und Webhosting</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m263">- Webanalyse (Besucherstatistik)</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m134">- Einsatz von Cookies</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m104">- Blogs und Publikationsmedien</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m182">- Kontakt- und Anfrageverwaltung</a></li>
@@ -64,6 +66,7 @@
         <li>Bereitstellung unseres Onlineangebotes und Nutzerfreundlichkeit.</li>
         <li>Informationstechnische Infrastruktur.</li>
         <li>Öffentlichkeitsarbeit.</li>
+        <li>Reichweitenmessung (anonyme Besucherstatistik).</li>
     </ul>
 
     <h2 id="m2427" class="mt-12 mb-2 text-section text-ink">Maßgebliche Rechtsgrundlagen</h2>
@@ -287,9 +290,49 @@
         <li><strong>Eigener Server, keine Inhalte von Dritten beim Seitenaufruf: </strong>Die Website, ihre Schriften,
             Symbole und Bilder (Termine, Galerien, Gruppenbilder) werden ausschließlich von unserem eigenen Server
             ausgeliefert; Termine und Bilder holt die Website serverseitig aus unserem internen Verwaltungssystem. Beim
-            Aufruf der Seiten werden keine Anfragen an Server Dritter gestellt (zur Karte siehe „OpenStreetMap“). Zum
+            Aufruf der Seiten werden keine Anfragen an Server Dritter gestellt (zur Karte siehe „Google Maps“; die
+            Besucherstatistik läuft ebenfalls auf unserem eigenen Server, siehe „Webanalyse“). Zum
             Schutz vor Überlastung zählt der Server Anfragen je IP-Adresse; dieser Zähler liegt nur im Arbeitsspeicher
             und verfällt nach wenigen Minuten; <span class=""><strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO).</span>
+        </li>
+    </ul>
+
+
+    <h2 id="m263" class="mt-12 mb-2 text-section text-ink">Webanalyse (Besucherstatistik)</h2>
+    <p>Um zu verstehen, welche Seiten gelesen werden und wie Besucher*innen zu uns finden, nutzen wir die
+        Open-Source-Software „Umami“. Umami betreiben wir <strong>selbst auf unserem eigenen Server</strong>; die Daten
+        werden nicht an Dritte weitergegeben und nicht für Werbung genutzt. Umami setzt <strong>keine Cookies</strong>
+        und legt keine Profile über mehrere Websites an. Das Skript und die Messdaten laufen ausschließlich über unsere
+        eigene Domain.</p>
+    <p>Bei jedem Seitenaufruf werden erfasst: die aufgerufene Seite (ohne Suchparameter), die zuvor besuchte Seite
+        (Referrer), Browser, Betriebssystem, Gerätetyp, Bildschirmgröße, Sprache sowie das aus der IP-Adresse
+        abgeleitete Land bzw. die Region. Ihre IP-Adresse wird dabei nicht gespeichert: Umami bildet aus IP-Adresse,
+        Browserkennung und einem täglich wechselnden Zufallswert eine Prüfsumme (Hash), mit der nur Aufrufe desselben
+        Tages zu einem Besuch zusammengefasst werden. Ein Wiedererkennen über mehrere Tage oder eine Zuordnung zu
+        Ihrer Person ist uns damit nicht möglich. Wir sehen nur zusammengefasste Zahlen.</p>
+    <ul class="m-elements">
+        <li><strong>Verarbeitete Datenarten:</strong> Nutzungsdaten (z. B. Seitenaufrufe, Verweildauer, verwendete
+            Gerätetypen und Betriebssysteme); Meta-, Kommunikations- und Verfahrensdaten (IP-Adresse nur kurzzeitig zur
+            Bildung des Hashs und zur Ermittlung des Landes, Zeitangaben).</li>
+        <li><strong>Betroffene Personen:</strong> Nutzer (z. B. Webseitenbesucher).</li>
+        <li><strong>Zwecke der Verarbeitung:</strong> Reichweitenmessung; Verbesserung und nutzerfreundliche Gestaltung
+            unseres Onlineangebots.</li>
+        <li><strong>Aufbewahrung und Löschung:</strong> Die zusammengefassten Statistikdaten speichern wir höchstens
+            24 Monate; die IP-Adresse wird nicht gespeichert.</li>
+        <li><strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO) an einer
+            datensparsamen Reichweitenmessung; auf Ihrem Endgerät werden keine Informationen gespeichert oder gezielt
+            ausgelesen, die über das für den Seitenabruf technisch Übliche hinausgehen.</li>
+        <li><strong>Widerspruch:</strong> Ist in Ihrem Browser „Do Not Track“ eingeschaltet, zählen wir Sie nicht.
+            Außerdem können Sie der Statistik hier für diesen Browser widersprechen (die Wahl wird nur lokal in Ihrem
+            Browser gespeichert):
+            <StatsOptOut />
+        </li>
+    </ul>
+    <p><strong>Weitere Hinweise zu Verarbeitungsprozessen, Verfahren und Diensten:</strong></p>
+    <ul class="m-elements">
+        <li><strong>Umami: </strong>Open-Source-Webanalyse, selbst betrieben auf unserem Server;
+            <strong>Dienstanbieter:</strong> keiner (eigener Betrieb, keine Übermittlung an Dritte);
+            <strong>Website:</strong> <a class="text-link break-words" href="https://umami.is" target="_blank" rel="noopener noreferrer">https://umami.is</a>.
         </li>
     </ul>
 
@@ -479,7 +522,7 @@
     <h2 id="m328" class="mt-12 mb-2 text-section text-ink">Plug-ins und eingebettete Funktionen sowie Inhalte</h2>
     <p>Wir binden Funktions- und Inhaltselemente in unser Onlineangebot ein, die von den Servern ihrer jeweiligen
         Anbieter (nachfolgend als „Drittanbieter" bezeichnet) bezogen werden. Derzeit ist das ausschließlich die Karte
-        von OpenStreetMap auf der Start- und der Kontaktseite, und auch diese erst, nachdem Sie auf „Karte laden“
+        von Google Maps auf der Kontaktseite und den Gruppenseiten, und auch diese erst, nachdem Sie auf „Karte laden“
         geklickt haben (nachfolgend „Inhalte“).</p>
     <p>Die Einbindung setzt immer voraus, dass die Drittanbieter dieser Inhalte die IP-Adresse der Nutzer verarbeiten,
         da sie ohne IP-Adresse die Inhalte nicht an deren Browser senden könnten. Die IP-Adresse ist damit für die
@@ -516,15 +559,15 @@
     </ul>
     <p><strong>Weitere Hinweise zu Verarbeitungsprozessen, Verfahren und Diensten:</strong></p>
     <ul class="m-elements">
-        <li><strong>OpenStreetMap: </strong>Erst nach Klick auf „Karte laden“ binden wir die Landkarten des Dienstes "OpenStreetMap" ein, die auf
-            Grundlage der Open Data Commons Open Database Lizenz (ODbL) durch die OpenStreetMap Foundation (OSMF)
-            angeboten werden. Die Daten der Nutzer werden durch OpenStreetMap ausschließlich zu Zwecken der Darstellung
-            der Kartenfunktionen und zur Zwischenspeicherung der gewählten Einstellungen verwendet. Zu diesen Daten
-            können insbesondere IP-Adressen und Standortdaten der Nutzer gehören, die jedoch nicht ohne deren
-            Einwilligung (im Regelfall im Rahmen der Einstellungen ihrer Endgeräte oder Browser vollzogen) erhoben
-            werden. Dabei wird Ihre IP-Adresse an die OSMF (Vereinigtes Königreich, Angemessenheitsbeschluss der EU-Kommission) übermittelt; <strong>Dienstanbieter:</strong> OpenStreetMap Foundation (OSMF); <span class=""><strong>Rechtsgrundlagen:</strong> Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO) durch Klick auf „Karte laden“; </span><strong>Website:</strong>
-            <a class="text-link break-words" href="https://www.openstreetmap.de" target="_blank" rel="noopener noreferrer">https://www.openstreetmap.de</a>. <strong>Datenschutzerklärung:</strong>
-            <a class="text-link break-words" href="https://osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener noreferrer">https://osmfoundation.org/wiki/Privacy_Policy</a>.
+        <li><strong>Google Maps: </strong>Erst nach Klick auf „Karte laden“ binden wir die Landkarte des Dienstes
+            „Google Maps“ ein. Dabei werden Ihre IP-Adresse sowie Nutzungs- und Gerätedaten an Google übermittelt; Google
+            kann dabei Cookies setzen und die Daten auch auf Servern in den USA verarbeiten. Die Übermittlung in die USA
+            erfolgt auf Grundlage des EU-US Data Privacy Framework (DPF), nach dem Google zertifiziert ist. Links auf
+            Google Maps („Route planen“, „In Karte öffnen“) übertragen erst beim Anklicken Daten an Google.
+            <strong>Dienstanbieter:</strong> Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland;
+            <span class=""><strong>Rechtsgrundlagen:</strong> Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO, § 25 Abs. 1 TDDDG) durch Klick auf „Karte laden“; </span><strong>Website:</strong>
+            <a class="text-link break-words" href="https://mapsplatform.google.com" target="_blank" rel="noopener noreferrer">https://mapsplatform.google.com</a>; <strong>Datenschutzerklärung:</strong>
+            <a class="text-link break-words" href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy</a>; <strong>Grundlage Drittlandübermittlung:</strong> Data Privacy Framework (DPF).
         </li>
     </ul>
 

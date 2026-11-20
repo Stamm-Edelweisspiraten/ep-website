@@ -27,7 +27,18 @@ getauscht** ist: statt PocketBase holt sie Termine und Galerien **serverseitig**
   ohne Backend. Honeypot-Felder `website` **und** `fax` (`HONEYPOT_FIELDS` in `lib/server/contact.ts`).
 - Eckdaten `<dl class="facts">`: Symbol steht **im** `<dt>` (`<div class="fact"><dt><span class="ic">…</span>Label</dt><dd>…</dd></div>`), sonst meldet Lighthouse
   ungültige Listen. „ab N Jahren“ (Start, FAQ) = kleinstes `ageMin` der Website-Gruppen, Rückfall 6.
+- **Suchbegriffe (2026-11-20, Nutzerauftrag):** „Pfadfinder“, „Pfadfinder Bremen“, „Pfadfinder Hastedt“, „Pfadfinder Hemelingen“ – in Titeln/Beschreibungen
+  (Start, Gruppen, Termine, Kontakt, Probestunde, FAQ, Galerie, Blog), H1 „Pfadfinder in Hastedt“, Über-uns-Text, `llms.txt` und JSON-LD (`keywords`,
+  `areaServed`, `alternateName`, `memberOf` CPD/Landesmark/Gau, `geo`, `hasMap`). Hastedt gehört zum Stadtteil Hemelingen – natürlich formulieren, kein Keyword-Stuffing.
+- Karte/Route/„In Google Maps öffnen“ zielen auf den Google-Eintrag `GOOGLE_PLACE_QUERY` = „Stamm Edelweißpiraten, Drakenburger Str. 42, 28207 Hemelingen“ (`lib/seo.ts`).
 - Tests `tests/unit/website-seo.test.ts`, `website-bot-trap.test.ts`, `website-contact.test.ts`.
+
+## Besucherstatistik (Umami, 2026-11-20)
+- Selbst gehostet, ohne Cookies. Proxy über die eigene Domain (`lib/server/umami.ts`): `/stats/script.js` (Tracker, 6 h im Speicher, bei Ausfall
+  letzter Stand bzw. leeres Skript) und `/stats/api/send` (nur Ereignisse der eigenen Website-ID, ≤ 16 KB, Client-IP als `X-Forwarded-For`,
+  Bot-Falle → 204). CSP bleibt `script-src`/`connect-src 'self'`. Tag im `+layout.svelte` nur mit Konfiguration (`data.umamiWebsiteId`),
+  `data-do-not-track`, `data-exclude-search`, `data-exclude-hash`. `/stats/` in robots.txt gesperrt.
+- Datenschutz Abschnitt `#m263` „Webanalyse (Besucherstatistik)“ mit Widerspruch `StatsOptOut.svelte` (`localStorage` `umami.disabled`). Test `website-umami`.
 
 ## Gestaltung und Dunkelmodus
 - **Stil**: weißer Grund, „Wolke“ `#f5f5f5` (`bg-subtle`, Hover `bg-subtle-2`) für Flächen/Karten/Felder, Tinte `#111` (`text-ink`, Hauptknopf, Fuß).
@@ -64,7 +75,7 @@ getauscht** ist: statt PocketBase holt sie Termine und Galerien **serverseitig**
 - Eigenes Projekt (`package.json` „web“, SvelteKit 2 / Svelte 5 im **Legacy-Modus** mit `export let`, Tailwind 4, `adapter-node`, Port 3001,
   `Dockerfile`, `.dockerignore`). Root-Werkzeuge ignorieren `website/`. Die Website importiert **nichts** aus `src/`.
 - Befehle im Ordner `website/`: `npm run dev` / `npm run check` / `npm run build`, Start `WEBSITE_API_KEY=… PORT=3001 node build`.
-  `npm run check` meldet **1 Fehler + Warnungen aus dem alten Code** (Leaflet-Typen; a11y in `Share.svelte`) – bekannt,
+  `npm run check` läuft seit 2026-11-20 ohne Fehler (Leaflet entfernt) – keine neuen Fehler
   nicht neu einführen. Es gibt kein `lint`/`test` in `website/`; reine Module (`event-pages.ts`, `backend-types.ts`) testet die Root-Suite
   (`tests/unit/website-event-pages.test.ts`, `website-contract.test.ts`).
 - Der API-Key steht **nur** in `WEBSITE_API_KEY` (Server). Nie im Browser abfragen: Daten über `+page.server.ts` bzw. Server-Routen.
@@ -78,6 +89,7 @@ getauscht** ist: statt PocketBase holt sie Termine und Galerien **serverseitig**
 | `WEBSITE_API_KEY` | Key mit `events.website.read galleries.website.read members.website.read offices.website.read website.content.read messages.website.contact` |
 | `ORIGIN` | öffentliche Adresse (adapter-node, CSRF) |
 | `ADDRESS_HEADER`, `XFF_DEPTH` | hinter nginx `X-Forwarded-For` / `1` – sonst zählt das IP-Rate-Limit alle Besucher*innen als eine IP (Proxy) |
+| `UMAMI_URL`, `UMAMI_WEBSITE_ID` | Besucherstatistik Umami (selbst gehostet, 2026-11-20); serverseitige Adresse der Instanz + Website-ID (UUID); leer/ungültig = aus |
 | `IMAGE_CACHE_MB`, `IMAGE_CACHE_TTL_SEC` | Bild-Cache im Arbeitsspeicher (Standard 48 MB, 3600 s; 0 = aus) |
 | `CONTACT_TO`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | Kontaktformular: **nur Rückfall** bei Ausfall des Backends (#31, SMTP an **eine feste** Adresse); ohne → Hinweis auf stafues@ (503) |
 
@@ -121,10 +133,10 @@ Compose (`docker-compose.yml`, `docker-compose.dokploy.yml`): Dienst `website` m
 | `/faq` | alle aktiven Fragen (`FaqList.svelte`, Akkordeon mit IDs), Rückfall `lib/faqs.ts` bei Ausfall |
 | `/bilder/blog/[slug]/[imageId]/[variant]` | Bild-Proxy (`blogImage`, nur Bilder veröffentlichter Beiträge) |
 | `/termine` | `fetchEvents`; Ansichten **Kalender** (Standard, `MonthCalendar.svelte`, mobil Agenda) / **Kacheln** / **Liste** (nach Monaten), Wahl in `?ansicht=` + `localStorage`; Filter-Chips Gruppen + Menü „Tags“ (`TagMenu.svelte`: Popover, mobil Blatt von unten, Suche ab 8 Tags, gewählte als entfernbare Chips) + Suche (`?gruppe=&thema=&q=&monat=`, alte `?tags=` der Gruppenseite gelten weiter); Serien in Kacheln/Liste einmal als „Regelmäßige Termine“, Vergangene aufklappbar |
-| `/termine/[id]` | `fetchEvent` (404 unbekannt, 503 Backend weg): Datum/Uhrzeit, Ort mit Link „In Karte öffnen“ (OSM-Suche, nur Link), Gruppen → Gruppenseite, verknüpfte Galerien, Teilen, OG-Tags |
+| `/termine/[id]` | `fetchEvent` (404 unbekannt, 503 Backend weg): Datum/Uhrzeit, Ort mit Link „In Karte öffnen“ (Google-Maps-Suche, nur Link; Fuß „Route planen“ = Google-Maps-Route), Gruppen → Gruppenseite, verknüpfte Galerien, Teilen, OG-Tags |
 | `/galerie`, `/galerie/[id]` | `fetchGalleries` / `fetchGallery`: Karten mit Titelbild (Maße, lazy), Bildanzahl, Gruppen; Filter Jahr/Gruppe/Suche (`?jahr=&gruppe=&q=`); Detail mit Bildern in Spalten (`thumb`, echte Seitenverhältnisse, Alt-Text = Bildbeschreibung), Lightbox (`web`, Unterschrift, Zähler, Tastatur/Wischen), Links zu den Terminen |
 | `/meute/[slug]`, `/sippe/[slug]` | **aus dem Intern-Bereich** (`fetchGroup`, gemeinsamer Loader `lib/server/group-page.ts`, Vorlage `GroupPage.svelte`: Kopf mit Bild/Name, Eckdaten, Text, nächste Termine der Gruppe serverseitig, Kontakt, Karte). Falscher Typ → 308 auf `/<type>/<slug>`; `/meute` → 307 auf die erste Meute |
-| Menü, Startseite („Unsere Gruppen“, `#gruppen`), Kontakt (Gruppen-Ansprechpartner) | `data.groups` aus `+layout.server.ts` (`fetchGroups`, ohne Backend leere Liste); Ämter auf `/kontakt` bleiben statisch |
+| Menü, Startseite („Unsere Gruppen“, `#gruppen`), Kontakt (Gruppen-Ansprechpartner) | `data.groups` aus `+layout.server.ts` (`fetchGroups`, ohne Backend leere Liste); Ansprechpartner*innen auf `/kontakt`: Seitenspalte = Amt „Stammesführung“ (Name enthält „Stammesführ“) + Gruppen, darunter alle weiteren Ämter mit E-Mail als Kacheln (`fetchTeam`, Vornamen, `EmailButtons compact`), ohne Backend fester Rückfall Stammesführung `stafues@` |
 | `/bilder/gruppe/[slug]` | Bild-Proxy fürs Gruppenbild (Cache je Slug + aktueller Version aus der Gruppenliste, `?v=` der Anfrage zählt nicht); ohne Bild im Backend nimmt `toGroup` das alte statische Bild je Slug |
 | `/team` | „Unser Team“ (2026-10-24, Menüpunkt vor Kontakt): `fetchTeam` = Ämter in Reihenfolge des Intern-Bereichs (ohne Personen **und** ohne Adresse weggelassen), je Amt Beschreibung, Inhaber*innen (**nur Vorname**, Profilbild oder Initiale, „seit <Jahr>“, Bio mit „Mehr lesen“), Amts-Adressen mit `EmailButtons` |
 | `/bilder/team/[userId]` | Bild-Proxy für Profilbilder (`teamImage`, Cache je Person + `?v=` aus `avatarPath`); nur Personen, die mit Bild in der Ämterliste stehen, sonst 404 ohne Backend-Abruf |
@@ -132,8 +144,8 @@ Compose (`docker-compose.yml`, `docker-compose.dokploy.yml`): Dienst `website` m
 | `/download[/…]` | **entfernt** (Nutzerentscheidung) → 308 auf `/` (`src/hooks.server.ts`), Menüpunkt gelöscht |
 | `/kontakt` | **Seit 2026-10-25 in den Posteingang des Intern-Bereichs** (Stamm-Postfach, `submitContact` in `backend.ts` → `messages` `POST /website/contact`, Scope `messages.website.contact`, Wiederholung bei Aussetzern unbedenklich, 409 = schon angekommen). Spam-Schutz zusätzlich: `ContactGuard.svelte` (in beiden Formularen, Start und `/kontakt`) holt per `GET /kontakt/challenge` (Server-Route, `no-store`, 30/10 min je IP) eine Proof-of-Work-Aufgabe, löst sie mit `lib/pow.ts` (WebCrypto, braucht HTTPS/localhost) und legt die Lösung in das Feld `pow` (`parsePow`); wer vorher absendet, wartet, das Formular geht danach selbst ab; ohne JavaScript Hinweis + Adresse. 422 vom Backend (zu schnell < 3 s, abgelaufen > 2 h, ungültig) → Text im Formular. Backend weg/falsch eingerichtet → **Rückfall SMTP** (falls konfiguriert): `parseContactForm`/`buildContactMessage` (`lib/server/contact.ts`), Versand mit eigenem SMTP-Client (`lib/server/smtp.ts`, nur `node:net`/`node:tls`, STARTTLS/465, AUTH nur mit TLS). Mail-Relay-Schutz: Empfänger/Absender/Betreff nur aus der Konfiguration, Eingaben nur im Base64-Text + `Reply-To` (geprüft), keine Auto-Antwort, Honeypot `website`, 5 / 10 min je IP + 30 / h gesamt, CSRF über `ORIGIN`. Erfolg → 303 `?success=1` |
 | `/probestunde` | **Probestunde anfragen** (2026-10-25): Kind (Name, Alter), Gruppe (Chips aller Website-Gruppen; nach Alter vorgeschlagen über `lib/age-range.ts` = Kopie aus `messages`, von Hand wählbar, `?gruppe=<slug>` von der Gruppenseite vorbelegt), Ansprechperson (Name, E-Mail, Telefon Pflicht), Nachricht, Einwilligung; Seitenspalte mit der gewählten Gruppe und „So läuft’s“. Action → `submitTrial` (`messages` `POST /website/trial`, gleicher Scope/Spam-Schutz wie `/kontakt`, `ContactGuard`), Erfolg 303 `?success=1&gruppe=<slug>` mit Gruppennamen. Prüfung `parseTrialForm`, SMTP-Rückfall `trialAsContact` (`lib/server/contact.ts`). Links: Navigation „Probestunde“, Fuß „Probestunde anfragen“, Gruppenseite „Probestunde ausmachen“ |
-| Karte (`Map.svelte`, Start + Kontakt) | **Zwei-Klick**: OSM-Kacheln erst nach „Karte laden“; vorher keine Anfrage an Dritte, Wahl nicht gespeichert |
-| `/cpd`, `/impressum`, `/datenschutz` | statisch; Datenschutz (Stand 21.10.2026) nennt nur noch genutzte Dienste: eigener Server, Kontaktformular per SMTP, OSM nach Klick, Social-Media-Präsenzen (keine Google Fonts, kein Consent-Tool, keine YouTube-/Instagram-Einbettung) |
+| Karte (`Map.svelte`, Kontakt + Gruppenseiten) | **Zwei-Klick**: Google-Maps-iframe (ohne API-Key, `output=embed`) erst nach „Karte laden“; vorher keine Anfrage an Dritte, Wahl nicht gespeichert; CSP `frame-src` nur Google Maps; Leaflet entfernt (2026-11-20) |
+| `/cpd`, `/impressum`, `/datenschutz` | statisch; Datenschutz (Stand 21.10.2026) nennt nur noch genutzte Dienste: eigener Server, Kontaktformular per SMTP, Google Maps nach Klick (seit 20.11.2026), Social-Media-Präsenzen (keine Google Fonts, kein Consent-Tool, keine YouTube-/Instagram-Einbettung) |
 | alle dynamischen Anfragen | `hooks.server.ts`: Rate-Limit je IP (`/bilder/…` 600/min, sonst 240/min, 429 + `Retry-After`); statische Dateien zählen nicht |
 
 Gruppen erscheinen, wenn sie im Intern-Bereich „auf der Website“ stehen (Gruppendialog → Reiter Website: Slug, Text, Alter, Kontakt-E-Mail;
@@ -144,7 +156,7 @@ Allgemein: Wochentag, Uhrzeit, Ende, Treffpunkt, Farbe; Leitung nur mit Vornamen
 - Leitende erscheinen nur mit Website-Einwilligung des Mitglieds (`consentWebsite`); ohne Einwilligung fehlen sie in `leaders` – leere Liste
   ist erlaubt (`joinNames([])` → `''`, `GroupPage.svelte` blendet „Ansprechpartner“ dann aus). Demo: Leitende brauchen `consentWebsite: true`.
 - Ämter-API (`/website/offices`, Seite „Unser Team“): nur Inhaber*innen mit eigenem Opt-in im Profil, sonst `holders: []`; **nur Vornamen**
-  (`firstName` = erstes Wort des Kontonamens, Nutzerwunsch 2026-10-24) – der Nachname verlässt den Intern-Server nicht.
+  (`firstName` = erstes Wort des Kontonamens, Nutzerwunsch 2026-10-24; die Website kürzt zusätzlich mit `onlyFirstName` auf den ersten Vornamen, auch bei Gruppenleitungen, 2026-11-20) – der Nachname verlässt den Intern-Server nicht.
 - Galerien sind erst nach dokumentierter Einwilligungs-Bestätigung öffentlich (`consentConfirmed`).
 
 ## Demo
