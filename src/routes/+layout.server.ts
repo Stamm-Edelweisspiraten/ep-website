@@ -1,4 +1,5 @@
 import { fetchBanners, fetchGroups } from '$lib/server/backend';
+import { umamiConfig } from '$lib/server/umami';
 import type { LayoutServerLoad } from './$types';
 
 // Gruppen aus dem Intern-Bereich für Navigation, Startseite und Kontakt (ohne Backend: leere Liste);
@@ -8,5 +9,7 @@ export const load: LayoutServerLoad = async () => {
         fetchGroups().catch(() => []),
         fetchBanners().catch(() => [])
     ]);
-    return { groups, banners };
+    // Besucherstatistik (Umami, selbst gehostet) nur, wenn konfiguriert
+    const umamiWebsiteId = umamiConfig()?.websiteId ?? null;
+    return { groups, banners, umamiWebsiteId };
 };

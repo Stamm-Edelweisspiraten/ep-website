@@ -38,6 +38,9 @@ services:
       SMTP_USER: ${WEBSITE_SMTP_USER:-}
       SMTP_PASS: ${WEBSITE_SMTP_PASS:-}
       SMTP_FROM: ${WEBSITE_SMTP_FROM:-}
+      # Besucherstatistik (Umami, selbst gehostet); leer = aus
+      UMAMI_URL: ${UMAMI_URL:-}
+      UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-}
     expose: ['3001']
     read_only: true
     tmpfs:

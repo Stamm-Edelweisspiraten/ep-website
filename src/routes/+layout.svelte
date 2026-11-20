@@ -11,6 +11,10 @@
 
 <svelte:head>
     <link rel="alternate" type="application/rss+xml" title="Blog – Stamm Edelweißpiraten" href="/blog/rss.xml" />
+    {#if data.umamiWebsiteId}
+        <!-- Besucherstatistik (Umami, selbst gehostet, ohne Cookies) über die eigene Domain, siehe lib/server/umami.ts -->
+        <script defer src="/stats/script.js" data-website-id={data.umamiWebsiteId} data-do-not-track="true" data-exclude-search="true" data-exclude-hash="true"></script>
+    {/if}
 </svelte:head>
 
 <div class="flex min-h-screen flex-col bg-page text-ink">
