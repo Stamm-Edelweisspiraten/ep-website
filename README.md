@@ -21,7 +21,8 @@ Eigenes Repo seit 2026-11-01 (vorher Ordner `website/` im Intern-Repo, Historie 
 npm ci
 npm run dev        # http://localhost:5173 (WEBSITE_API_URL/KEY in .env)
 npm test           # Unit-Tests (tests/)
-npm run check      # Typprüfung (wenige bekannte Altfehler, CI erlaubt bis 5)
+npm run check      # Typprüfung (muss fehlerfrei sein)
+node scripts/audit.mjs  # Sicherheitsprüfung aller Pakete (Ausnahmen mit Begründung im Skript)
 npm run build && node --env-file=.env build   # :3001
 ```
 

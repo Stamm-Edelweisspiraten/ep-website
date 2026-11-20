@@ -22,8 +22,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Typprüfung (bekannte Altfehler, siehe README)
-        # Altcode meldet bekannte Fehler; der Schritt bricht erst ab, wenn es MEHR werden.
+      - name: Typprüfung (keine Fehler erlaubt)
+        # Seit 2026-11-20 ohne Fehler (Leaflet entfernt) – jeder neue Fehler bricht ab.
         run: |
           set +e
           npx svelte-kit sync
@@ -31,12 +31,13 @@ jobs:
           tail -n 1 svelte-check.log
           errors=$(grep -E '^[0-9]+ COMPLETED' svelte-check.log | sed -E 's/.* ([0-9]+) ERRORS.*/\1/')
           if [ -z "$errors" ]; then echo "svelte-check lieferte kein Ergebnis"; exit 1; fi
-          if [ "$errors" -gt 5 ]; then
+          if [ "$errors" -gt 0 ]; then
             grep ' ERROR ' svelte-check.log
-            echo "Mehr als die 5 bekannten Fehler: $errors"
+            echo "svelte-check meldet $errors Fehler"
             exit 1
           fi
       - run: npm test
       - run: npm run build
-      - name: Audit Laufzeitabhängigkeiten (High/Critical blockieren)
-        run: npm audit --omit=dev --audit-level=high
+      - name: Audit aller Abhängigkeiten (High/Critical blockieren, Ausnahmen in scripts/audit.mjs)
+        # Auch devDependencies: SvelteKit/Vite landen im gebauten Server.
+        run: node scripts/audit.mjs high
