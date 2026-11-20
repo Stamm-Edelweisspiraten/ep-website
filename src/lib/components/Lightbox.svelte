@@ -85,6 +85,7 @@
                 type="button"
                 class="absolute left-2 z-10 inline-flex size-12 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
                 aria-label="Vorheriges Bild"
+                data-umami-event="Bild geblättert"
                 on:click={prev}><Icon name="chevron-left" size={24} /></button
             >
         {/if}
@@ -98,6 +99,7 @@
                 type="button"
                 class="absolute right-2 z-10 inline-flex size-12 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
                 aria-label="Nächstes Bild"
+                data-umami-event="Bild geblättert"
                 on:click={next}><Icon name="chevron-right" size={24} /></button
             >
         {/if}

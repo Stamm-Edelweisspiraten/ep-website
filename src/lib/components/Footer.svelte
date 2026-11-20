@@ -26,7 +26,7 @@
                 <p class="sub">Kostenlos und unverbindlich – sag uns kurz Bescheid, wir finden die passende Gruppe. In der Ev. Kirchengemeinde Bremen-Hastedt.</p>
             </div>
             <div class="acts">
-                <a class="pill white" href="/probestunde">Probestunde anfragen<Icon name="arrow-right" size={18} /></a>
+                <a class="pill white" href="/probestunde" data-umami-event="Probestunde-Knopf" data-umami-event-ort="Fuß">Probestunde anfragen<Icon name="arrow-right" size={18} /></a>
                 <a class="pill dim" href="/kontakt">Frage stellen</a>
             </div>
         </div>
@@ -70,7 +70,7 @@
                 <h2><Icon name="map-pin" size={18} />So findest du uns</h2>
                 <p>Ev. Kirchengemeinde Bremen-Hastedt<br />Drakenburger Str. 42<br />28207 Bremen</p>
                 <a class="ln" href="/kontakt"><Icon name="mail" size={18} />Kontaktformular</a>
-                <a class="ln" href={route} target="_blank" rel="noopener noreferrer"><Icon name="map" size={18} />Route planen</a>
+                <a class="ln" href={route} target="_blank" rel="noopener noreferrer" data-umami-event="Route planen"><Icon name="map" size={18} />Route planen</a>
             </div>
         </div>
 

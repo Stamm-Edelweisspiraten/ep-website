@@ -4,6 +4,8 @@
     import Icon from '$lib/components/Icon.svelte';
     import ContactGuard from '$lib/components/ContactGuard.svelte';
     import Seo from '$lib/components/Seo.svelte';
+    import { onMount } from 'svelte';
+    import { fieldNames, track, trackWhenReady } from '$lib/track';
     import { groupsForAge } from '$lib/age-range';
 
     export let data;
@@ -44,6 +46,18 @@
     }
 
     $: sentGroup = groups.find((g) => g.slug === $page?.url?.searchParams?.get('gruppe')) ?? null;
+
+    // Statistik: Erfolg, Fehler (nur Feldnamen) und Formularbeginn – nie Inhalte
+    onMount(() => {
+        if (sent) trackWhenReady('Probestunde angefragt', { gruppe: sentGroup?.slug ?? 'keine' });
+        else if (form?.errors || form?.error) trackWhenReady('Formularfehler', { formular: 'Probestunde', felder: fieldNames(form?.errors) || 'allgemein' });
+    });
+    let started = false;
+    function onStart() {
+        if (started) return;
+        started = true;
+        track('Formular begonnen', { formular: 'Probestunde' });
+    }
 </script>
 
 <Seo
@@ -83,7 +97,7 @@
                     <p class="err" role="alert"><Icon name="alert" />{form.error}</p>
                 {/if}
 
-                <form method="POST" aria-labelledby="h-kind">
+                <form method="POST" aria-labelledby="h-kind" on:focusin={onStart} on:submit={() => track('Formular abgeschickt', { formular: 'Probestunde', gruppe: chosen || 'keine', vorschlag: fits })}>
                     <!-- Honeypot (Anti-Spam): für Menschen unsichtbar -->
                     <div class="hp" aria-hidden="true">
                         <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
@@ -115,7 +129,7 @@
                             <input type="hidden" name="group" value={manual ? chosen : ''} />
                             <div class="chips">
                                 {#each groups as g (g.slug)}
-                                    <button type="button" class="chip" aria-pressed={chosen === g.slug} on:click={() => pick(g.slug)}>
+                                    <button type="button" class="chip" aria-pressed={chosen === g.slug} data-umami-event="Probestunde: Gruppe gewählt" data-umami-event-gruppe={g.slug} on:click={() => pick(g.slug)}>
                                         <span class="dot" style="--g: {g.color}"></span>{g.typeLabel} {g.name}{#if g.ageRange}<span class="n">{g.ageRange}</span>{/if}
                                     </button>
                                 {/each}

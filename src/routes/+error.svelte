@@ -5,6 +5,7 @@
     import { onDestroy, onMount } from 'svelte';
     import { invalidateAll } from '$app/navigation';
     import { page } from '$app/stores';
+    import { currentPath, trackWhenReady } from '$lib/track';
 
     const RETRY_SECONDS = [5, 10, 20];
 
@@ -46,6 +47,7 @@
     }
 
     onMount(() => {
+        trackWhenReady('Fehlerseite', { status, seite: currentPath() });
         if (unavailable) schedule();
     });
 
@@ -93,7 +95,7 @@
                 type="button"
                 class="pill"
                 disabled={retrying}
-                on:click={() => ((attempt = 0), retry())}
+                data-umami-event="Fehlerseite erneut versuchen" on:click={() => ((attempt = 0), retry())}
             >
                 Jetzt erneut versuchen
             </button>

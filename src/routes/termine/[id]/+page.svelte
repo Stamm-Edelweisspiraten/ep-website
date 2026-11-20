@@ -55,7 +55,7 @@
 
     <div class="topline">
         <a class="ulink" href="/termine"><Icon name="arrow-left" size={18} />Alle Termine</a>
-        <button type="button" class="pill soft" aria-haspopup="dialog" on:click={() => (shareOpen = true)}><Icon name="share" size={18} />Teilen</button>
+        <button type="button" class="pill soft" aria-haspopup="dialog" data-umami-event="Teilen geöffnet" on:click={() => (shareOpen = true)}><Icon name="share" size={18} />Teilen</button>
     </div>
 
     <header class="ehead">
@@ -100,7 +100,7 @@
                             <dd>
                                 <span class="loc">{e.location}</span>
                                 {#if mapUrl}
-                                    <a class="ulink sm" href={mapUrl} target="_blank" rel="noopener noreferrer">In Karte öffnen<Icon name="external" size={16} /><span class="sr-only">(neues Fenster)</span></a>
+                                    <a class="ulink sm" href={mapUrl} target="_blank" rel="noopener noreferrer" data-umami-event="Termin: In Karte öffnen">In Karte öffnen<Icon name="external" size={16} /><span class="sr-only">(neues Fenster)</span></a>
                                 {/if}
                             </dd>
                         </div>

@@ -4,6 +4,7 @@
     import Map from '$lib/components/Map.svelte';
     import EmailButtons from '$lib/components/EmailButtons.svelte';
     import EventList from '$lib/components/EventList.svelte';
+    import CalendarSubscribe from '$lib/components/CalendarSubscribe.svelte';
     import Icon from '$lib/components/Icon.svelte';
     import Seo from '$lib/components/Seo.svelte';
     import { formatMonth } from '$lib/dates';
@@ -59,7 +60,7 @@
         <h1 class="display" id="h-gruppe">{group.name}</h1>
         {#if group.teaser}<p class="lede">{group.teaser}</p>{/if}
         <div class="acts">
-            <a class="pill" href="/probestunde?gruppe={encodeURIComponent(group.slug)}">Probestunde ausmachen<Icon name="arrow-right" size={18} /></a>
+            <a class="pill" href="/probestunde?gruppe={encodeURIComponent(group.slug)}" data-umami-event="Probestunde-Knopf" data-umami-event-ort="Gruppenseite" data-umami-event-gruppe={group.slug}>Probestunde ausmachen<Icon name="arrow-right" size={18} /></a>
             <a class="pill soft" href="/termine?gruppe={encodeURIComponent(group.name)}"><Icon name="calendar" size={18} />Termine der {group.typeLabel}</a>
         </div>
     </div>
@@ -91,6 +92,10 @@
     </div>
     <EventList {events} showGroups={false} emptyText="Gerade stehen keine besonderen Termine an – die Gruppenstunde findet wie gewohnt statt." />
     {#if when}<p class="cap" style="margin-top: 16px">Die Gruppenstunde findet jede Woche statt ({when}).</p>{/if}
+    <div class="calrow">
+        <p class="cap">Alle Termine und Gruppenstunden der {group.typeLabel} automatisch im eigenen Kalender:</p>
+        <CalendarSubscribe groupSlug={group.slug} label="Kalender abonnieren" />
+    </div>
 </section>
 
 {#if galleries.length}
@@ -317,5 +322,11 @@
             width: 88px;
             height: 88px;
         }
+    }
+    .calrow {
+        margin-top: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 </style>

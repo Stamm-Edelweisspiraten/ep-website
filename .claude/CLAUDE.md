@@ -38,7 +38,18 @@ getauscht** ist: statt PocketBase holt sie Termine und Galerien **serverseitig**
   letzter Stand bzw. leeres Skript) und `/stats/api/send` (nur Ereignisse der eigenen Website-ID, ≤ 16 KB, Client-IP als `X-Forwarded-For`,
   Bot-Falle → 204). CSP bleibt `script-src`/`connect-src 'self'`. Tag im `+layout.svelte` nur mit Konfiguration (`data.umamiWebsiteId`),
   `data-do-not-track`, `data-exclude-search`, `data-exclude-hash`. `/stats/` in robots.txt gesperrt.
+- **Ereignisse** (2026-11-20): `lib/track.ts` (`track`, `trackWhenReady`, `fieldNames`) + `Analytics.svelte` im Layout (nur mit Umami): externe Links (nur Domain),
+  mailto/tel (ohne Adresse), Downloads, Scrolltiefe 25/50/75/100, Druck, Rückkehr nach > 5 min, Fehlerseiten. Gezielt per `data-umami-event` bzw. `track()`:
+  Probestunde-Knöpfe (`ort`), Formular begonnen/abgeschickt/Fehler (nur Feldnamen)/gesendet, Karte, Route, FAQ, Lightbox, Teilen, Termin-Ansicht/-Filter/-Suche
+  (ohne Begriff), Galerie-Filter, Kalender-Abo, Design, Hinweis geschlossen, Team „Mehr lesen“. **Regel: nie Eingaben/personenbezogene Daten.**
 - Datenschutz Abschnitt `#m263` „Webanalyse (Besucherstatistik)“ mit Widerspruch `StatsOptOut.svelte` (`localStorage` `umami.disabled`). Test `website-umami`.
+
+## Kalender-Abo und Abhängigkeiten (2026-11-20)
+- `/termine.ics` (alle besonderen Termine ohne Serien) und `/termine.ics?gruppe=<slug>` (Termine + Gruppenstunden der Gruppe), 90 Tage zurück bis Ende
+  nächsten Jahres, `lib/server/ical.ts` (rein, Test `website-ical`: TZID Europe/Berlin, ganztägig `VALUE=DATE`, Falten nach 75 Bytes). Knöpfe
+  `CalendarSubscribe.svelte` (webcal, Google Kalender, Adresse kopieren) auf `/termine` (Seitenspalte) und der Gruppenseite.
+- CI-Audit `node scripts/audit.mjs high` prüft **alle** Pakete (SvelteKit ist devDependency, steckt aber im Server); bewertete Ausnahmen mit Begründung und
+  Ablaufdatum im Skript (SvelteKit-2-Meldungen, Fix erst mit SvelteKit 3). svelte-check in der CI: 0 Fehler erlaubt.
 
 ## Gestaltung und Dunkelmodus
 - **Stil**: weißer Grund, „Wolke“ `#f5f5f5` (`bg-subtle`, Hover `bg-subtle-2`) für Flächen/Karten/Felder, Tinte `#111` (`text-ink`, Hauptknopf, Fuß).

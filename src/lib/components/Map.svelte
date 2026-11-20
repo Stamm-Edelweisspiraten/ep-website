@@ -33,8 +33,8 @@
             IP-Adresse und Nutzungsdaten an Google übertragen (<a href="/datenschutz#m328" class="text-link">Datenschutz</a>).
         </p>
         <div class="acts" style="justify-content: center">
-            <button type="button" class="pill" on:click={() => (active = true)}>Karte laden</button>
-            <a class="pill canvas" href={mapsLink} target="_blank" rel="noopener noreferrer">In Google Maps öffnen<Icon name="external" size={16} /></a>
+            <button type="button" class="pill" data-umami-event="Karte geladen" on:click={() => (active = true)}>Karte laden</button>
+            <a class="pill canvas" href={mapsLink} target="_blank" rel="noopener noreferrer" data-umami-event="In Google Maps öffnen">In Google Maps öffnen<Icon name="external" size={16} /></a>
         </div>
     </div>
 {/if}

@@ -83,11 +83,11 @@
             {#if years.length > 1}
                 <button type="button" class="chip" aria-pressed={!year} on:click={() => (year = '')}>Alle Jahre</button>
                 {#each years as y (y)}
-                    <button type="button" class="chip" aria-pressed={year === y} on:click={() => (year = year === y ? '' : y)}>{y}</button>
+                    <button type="button" class="chip" aria-pressed={year === y} data-umami-event="Galeriefilter" data-umami-event-art="Jahr" data-umami-event-jahr={y} on:click={() => (year = year === y ? '' : y)}>{y}</button>
                 {/each}
             {/if}
             {#each groups as gr (gr.id)}
-                <button type="button" class="chip" aria-pressed={group === gr.id} on:click={() => (group = group === gr.id ? '' : gr.id)}>
+                <button type="button" class="chip" aria-pressed={group === gr.id} data-umami-event="Galeriefilter" data-umami-event-art="Gruppe" data-umami-event-gruppe={gr.name} on:click={() => (group = group === gr.id ? '' : gr.id)}>
                     <span class="dot" style="--g: {gr.color ?? 'currentColor'}"></span>{gr.name}
                 </button>
             {/each}
@@ -96,7 +96,7 @@
     {#if filterActive}
         <p class="cap found" role="status">
             {filtered.length} {filtered.length === 1 ? 'Galerie' : 'Galerien'} gefunden ·
-            <button type="button" class="linkbtn" on:click={() => ((year = ''), (group = ''), (q = ''))}>Filter zurücksetzen</button>
+            <button type="button" class="linkbtn" data-umami-event="Galeriefilter zurückgesetzt" on:click={() => ((year = ''), (group = ''), (q = ''))}>Filter zurücksetzen</button>
         </p>
     {/if}
 

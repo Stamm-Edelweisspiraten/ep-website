@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { track, currentPath } from '$lib/track';
     import QRCode from 'qrcode';
     import { tick } from 'svelte';
 
@@ -51,6 +52,7 @@
     async function copyLink() {
         try {
             await navigator.clipboard.writeText(url);
+            track('Teilen', { art: 'Link kopiert', seite: currentPath() });
             copied = true;
             copyFailed = false;
         } catch {
@@ -137,6 +139,7 @@
                         aria-label="QR-Code herunterladen"
                         title="QR-Code herunterladen"
                         on:click={() => {
+                            track('Teilen', { art: 'QR-Code', seite: currentPath() });
                             const link = document.createElement('a');
                             link.href = qrDataUrl;
                             link.download = 'edelweisspiraten-qr.png';
@@ -151,6 +154,8 @@
 
                     <a
                         class="flex size-12 items-center justify-center rounded-full bg-ink text-on-ink transition-colors hover:bg-ink-hover"
+                        data-umami-event="Teilen"
+                        data-umami-event-art="WhatsApp"
                         aria-label="Per WhatsApp teilen"
                         title="Per WhatsApp teilen"
                         href={`https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`}
@@ -164,6 +169,8 @@
 
                     <a
                         class="flex size-12 items-center justify-center rounded-full bg-ink text-on-ink transition-colors hover:bg-ink-hover"
+                        data-umami-event="Teilen"
+                        data-umami-event-art="E-Mail"
                         aria-label="Per E-Mail teilen"
                         title="Per E-Mail teilen"
                         href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(whatsappMessage)}`}

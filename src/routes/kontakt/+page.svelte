@@ -12,6 +12,8 @@
     import EmailButtons from '$lib/components/EmailButtons.svelte';
     import Icon from '$lib/components/Icon.svelte';
     import ContactGuard from '$lib/components/ContactGuard.svelte';
+    import { onMount } from 'svelte';
+    import { fieldNames, track, trackWhenReady } from '$lib/track';
 
     export let data;
     /** Ergebnis der Form-Action (`+page.server.ts`): Fehlertext, Feldfehler, eingegebene Werte */
@@ -22,6 +24,18 @@
     $: errors = form?.errors ?? {};
     $: values = form?.values ?? null;
     $: sent = $page?.url?.searchParams?.get('success') === '1';
+
+    // Statistik: Erfolg, Fehler (nur Feldnamen) und Formularbeginn – nie Inhalte
+    onMount(() => {
+        if (sent) trackWhenReady('Kontaktanfrage gesendet');
+        else if (form?.errors || form?.error) trackWhenReady('Formularfehler', { formular: 'Kontakt', felder: fieldNames(form?.errors) || 'allgemein' });
+    });
+    let started = false;
+    function onStart() {
+        if (started) return;
+        started = true;
+        track('Formular begonnen', { formular: 'Kontakt' });
+    }
 
     /** Stammesführung oben neben dem Formular, alle anderen Ämter als Kacheln darunter */
     $: offices = data.offices ?? [];
@@ -61,7 +75,7 @@
                 {/if}
 
                 <!-- Versand über den eigenen Server (lib/server/contact.ts), feste Empfängeradresse -->
-                <form method="POST" aria-labelledby="h-formular">
+                <form method="POST" aria-labelledby="h-formular" on:focusin={onStart} on:submit={() => track('Formular abgeschickt', { formular: 'Kontakt' })}>
                     <!-- Honeypot (Anti-Spam): für Menschen unsichtbar -->
                     <div class="hp" aria-hidden="true">
                         <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>

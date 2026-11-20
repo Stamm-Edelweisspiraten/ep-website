@@ -123,10 +123,11 @@
     <div class="end">
         <ThemeToggle />
         <a class="round hide-m" href="/kontakt" aria-label="Kontakt" title="Kontakt"><Icon name="mail" /></a>
-        <a class="pill hide-m" href="/probestunde">Probestunde</a>
+        <a class="pill hide-m" href="/probestunde" data-umami-event="Probestunde-Knopf" data-umami-event-ort="Navigation">Probestunde</a>
         <button
             type="button"
             class="round menu"
+            data-umami-event="Menü mobil umgeschaltet"
             on:click={() => (open = !open)}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -152,7 +153,7 @@
             {#each [...links, ...about] as link (link.href)}
                 <a href={link.href} class="mi" aria-current={active(link.href, path) ? 'page' : undefined}>{link.label}</a>
             {/each}
-            <p style="margin-top: 20px"><a class="pill" href="/probestunde">Probestunde</a></p>
+            <p style="margin-top: 20px"><a class="pill" href="/probestunde" data-umami-event="Probestunde-Knopf" data-umami-event-ort="Menü mobil">Probestunde</a></p>
         </div>
     </nav>
 {/if}

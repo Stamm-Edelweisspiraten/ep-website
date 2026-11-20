@@ -86,7 +86,7 @@
                                         {long && !expanded.has(key) ? `${person.bio.slice(0, BIO_PREVIEW).trimEnd()} …` : person.bio}
                                     </p>
                                     {#if long}
-                                        <button type="button" class="more" aria-expanded={expanded.has(key)} on:click={() => toggle(key)}>
+                                        <button type="button" class="more" aria-expanded={expanded.has(key)} data-umami-event="Team: Mehr lesen" on:click={() => toggle(key)}>
                                             {expanded.has(key) ? 'Weniger anzeigen' : 'Mehr lesen'}
                                         </button>
                                     {/if}

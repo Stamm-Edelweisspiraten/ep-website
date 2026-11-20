@@ -97,9 +97,9 @@
     <div class="calhead">
         <h2 class="h-xl" aria-live="polite">{label}</h2>
         <div class="acts">
-            <button type="button" class="pill soft sm" on:click={goToday}>Heute</button>
-            <button type="button" class="round" aria-label="Vorheriger Monat" on:click={() => go(-1)}><Icon name="chevron-left" /></button>
-            <button type="button" class="round" aria-label="Nächster Monat" on:click={() => go(1)}><Icon name="chevron-right" /></button>
+            <button type="button" class="pill soft sm" data-umami-event="Kalender geblättert" data-umami-event-richtung="heute" on:click={goToday}>Heute</button>
+            <button type="button" class="round" aria-label="Vorheriger Monat" data-umami-event="Kalender geblättert" data-umami-event-richtung="zurück" on:click={() => go(-1)}><Icon name="chevron-left" /></button>
+            <button type="button" class="round" aria-label="Nächster Monat" data-umami-event="Kalender geblättert" data-umami-event-richtung="vor" on:click={() => go(1)}><Icon name="chevron-right" /></button>
         </div>
     </div>
 

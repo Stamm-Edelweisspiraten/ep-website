@@ -63,7 +63,7 @@
                 <span class="av" aria-hidden="true">{initial}</span>
                 <span class="strong">{p.authorName}</span>
             {/if}
-            <button type="button" class="pill soft sm" aria-haspopup="dialog" on:click={() => (shareOpen = true)}><Icon name="share" size={16} />Teilen</button>
+            <button type="button" class="pill soft sm" aria-haspopup="dialog" data-umami-event="Teilen geöffnet" on:click={() => (shareOpen = true)}><Icon name="share" size={16} />Teilen</button>
         </div>
     </header>
 

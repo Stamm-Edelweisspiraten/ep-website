@@ -310,6 +310,13 @@
         Browserkennung und einem täglich wechselnden Zufallswert eine Prüfsumme (Hash), mit der nur Aufrufe desselben
         Tages zu einem Besuch zusammengefasst werden. Ein Wiedererkennen über mehrere Tage oder eine Zuordnung zu
         Ihrer Person ist uns damit nicht möglich. Wir sehen nur zusammengefasste Zahlen.</p>
+    <p>Zusätzlich zählen wir anonym, wie die Website genutzt wird (sogenannte Ereignisse), zum Beispiel: Klicks auf
+        Knöpfe und Links (bei Links auf andere Websites nur deren Domain, bei E-Mail- und Telefon-Links weder Adresse
+        noch Nummer), das Laden der Karte, das Öffnen von Fragen und Bildern, gewählte Ansichten und Filter auf den
+        Termin- und Galerieseiten, Kalender-Abos, Teilen, wie weit eine Seite gelesen wurde (Scrolltiefe) sowie ob ein
+        Formular begonnen, abgeschickt oder mit Fehlern zurückgegeben wurde. <strong>Was Sie in Formulare oder
+        Suchfelder eingeben (z. B. Namen, E-Mail-Adresse, Telefonnummer, Nachricht, Suchbegriffe), wird dabei nie
+        erfasst</strong> – bei Fehlern nur, welches Feld betroffen war.</p>
     <ul class="m-elements">
         <li><strong>Verarbeitete Datenarten:</strong> Nutzungsdaten (z. B. Seitenaufrufe, Verweildauer, verwendete
             Gerätetypen und Betriebssysteme); Meta-, Kommunikations- und Verfahrensdaten (IP-Adresse nur kurzzeitig zur

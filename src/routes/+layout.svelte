@@ -3,6 +3,7 @@
     import Navbar from '$lib/components/Navbar.svelte';
     import Footer from '$lib/components/Footer.svelte';
     import SiteBanner from '$lib/components/SiteBanner.svelte';
+    import Analytics from '$lib/components/Analytics.svelte';
 
     export let data;
 
@@ -26,3 +27,4 @@
     </main>
     <Footer groups={data.groups} />
 </div>
+{#if data.umamiWebsiteId}<Analytics />{/if}

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { track } from '$lib/track';
     import { onMount } from 'svelte';
     import type { SiteBanner } from '$lib/site-types';
     import Icon from '$lib/components/Icon.svelte';
@@ -27,6 +28,7 @@
     });
 
     function dismiss(banner: SiteBanner) {
+        track('Hinweis geschlossen', { hinweis: banner.title ?? banner.text.slice(0, 60) });
         dismissed = [...dismissed.filter((k) => k !== banner.dismissKey), banner.dismissKey].slice(-MAX_REMEMBERED);
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(dismissed));

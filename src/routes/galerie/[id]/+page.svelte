@@ -54,7 +54,7 @@
                         <span class="tag md"><span class="dot" style="--g: {x.color ?? 'currentColor'}"></span><span>{x.name}</span></span>
                     {/if}
                 {/each}
-                <button type="button" class="pill soft sm" aria-haspopup="dialog" on:click={() => (shareOpen = true)}><Icon name="share" size={16} />Teilen</button>
+                <button type="button" class="pill soft sm" aria-haspopup="dialog" data-umami-event="Teilen geöffnet" on:click={() => (shareOpen = true)}><Icon name="share" size={16} />Teilen</button>
             </div>
         </div>
     </div>
@@ -67,7 +67,7 @@
     <ul class="photos">
         {#each g.images as img, i (img.id)}
             <li>
-                <button type="button" class="ph" aria-label={`${altOf(i)} vergrößern`} on:click={() => (selectedIndex = i)}>
+                <button type="button" class="ph" aria-label={`${altOf(i)} vergrößern`} data-umami-event="Bild vergrößert" data-umami-event-galerie={g.title} on:click={() => (selectedIndex = i)}>
                     <img
                         src={img.thumbUrl}
                         alt={altOf(i)}

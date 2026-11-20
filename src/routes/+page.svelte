@@ -1,5 +1,6 @@
 
 <script>
+    import { track } from '$lib/track';
     import EventList from '$lib/components/EventList.svelte';
     import FaqList from '$lib/components/FaqList.svelte';
     import Icon from '$lib/components/Icon.svelte';
@@ -81,8 +82,8 @@
             <h1 class="display" id="h-hero">Pfadfinder<br />in Hastedt</h1>
             <p>Gruppenstunden, Fahrten und Lager für Kinder und Jugendliche ab {minAge} Jahren. Die erste Gruppenstunde ist kostenlos und ohne Anmeldung.</p>
             <div class="acts" style="margin-top: 8px">
-                <a class="pill white" href="#gruppen">Gruppe finden<Icon name="arrow-right" size={18} /></a>
-                <a class="pill glass" href="/termine"><Icon name="calendar" size={18} />Nächste Termine</a>
+                <a class="pill white" href="#gruppen" data-umami-event="Startseite: Gruppe finden">Gruppe finden<Icon name="arrow-right" size={18} /></a>
+                <a class="pill glass" href="/termine" data-umami-event="Startseite: Nächste Termine"><Icon name="calendar" size={18} />Nächste Termine</a>
             </div>
         </div>
     </div>
@@ -136,8 +137,8 @@
         <h2 class="h-xl" id="h-gruppen">Unsere Gruppen</h2>
         {#if data.groups.length > 3}
             <div class="railnav">
-                <button class="round" type="button" aria-label="Vorherige Gruppen" aria-controls="gruppen-rail" on:click={() => scrollRail(-1)}><Icon name="chevron-left" /></button>
-                <button class="round" type="button" aria-label="Weitere Gruppen" aria-controls="gruppen-rail" on:click={() => scrollRail(1)}><Icon name="chevron-right" /></button>
+                <button class="round" type="button" aria-label="Vorherige Gruppen" aria-controls="gruppen-rail" data-umami-event="Gruppen geblättert" on:click={() => scrollRail(-1)}><Icon name="chevron-left" /></button>
+                <button class="round" type="button" aria-label="Weitere Gruppen" aria-controls="gruppen-rail" data-umami-event="Gruppen geblättert" on:click={() => scrollRail(1)}><Icon name="chevron-right" /></button>
             </div>
         {:else}
             <a class="ulink" href="/kontakt">Fragen zur Probestunde</a>
@@ -274,9 +275,9 @@
                     </div>
                 </div>
             {/if}
-            <div class="row"><span class="ic sub"><Icon name="map" /></span><div><h3>Karte und Anfahrt</h3><p>Die Karte lädt erst nach Klick von OpenStreetMap.</p><p style="margin-top: 10px"><a class="pill soft" href="/kontakt#karte">Zur Karte</a></p></div></div>
+            <div class="row"><span class="ic sub"><Icon name="map" /></span><div><h3>Karte und Anfahrt</h3><p>Die Karte lädt erst nach Klick von Google Maps.</p><p style="margin-top: 10px"><a class="pill soft" href="/kontakt#karte">Zur Karte</a></p></div></div>
         </div>
-        <form method="POST" action="/kontakt">
+        <form method="POST" action="/kontakt" on:focusin={() => track('Formular begonnen', { formular: 'Kontakt (Startseite)' })} on:submit={() => track('Formular abgeschickt', { formular: 'Kontakt (Startseite)' })}>
             <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label><label>Bitte leer lassen <input type="text" name="fax" tabindex="-1" autocomplete="off" /></label></div>
             <div class="fld"><label class="label" for="k-name">Name</label><input class="field" id="k-name" name="name" type="text" required maxlength="100" autocomplete="name" /></div>
             <div class="fld"><label class="label" for="k-mail">E-Mail</label><input class="field" id="k-mail" name="email" type="email" required maxlength="254" autocomplete="email" /></div>

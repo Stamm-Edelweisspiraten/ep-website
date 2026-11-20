@@ -3,6 +3,7 @@
     // gleich richtig ausliefert. Ohne Wahl folgt die Seite der Systemeinstellung (siehe `app.html`).
     import { onMount } from 'svelte';
     import Icon from '$lib/components/Icon.svelte';
+    import { track } from '$lib/track';
 
     let dark = false;
 
@@ -17,6 +18,7 @@
         root.classList.toggle('light', !dark);
         const secure = location.protocol === 'https:' ? '; Secure' : '';
         document.cookie = `theme=${dark ? 'dark' : 'light'}; Path=/; Max-Age=31536000; SameSite=Lax${secure}`;
+        track('Design gewechselt', { design: dark ? 'dunkel' : 'hell' });
     }
 </script>
 

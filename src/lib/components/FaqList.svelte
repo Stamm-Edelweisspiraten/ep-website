@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { SiteFaq } from '$lib/site-types';
     import Icon from '$lib/components/Icon.svelte';
+    import { track, currentPath } from '$lib/track';
 
     /** Fragen mit serverseitig bereinigten Antworten (`lib/server/rich-text.ts`) */
     export let faqs: SiteFaq[] = [];
@@ -11,6 +12,8 @@
 
     function toggle(id: string) {
         openId = openId === id ? null : id;
+        const faq = openId ? faqs.find((f) => f.id === openId) : null;
+        if (faq) track('FAQ geöffnet', { frage: faq.question, seite: currentPath() });
     }
 </script>
 

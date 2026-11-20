@@ -40,3 +40,17 @@ describe('Weiterleitung nur eigener Ereignisse', () => {
 		expect(isOwnEvent(event(ID).padEnd(MAX_EVENT_BYTES + 1, ' '), ID)).toBe(false);
 	});
 });
+
+describe('Ereignisse ohne Eingaben (lib/track.ts)', async () => {
+	const { fieldNames, track } = await import('../src/lib/track');
+
+	it('Formularfehler: nur Feldnamen, sortiert, keine Inhalte', () => {
+		expect(fieldNames({ email: 'ungültig: max@example.de', name: 'Pflicht' })).toBe('email,name');
+		expect(fieldNames({ 'max@example.de': 'x' })).toBe('');
+		expect(fieldNames(null)).toBe('');
+	});
+
+	it('ohne Umami passiert nichts (kein Fehler)', () => {
+		expect(() => track('Test', { a: 1 })).not.toThrow();
+	});
+});

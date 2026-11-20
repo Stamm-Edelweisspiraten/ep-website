@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import CalendarSubscribe from '$lib/components/CalendarSubscribe.svelte';
+	import { track } from '$lib/track';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -52,6 +54,12 @@
 	let visibleCount = PAGE_SIZE;
 
 	$: filtered = filterEvents(data.events, { groups: selectedGroups, tags: selectedTags, q });
+	// Suche zählen (einmal je Seitenaufruf, ohne Suchbegriff), sobald 3 Zeichen getippt sind
+	let searchTracked = false;
+	$: if (!searchTracked && q.trim().length >= 3) {
+		searchTracked = true;
+		track('Terminsuche', { treffer: filtered.length > 0 });
+	}
 	$: series = summarizeSeries(filtered, data.today);
 	$: singles = splitSingles(filtered, data.today);
 	$: upcomingShown = singles.upcoming.slice(0, visibleCount);
@@ -90,6 +98,7 @@
 	}
 
 	function setView(v: View) {
+		if (v !== view) track('Terminansicht', { ansicht: v });
 		view = v;
 		try {
 			localStorage.setItem(VIEW_KEY, v);
@@ -242,7 +251,8 @@
 							aria-pressed={on}
 							on:click={() => (
 								(selectedGroups = toggle(selectedGroups, g.id)),
-								(visibleCount = PAGE_SIZE)
+								(visibleCount = PAGE_SIZE),
+								track('Terminfilter', { art: 'Gruppe', gruppe: g.name })
 							)}
 						>
 							<span class="dot" style="--g: {g.color ?? 'currentColor'}"></span>{g.name}
@@ -253,7 +263,11 @@
 			<TagMenu
 				{tags}
 				selected={selectedTags}
-				on:change={(e) => ((selectedTags = e.detail), (visibleCount = PAGE_SIZE))}
+				on:change={(e) => (
+					(selectedTags = e.detail),
+					(visibleCount = PAGE_SIZE),
+					track('Terminfilter', { art: 'Thema', anzahl: e.detail.length })
+				)}
 			/>
 		</div>
 	{/if}
@@ -261,7 +275,7 @@
 		<p class="cap found" role="status">
 			{filtered.length}
 			{filtered.length === 1 ? 'Termin' : 'Termine'} gefunden ·
-			<button type="button" class="linkbtn" on:click={resetFilters}>Filter zurücksetzen</button>
+			<button type="button" class="linkbtn" data-umami-event="Terminfilter zurückgesetzt" on:click={resetFilters}>Filter zurücksetzen</button>
 		</p>
 	{/if}
 
@@ -303,7 +317,7 @@
 					{/if}
 					{#if singles.upcoming.length > visibleCount}
 						<div class="morebar">
-							<button type="button" class="pill soft" on:click={() => (visibleCount += PAGE_SIZE)}>
+							<button type="button" class="pill soft" data-umami-event="Weitere Termine geladen" on:click={() => (visibleCount += PAGE_SIZE)}>
 								Weitere Termine laden ({singles.upcoming.length - visibleCount})
 							</button>
 						</div>
@@ -316,6 +330,7 @@
 							type="button"
 							class="pill soft"
 							aria-expanded={showPast}
+							data-umami-event="Vergangene Termine umgeschaltet"
 							on:click={() => (showPast = !showPast)}
 						>
 							<Icon name={showPast ? 'chevron-up' : 'chevron-down'} size={18} />
@@ -371,6 +386,15 @@
 					<p>In den Schulferien fallen die Gruppenstunden aus.</p>
 				</div>
 			{/if}
+			<div class="abox">
+				<span class="ic" style="width: 48px; height: 48px"><Icon name="calendar" /></span>
+				<h2>Termine im Kalender</h2>
+				<p>
+					Fahrten, Lager und Aktionen automatisch im Handy- oder Outlook-Kalender. Die Gruppenstunden
+					gibt es als eigenes Abo auf der Seite jeder Gruppe.
+				</p>
+				<CalendarSubscribe />
+			</div>
 			<div class="abox">
 				<span class="ic" style="width: 48px; height: 48px"><Icon name="question" /></span>
 				<h2>Neu dabei?</h2>

@@ -2,6 +2,7 @@
     // „E-Mail schreiben“ und „Adresse kopieren“ – für Gruppen und Ämter gleich.
     // `compact`: Adresse selbst als Mail-Link + runder Kopieren-Knopf (Kontaktseite, viele Einträge).
     import Icon from '$lib/components/Icon.svelte';
+    import { track, currentPath } from '$lib/track';
 
     export let email = '';
     /** auf Wolke-Flächen: Knöpfe im Seitengrund */
@@ -14,6 +15,7 @@
     async function copyEmail() {
         try {
             await navigator.clipboard.writeText(email);
+            track('E-Mail-Adresse kopiert', { seite: currentPath() });
             copied = true;
             failed = false;
             setTimeout(() => (copied = false), 2000);
