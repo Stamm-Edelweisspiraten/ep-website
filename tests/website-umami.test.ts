@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('$env/dynamic/private', () => ({ env: {} }));
 
-const { isOwnEvent, parseUmamiConfig, MAX_EVENT_BYTES } = await import('../src/lib/server/umami');
+const { isOwnEvent, isOwnRecording, parseUmamiConfig, MAX_EVENT_BYTES, MAX_RECORD_BYTES } = await import('../src/lib/server/umami');
 
 const ID = '3f2b1c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
 
@@ -38,6 +38,23 @@ describe('Weiterleitung nur eigener Ereignisse', () => {
 		expect(isOwnEvent('{kaputt', ID)).toBe(false);
 		expect(isOwnEvent('', ID)).toBe(false);
 		expect(isOwnEvent(event(ID).padEnd(MAX_EVENT_BYTES + 1, ' '), ID)).toBe(false);
+	});
+});
+
+describe('Weiterleitung der Sitzungsaufzeichnung', () => {
+	const pkg = (website: string, type = 'record') => JSON.stringify({ type, payload: { website, events: [] } });
+
+	it('lässt Aufzeichnung und Heatmap der eigenen Website durch, auch größere Pakete', () => {
+		expect(isOwnRecording(pkg(ID), ID)).toBe(true);
+		expect(isOwnRecording(pkg(ID, 'heatmap'), ID)).toBe(true);
+		expect(isOwnRecording(pkg(ID).padEnd(100_000, ' '), ID)).toBe(true);
+	});
+
+	it('weist fremde Websites, normale Ereignisse und Übergrößen ab', () => {
+		expect(isOwnRecording(pkg('00000000-0000-0000-0000-000000000000'), ID)).toBe(false);
+		expect(isOwnRecording(pkg(ID, 'event'), ID)).toBe(false);
+		expect(isOwnEvent(pkg(ID), ID)).toBe(false);
+		expect(isOwnRecording(pkg(ID).padEnd(MAX_RECORD_BYTES + 1, ' '), ID)).toBe(false);
 	});
 });
 

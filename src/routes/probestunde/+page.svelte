@@ -97,7 +97,7 @@
                     <p class="err" role="alert"><Icon name="alert" />{form.error}</p>
                 {/if}
 
-                <form method="POST" aria-labelledby="h-kind" on:focusin={onStart} on:submit={() => track('Formular abgeschickt', { formular: 'Probestunde', gruppe: chosen || 'keine', vorschlag: fits })}>
+                <form method="POST" aria-labelledby="h-kind" class="rr-block" on:focusin={onStart} on:submit={() => track('Formular abgeschickt', { formular: 'Probestunde', gruppe: chosen || 'keine', vorschlag: fits })}>
                     <!-- Honeypot (Anti-Spam): für Menschen unsichtbar -->
                     <div class="hp" aria-hidden="true">
                         <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>

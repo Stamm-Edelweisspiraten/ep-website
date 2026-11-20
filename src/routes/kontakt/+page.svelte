@@ -75,7 +75,7 @@
                 {/if}
 
                 <!-- Versand über den eigenen Server (lib/server/contact.ts), feste Empfängeradresse -->
-                <form method="POST" aria-labelledby="h-formular" on:focusin={onStart} on:submit={() => track('Formular abgeschickt', { formular: 'Kontakt' })}>
+                <form method="POST" aria-labelledby="h-formular" class="rr-block" on:focusin={onStart} on:submit={() => track('Formular abgeschickt', { formular: 'Kontakt' })}>
                     <!-- Honeypot (Anti-Spam): für Menschen unsichtbar -->
                     <div class="hp" aria-hidden="true">
                         <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>

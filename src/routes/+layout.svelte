@@ -27,4 +27,4 @@
     </main>
     <Footer groups={data.groups} />
 </div>
-{#if data.umamiWebsiteId}<Analytics />{/if}
+{#if data.umamiWebsiteId}<Analytics websiteId={data.umamiWebsiteId} />{/if}

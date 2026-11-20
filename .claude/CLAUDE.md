@@ -42,6 +42,11 @@ getauscht** ist: statt PocketBase holt sie Termine und Galerien **serverseitig**
   mailto/tel (ohne Adresse), Downloads, Scrolltiefe 25/50/75/100, Druck, Rückkehr nach > 5 min, Fehlerseiten. Gezielt per `data-umami-event` bzw. `track()`:
   Probestunde-Knöpfe (`ort`), Formular begonnen/abgeschickt/Fehler (nur Feldnamen)/gesendet, Karte, Route, FAQ, Lightbox, Teilen, Termin-Ansicht/-Filter/-Suche
   (ohne Begriff), Galerie-Filter, Kalender-Abo, Design, Hinweis geschlossen, Team „Mehr lesen“. **Regel: nie Eingaben/personenbezogene Daten.**
+- **Sitzungsaufzeichnung/Heatmaps** (2026-11-20, Nutzerauftrag, Instanz `https://um.edelweisspiraten-bremen.de`, Website-ID `91706512-…`): Umamis
+  `recorder.js` (rrweb) über `/stats/recorder.js`, Einstellungen `/stats/api/websites/<id>/recorder` (nur eigene ID, 5 min), Pakete `/stats/api/record`
+  (`record`/`heatmap`, ≤ 600 KB, `isOwnRecording`); gemeinsame Proxy-Hilfen `lib/server/umami-proxy.ts`. Geladen von `Analytics.svelte` mit
+  `data-host-url="/stats"`, **nicht** bei `umami.disabled`, DNT oder GPC (prüft der Recorder selbst nicht). Formulare (Start, Kontakt, Probestunde) tragen
+  `class="rr-block"`. Stichprobe/Maskierung (derzeit 15 %, `strict`, max. 10 min) kommen aus Umami. Datenschutz nennt Aufbewahrung 30 Tage – in Umami einstellen.
 - Datenschutz Abschnitt `#m263` „Webanalyse (Besucherstatistik)“ mit Widerspruch `StatsOptOut.svelte` (`localStorage` `umami.disabled`). Test `website-umami`.
 
 ## Kalender-Abo und Abhängigkeiten (2026-11-20)

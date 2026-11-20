@@ -7,6 +7,9 @@
     import { afterNavigate } from '$app/navigation';
     import { track, currentPath } from '$lib/track';
 
+    /** Website-ID für den Recorder (Sitzungsaufzeichnung/Heatmaps) */
+    export let websiteId = '';
+
     const DOWNLOAD_RE = /\.(pdf|docx?|xlsx?|pptx?|odt|ods|zip|ics|jpe?g|png|avif|webp|mp3|mp4)$/i;
     const MARKS = [25, 50, 75, 100];
     /** @type {Set<number>} */
@@ -60,7 +63,31 @@
         else if (hiddenAt && Date.now() - hiddenAt > 5 * 60_000) track('Zurück auf der Seite', { seite: currentPath() });
     }
 
+    /** Widerspruch (Datenschutzseite) oder „Do Not Track“/GPC → keine Aufzeichnung. */
+    function recordingAllowed() {
+        try {
+            if (localStorage.getItem('umami.disabled')) return false;
+        } catch {
+            return false;
+        }
+        const nav = /** @type {Navigator & { globalPrivacyControl?: boolean }} */ (navigator);
+        return nav.doNotTrack !== '1' && /** @type {any} */ (window).doNotTrack !== '1' && nav.globalPrivacyControl !== true;
+    }
+
+    /** Recorder erst nach dem Tracker laden (er braucht dessen Sitzung); Formulare tragen `rr-block` und werden nicht aufgezeichnet. */
+    function loadRecorder() {
+        if (!websiteId || !recordingAllowed() || document.querySelector('script[data-umami-recorder]')) return;
+        const s = document.createElement('script');
+        s.src = '/stats/recorder.js';
+        s.defer = true;
+        s.dataset.websiteId = websiteId;
+        s.dataset.hostUrl = '/stats';
+        s.dataset.umamiRecorder = '';
+        document.head.appendChild(s);
+    }
+
     onMount(() => {
+        loadRecorder();
         let ticking = false;
         const scroll = () => {
             if (ticking) return;

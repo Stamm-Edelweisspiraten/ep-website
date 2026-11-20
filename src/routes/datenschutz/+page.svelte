@@ -309,7 +309,7 @@
         abgeleitete Land bzw. die Region. Ihre IP-Adresse wird dabei nicht gespeichert: Umami bildet aus IP-Adresse,
         Browserkennung und einem täglich wechselnden Zufallswert eine Prüfsumme (Hash), mit der nur Aufrufe desselben
         Tages zu einem Besuch zusammengefasst werden. Ein Wiedererkennen über mehrere Tage oder eine Zuordnung zu
-        Ihrer Person ist uns damit nicht möglich. Wir sehen nur zusammengefasste Zahlen.</p>
+        Ihrer Person ist uns damit nicht möglich.</p>
     <p>Zusätzlich zählen wir anonym, wie die Website genutzt wird (sogenannte Ereignisse), zum Beispiel: Klicks auf
         Knöpfe und Links (bei Links auf andere Websites nur deren Domain, bei E-Mail- und Telefon-Links weder Adresse
         noch Nummer), das Laden der Karte, das Öffnen von Fragen und Bildern, gewählte Ansichten und Filter auf den
@@ -317,19 +317,30 @@
         Formular begonnen, abgeschickt oder mit Fehlern zurückgegeben wurde. <strong>Was Sie in Formulare oder
         Suchfelder eingeben (z. B. Namen, E-Mail-Adresse, Telefonnummer, Nachricht, Suchbegriffe), wird dabei nie
         erfasst</strong> – bei Fehlern nur, welches Feld betroffen war.</p>
+    <p><strong>Sitzungsaufzeichnung und Heatmaps:</strong> Damit wir erkennen, wo die Bedienung hakt (z. B. ob Knöpfe
+        gefunden werden oder Seiten auf dem Handy richtig dargestellt sind), zeichnet Umami bei einem Teil der Besuche
+        (Stichprobe) den Ablauf des Besuchs auf: Aufbau und Veränderungen der angezeigten Seite, Mausbewegungen, Klicks,
+        Scrollen und die Fenstergröße. Daraus entstehen anonyme Wiedergaben eines Besuchs sowie Heatmaps (wo auf einer
+        Seite geklickt und wie weit gescrollt wird). <strong>Eingaben in Formularfelder werden dabei immer unkenntlich
+        gemacht, unsere Kontakt- und Probestunden-Formulare werden gar nicht aufgezeichnet.</strong> Die Aufzeichnung
+        ist einem Besuch des Tages, nicht Ihrer Person zugeordnet; eine Aufzeichnung dauert höchstens zehn Minuten.
+        Wir sehen sie nur selbst in unserer Umami-Instanz. Bei Widerspruch (unten), „Do Not Track“ oder „Global Privacy
+        Control“ findet keine Aufzeichnung statt.</p>
     <ul class="m-elements">
         <li><strong>Verarbeitete Datenarten:</strong> Nutzungsdaten (z. B. Seitenaufrufe, Verweildauer, verwendete
-            Gerätetypen und Betriebssysteme); Meta-, Kommunikations- und Verfahrensdaten (IP-Adresse nur kurzzeitig zur
+            Gerätetypen und Betriebssysteme, bei der Sitzungsaufzeichnung Klicks, Maus- und Scrollbewegungen sowie die
+            angezeigten Seiteninhalte ohne Formulareingaben); Meta-, Kommunikations- und Verfahrensdaten (IP-Adresse nur kurzzeitig zur
             Bildung des Hashs und zur Ermittlung des Landes, Zeitangaben).</li>
         <li><strong>Betroffene Personen:</strong> Nutzer (z. B. Webseitenbesucher).</li>
         <li><strong>Zwecke der Verarbeitung:</strong> Reichweitenmessung; Verbesserung und nutzerfreundliche Gestaltung
             unseres Onlineangebots.</li>
         <li><strong>Aufbewahrung und Löschung:</strong> Die zusammengefassten Statistikdaten speichern wir höchstens
-            24 Monate; die IP-Adresse wird nicht gespeichert.</li>
+            24 Monate, Sitzungsaufzeichnungen höchstens 30 Tage; die IP-Adresse wird nicht gespeichert.</li>
         <li><strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO) an einer
             datensparsamen Reichweitenmessung; auf Ihrem Endgerät werden keine Informationen gespeichert oder gezielt
             ausgelesen, die über das für den Seitenabruf technisch Übliche hinausgehen.</li>
-        <li><strong>Widerspruch:</strong> Ist in Ihrem Browser „Do Not Track“ eingeschaltet, zählen wir Sie nicht.
+        <li><strong>Widerspruch:</strong> Ist in Ihrem Browser „Do Not Track“ eingeschaltet, zählen wir Sie nicht
+            (bei „Global Privacy Control“ zeichnen wir zusätzlich keine Sitzung auf).
             Außerdem können Sie der Statistik hier für diesen Browser widersprechen (die Wahl wird nur lokal in Ihrem
             Browser gespeichert):
             <StatsOptOut />
@@ -337,7 +348,7 @@
     </ul>
     <p><strong>Weitere Hinweise zu Verarbeitungsprozessen, Verfahren und Diensten:</strong></p>
     <ul class="m-elements">
-        <li><strong>Umami: </strong>Open-Source-Webanalyse, selbst betrieben auf unserem Server;
+        <li><strong>Umami: </strong>Open-Source-Webanalyse mit Sitzungsaufzeichnung und Heatmaps, selbst betrieben auf unserem Server;
             <strong>Dienstanbieter:</strong> keiner (eigener Betrieb, keine Übermittlung an Dritte);
             <strong>Website:</strong> <a class="text-link break-words" href="https://umami.is" target="_blank" rel="noopener noreferrer">https://umami.is</a>.
         </li>

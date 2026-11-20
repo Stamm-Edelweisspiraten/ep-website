@@ -277,7 +277,7 @@
             {/if}
             <div class="row"><span class="ic sub"><Icon name="map" /></span><div><h3>Karte und Anfahrt</h3><p>Die Karte lädt erst nach Klick von Google Maps.</p><p style="margin-top: 10px"><a class="pill soft" href="/kontakt#karte">Zur Karte</a></p></div></div>
         </div>
-        <form method="POST" action="/kontakt" on:focusin={() => track('Formular begonnen', { formular: 'Kontakt (Startseite)' })} on:submit={() => track('Formular abgeschickt', { formular: 'Kontakt (Startseite)' })}>
+        <form method="POST" action="/kontakt" class="rr-block" on:focusin={() => track('Formular begonnen', { formular: 'Kontakt (Startseite)' })} on:submit={() => track('Formular abgeschickt', { formular: 'Kontakt (Startseite)' })}>
             <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label><label>Bitte leer lassen <input type="text" name="fax" tabindex="-1" autocomplete="off" /></label></div>
             <div class="fld"><label class="label" for="k-name">Name</label><input class="field" id="k-name" name="name" type="text" required maxlength="100" autocomplete="name" /></div>
             <div class="fld"><label class="label" for="k-mail">E-Mail</label><input class="field" id="k-mail" name="email" type="email" required maxlength="254" autocomplete="email" /></div>

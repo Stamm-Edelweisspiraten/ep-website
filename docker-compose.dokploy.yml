@@ -39,8 +39,8 @@ services:
       SMTP_PASS: ${WEBSITE_SMTP_PASS:-}
       SMTP_FROM: ${WEBSITE_SMTP_FROM:-}
       # Besucherstatistik (Umami, selbst gehostet); leer = aus
-      UMAMI_URL: ${UMAMI_URL:-}
-      UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-}
+      UMAMI_URL: ${UMAMI_URL:-https://um.edelweisspiraten-bremen.de}
+      UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-91706512-8343-4261-9cc1-fcf67bffd09e}
     expose: ['3001']
     read_only: true
     tmpfs:
