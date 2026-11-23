@@ -54,6 +54,7 @@ export const STATIC_PAGES: { path: string; priority: number; changefreq: string 
 	{ path: '/team', priority: 0.6, changefreq: 'monthly' },
 	{ path: '/kontakt', priority: 0.6, changefreq: 'yearly' },
 	{ path: '/cpd', priority: 0.5, changefreq: 'yearly' },
+	{ path: '/spenden', priority: 0.4, changefreq: 'yearly' },
 	{ path: '/impressum', priority: 0.2, changefreq: 'yearly' },
 	{ path: '/datenschutz', priority: 0.2, changefreq: 'yearly' }
 ];
@@ -210,6 +211,7 @@ export function llmsTxt(
 		`- [Blog](${url('/blog')}): Berichte von Fahrten und Lagern (RSS: ${url('/blog/rss.xml')})`,
 		`- [Galerie](${url('/galerie')}): Bilder von Fahrten, Lagern und Aktionen`,
 		`- [Unser Bund (CPD)](${url('/cpd')}): Aufbau und Geschichte der Christlichen Pfadfinderschaft Deutschlands`,
+		`- [Spenden](${url('/spenden')}): Geld- und Sachspenden für Fahrten, Lager und Material`,
 		'',
 		'## Optional',
 		'',

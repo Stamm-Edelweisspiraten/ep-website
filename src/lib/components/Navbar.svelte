@@ -25,6 +25,7 @@
         { href: '/team', label: 'Unser Team' },
         { href: '/cpd', label: 'Unser Bund (CPD)' },
         { href: '/faq', label: 'Häufige Fragen' },
+        { href: '/spenden', label: 'Spenden' },
         { href: '/kontakt', label: 'Kontakt' }
     ];
 

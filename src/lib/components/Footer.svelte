@@ -63,21 +63,22 @@
                 <a href="/galerie">Galerie</a>
                 <a href="/blog">Blog</a>
                 <a href="/team">Unser Team</a>
-                <a href="/faq">Häufige Fragen</a>
                 <a href="/cpd">Unser Bund (CPD)</a>
-                <a href="https://intern.edelweisspiraten-bremen.de" target="_blank" rel="noopener noreferrer">Intern-Bereich<span class="sr-only"> (neues Fenster)</span></a>
             </nav>
             <div class="fbox kontakt">
-                <h2><Icon name="map-pin" size={18} />So findest du uns</h2>
+                <h2><Icon name="map-pin" size={18} />Kontakt &amp; Anfahrt</h2>
                 <p>Ev. Kirchengemeinde Bremen-Hastedt<br />Drakenburger Str. 42<br />28207 Bremen</p>
                 <a class="ln" href="/kontakt"><Icon name="mail" size={18} />Kontaktformular</a>
+                <a class="ln" href="/faq"><Icon name="question" size={18} />Häufige Fragen</a>
                 <a class="ln" href={route} target="_blank" rel="noopener noreferrer" data-umami-event="Route planen"><Icon name="map" size={18} />Route planen</a>
+                <a class="ln" href="/spenden"><Icon name="heart" size={18} />Spenden</a>
             </div>
         </div>
 
         <div class="legal">
             <p>© {new Date().getFullYear()} Stamm Edelweißpiraten · Christliche Pfadfinderschaft Deutschlands e. V.</p>
             <div class="r">
+                <a href="https://intern.edelweisspiraten-bremen.de" target="_blank" rel="noopener noreferrer">Intern-Bereich<span class="sr-only"> (neues Fenster)</span></a>
                 <a href="https://status.edelweisspiraten-bremen.de" target="_blank" rel="noopener noreferrer">Systemstatus<span class="sr-only"> (neues Fenster)</span></a>
                 <a href="/impressum">Impressum</a>
                 <a href="/datenschutz">Datenschutz</a>

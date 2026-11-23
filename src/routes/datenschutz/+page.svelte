@@ -31,6 +31,7 @@
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m134">- Einsatz von Cookies</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m104">- Blogs und Publikationsmedien</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m182">- Kontakt- und Anfrageverwaltung</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m-spenden">- Spenden</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m-fotos">- Fotos, Namen und Inhalte über unsere Mitglieder</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m136">- Präsenzen in sozialen Netzwerken (Social Media)</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m328">- Plug-ins und eingebettete Funktionen sowie Inhalte</a></li>
@@ -62,6 +63,7 @@
         <li>Kommunikation.</li>
         <li>Sicherheitsmaßnahmen.</li>
         <li>Organisations- und Verwaltungsverfahren.</li>
+        <li>Verbuchung von Spenden.</li>
         <li>Feedback.</li>
         <li>Bereitstellung unseres Onlineangebotes und Nutzerfreundlichkeit.</li>
         <li>Informationstechnische Infrastruktur.</li>
@@ -490,6 +492,28 @@
             im Arbeitsspeicher und verfallen nach wenigen Minuten bis höchstens 24 Stunden. <strong>Rechtsgrundlage:</strong>
             Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO).
         </li>
+    </ul>
+
+    <h2 id="m-spenden" class="mt-12 mb-2 text-section text-ink">Spenden</h2>
+    <p>Auf der Seite „Spenden“ nennen wir unser Spendenkonto; die Seite selbst erhebt dabei keine Daten (das Kopieren
+        der Kontodaten geschieht nur in Ihrem Browser). Wenn Sie uns Geld überweisen, erhalten wir von unserer Bank die
+        üblichen Überweisungsdaten: Name und IBAN des Kontos, Betrag, Datum und Verwendungszweck. Bei Sachspenden oder
+        Fragen per E-Mail verarbeiten wir Ihre Kontaktdaten und Ihre Nachricht. Wir nutzen diese Angaben nur, um die
+        Spende zu verbuchen, Ihnen ggf. zu danken bzw. eine Spendenbescheinigung auszustellen und Rückfragen zu
+        beantworten; an Dritte geben wir sie nicht weiter (außer an Steuerberatung oder Behörden, soweit gesetzlich
+        vorgeschrieben).</p>
+    <ul class="m-elements">
+        <li><strong>Verarbeitete Datenarten:</strong> Bestandsdaten (Name), Zahlungsdaten (IBAN, Betrag, Datum,
+            Verwendungszweck), Kontaktdaten (z. B. E-Mail-Adresse), Inhaltsdaten (Nachrichten).</li>
+        <li><strong>Betroffene Personen:</strong> Spender*innen, Kommunikationspartner.</li>
+        <li><strong>Zwecke der Verarbeitung:</strong> Verbuchung von Spenden; Ausstellung von Spendenbescheinigungen;
+            Kommunikation.</li>
+        <li><strong>Aufbewahrung und Löschung:</strong> Buchungsbelege und Kopien von Spendenbescheinigungen bewahren
+            wir nach den steuerrechtlichen Fristen auf (bis zu 10 Jahre), siehe „Allgemeine Informationen zur
+            Datenspeicherung und Löschung“; E-Mails löschen wir, sobald die Anfrage erledigt ist.</li>
+        <li><strong>Rechtsgrundlagen:</strong> Vertragserfüllung bzw. vorvertragliche Anfragen (Art. 6 Abs. 1 S. 1
+            lit. b) DSGVO), rechtliche Verpflichtung (Art. 6 Abs. 1 S. 1 lit. c) DSGVO, z. B. § 147 AO, § 50 EStDV),
+            berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO).</li>
     </ul>
 
     <h2 id="m-fotos" class="mt-12 mb-2 text-section text-ink">Fotos, Namen und Inhalte über unsere Mitglieder</h2>

@@ -336,3 +336,18 @@ describe('Gzip dynamischer Antworten', () => {
 		).toBe(true);
 	});
 });
+
+describe('Spendenkonto (lib/donation.ts)', async () => {
+	const { compactIban, formatIban, MATERIAL_RE, TREASURER_RE } = await import('../src/lib/donation');
+
+	it('IBAN ohne bzw. mit Vierergruppen', () => {
+		expect(compactIban(' de89 3704 0044 0532 0130 00 ')).toBe('DE89370400440532013000');
+		expect(formatIban('DE89370400440532013000')).toBe('DE89 3704 0044 0532 0130 00');
+	});
+
+	it('erkennt Kasse und Materialwart am Amtsnamen', () => {
+		for (const n of ['Kasse', 'Kassenwart', 'Kassierer*in', 'Schatzmeisterin']) expect(TREASURER_RE.test(n)).toBe(true);
+		expect(TREASURER_RE.test('Stammesführung')).toBe(false);
+		expect(MATERIAL_RE.test('Materialwart')).toBe(true);
+	});
+});
