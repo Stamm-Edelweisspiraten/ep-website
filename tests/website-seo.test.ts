@@ -11,7 +11,9 @@ import {
 	breadcrumb,
 	event,
 	faqPage,
+	groupMeeting,
 	jsonLdScript,
+	nextWeekday,
 	organization,
 	plainText,
 	scheduleDate,
@@ -31,6 +33,58 @@ import {
 } from '../src/lib/server/compress';
 
 const BASE = 'https://edelweisspiraten-bremen.de';
+
+describe('Gruppenstunden als Event mit Schedule', () => {
+	const input = {
+		base: BASE,
+		path: '/meute/funkelfuechse',
+		name: 'Funkelfüchse',
+		typeLabel: 'Meute',
+		description: '<p>Wir spielen draußen.</p>',
+		weekdayNumber: 5,
+		startTime: '16:30',
+		endTime: '18:00',
+		ageMin: 7,
+		ageMax: 10,
+		meetingPlace: 'Drakenburger Str. 42',
+		today: '2026-11-23' // Montag
+	};
+
+	it('nächster Wochentag ab heute (einschließlich)', () => {
+		expect(nextWeekday('2026-11-23', 1)).toBe('2026-11-23');
+		expect(nextWeekday('2026-11-23', 5)).toBe('2026-11-27');
+		expect(nextWeekday('2026-11-28', 1)).toBe('2026-11-30');
+		expect(nextWeekday('2026-12-31', 5)).toBe('2027-01-01');
+	});
+
+	it('wöchentlicher Schedule, nächstes Datum mit Berliner Zeit, Alter, Treffpunkt, Probestunde', () => {
+		const ld = groupMeeting(input)!;
+		expect(ld['@type']).toBe('Event');
+		expect(ld.url).toBe(`${BASE}/meute/funkelfuechse`);
+		expect(ld.startDate).toBe('2026-11-27T16:30:00+01:00');
+		expect(ld.endDate).toBe('2026-11-27T18:00:00+01:00');
+		expect(ld.eventSchedule).toEqual({
+			'@type': 'Schedule',
+			repeatFrequency: 'P1W',
+			byDay: 'https://schema.org/Friday',
+			startTime: '16:30:00',
+			endTime: '18:00:00',
+			scheduleTimezone: 'Europe/Berlin'
+		});
+		expect(ld.audience).toEqual({ '@type': 'PeopleAudience', suggestedMinAge: 7, suggestedMaxAge: 10 });
+		expect((ld.location as { name: string }).name).toBe('Ev. Kirchengemeinde Bremen-Hastedt');
+		expect(ld.description).toBe('Wir spielen draußen.');
+		expect((ld.offers as { url: string }).url).toBe(`${BASE}/probestunde`);
+	});
+
+	it('anderer Treffpunkt als Text; ohne Wochentag oder Uhrzeit kein Event', () => {
+		expect((groupMeeting({ ...input, meetingPlace: 'Waldspielplatz' })!.location as { name: string }).name).toBe('Waldspielplatz');
+		expect(groupMeeting({ ...input, weekdayNumber: null })).toBeNull();
+		expect(groupMeeting({ ...input, startTime: null })).toBeNull();
+		expect(groupMeeting({ ...input, weekdayNumber: 8 })).toBeNull();
+		expect(groupMeeting({ ...input, endTime: null })!.endDate).toBeUndefined();
+	});
+});
 
 describe('JSON-LD', () => {
 	it('maskiert < > & und Zeilentrenner, bleibt gültiges JSON', () => {

@@ -163,7 +163,7 @@ export function llmsTxt(
 		'',
 		'- Alter: ab 6 Jahren (Meute für Kinder, Sippe für Jugendliche – genaue Alter siehe Gruppen)',
 		`- Treffpunkt: ${place}`,
-		'- Beitrag: 47 € im Jahr, Schnuppern ist kostenlos',
+		'- Beitrag: 55 € im Jahr, Schnuppern ist kostenlos',
 		`- Kontakt: ${CONTACT_EMAIL} (Stammesführung) oder Kontaktformular ${url('/kontakt')}`,
 		`- Probestunde anfragen: ${url('/probestunde')}`,
 		`- Instagram: ${INSTAGRAM_URL}`,

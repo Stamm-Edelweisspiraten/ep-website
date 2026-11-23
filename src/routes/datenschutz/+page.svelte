@@ -15,7 +15,7 @@
 <div class="legal-doc">
     <h1 class="display legal-title">Datenschutzerklärung</h1>
     <p class="mt-3 text-lede text-body">Welche personenbezogenen Daten wir verarbeiten, wofür und welche Rechte Sie haben.</p>
-    <p class="mt-2 mb-3 text-small text-muted">Stand: 20. November 2026</p>
+    <p class="mt-2 mb-3 text-small text-muted">Stand: 23. November 2026</p>
     <h2 class="mt-10 mb-2 text-section text-ink">Inhaltsübersicht</h2>
     <ul class="index mb-4 mt-1">
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m3">- Verantwortlicher</a></li>
@@ -31,14 +31,14 @@
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m134">- Einsatz von Cookies</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m104">- Blogs und Publikationsmedien</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m182">- Kontakt- und Anfrageverwaltung</a></li>
+        <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m-fotos">- Fotos, Namen und Inhalte über unsere Mitglieder</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m136">- Präsenzen in sozialen Netzwerken (Social Media)</a></li>
         <li><a class="index-link transition-colors hover:text-link hover:underline" href="#m328">- Plug-ins und eingebettete Funktionen sowie Inhalte</a></li>
     </ul>
     <h2 id="m3" class="mt-12 mb-2 text-section text-ink">Verantwortlicher</h2>
     <p>Philipp Hethey<br>Rockwinkeler Heerstraße 140<br>28355 Bremen</p>
     <p>E-Mail-Adresse: datenschutz@edelweisspiraten-bremen.de</p>
-    <p>Impressum: <a class="text-link break-words" href="https://edelweißpiraten.de/impressum"
-                     target="_blank" rel="noopener noreferrer">https://edelweißpiraten.de/impressum</a></p>
+    <p>Impressum: <a class="text-link break-words" href="/impressum">Impressum</a></p>
 
     <h2 id="mOverview" class="mt-12 mb-2 text-section text-ink">Übersicht der Verarbeitungen</h2>
     <p>Die nachfolgende Übersicht fasst die Arten der verarbeiteten Daten und die Zwecke ihrer Verarbeitung zusammen und
@@ -139,16 +139,8 @@
         ausdrücklich auf den Datentransfer in Drittländer hingewiesen wird), erfolgt dies stets im Einklang mit den
         gesetzlichen Vorgaben.</p>
     <p>Für Datenübermittlungen in die USA stützen wir uns vorrangig auf das Data Privacy Framework (DPF), welches durch
-        einen Angemessenheitsbeschluss der EU-Kommission vom 10.07.2023 als sicherer Rechtsrahmen anerkannt wurde.
-        Zusätzlich haben wir mit den jeweiligen Anbietern Standardvertragsklauseln abgeschlossen, die den Vorgaben der
-        EU-Kommission entsprechen und vertragliche Verpflichtungen zum Schutz Ihrer Daten festlegen.</p>
-    <p>Diese zweifache Absicherung gewährleistet einen umfassenden Schutz Ihrer Daten: Das DPF bildet die primäre
-        Schutzebene, während die Standardvertragsklauseln als zusätzliche Sicherheit dienen. Sollten sich Änderungen im
-        Rahmen des DPF ergeben, greifen die Standardvertragsklauseln als zuverlässige Rückfalloption ein. So stellen wir
-        sicher, dass Ihre Daten auch bei etwaigen politischen oder rechtlichen Veränderungen stets angemessen geschützt
-        bleiben.</p>
-    <p>Bei den einzelnen Diensteanbietern informieren wir Sie darüber, ob sie nach dem DPF zertifiziert sind und ob
-        Standardvertragsklauseln vorliegen. Weitere Informationen zum DPF und eine Liste der zertifizierten Unternehmen
+        einen Angemessenheitsbeschluss der EU-Kommission vom 10.07.2023 als sicherer Rechtsrahmen anerkannt wurde.</p>
+    <p>Bei den einzelnen Diensteanbietern informieren wir Sie darüber, ob sie nach dem DPF zertifiziert sind. Weitere Informationen zum DPF und eine Liste der zertifizierten Unternehmen
         finden Sie auf der Website des US-Handelsministeriums unter <a class="text-link break-words" href="https://www.dataprivacyframework.gov/"
                                                                        target="_blank" rel="noopener noreferrer">https://www.dataprivacyframework.gov/</a>
         (in englischer Sprache).</p>
@@ -306,9 +298,10 @@
         eigene Domain.</p>
     <p>Bei jedem Seitenaufruf werden erfasst: die aufgerufene Seite (ohne Suchparameter), die zuvor besuchte Seite
         (Referrer), Browser, Betriebssystem, Gerätetyp, Bildschirmgröße, Sprache sowie das aus der IP-Adresse
-        abgeleitete Land bzw. die Region. Ihre IP-Adresse wird dabei nicht gespeichert: Umami bildet aus IP-Adresse,
-        Browserkennung und einem täglich wechselnden Zufallswert eine Prüfsumme (Hash), mit der nur Aufrufe desselben
-        Tages zu einem Besuch zusammengefasst werden. Ein Wiedererkennen über mehrere Tage oder eine Zuordnung zu
+        abgeleitete Land, Bundesland bzw. Stadt. Ihre IP-Adresse wird dabei nicht gespeichert: Umami bildet aus IP-Adresse,
+        Browserkennung und einem monatlich wechselnden Zufallswert eine pseudonyme Kennung (Hash), mit der Aufrufe
+        innerhalb eines Kalendermonats demselben Gerät zugeordnet werden. Ein Wiedererkennen über den Monat hinaus
+        oder eine Zuordnung zu
         Ihrer Person ist uns damit nicht möglich.</p>
     <p>Zusätzlich zählen wir anonym, wie die Website genutzt wird (sogenannte Ereignisse), zum Beispiel: Klicks auf
         Knöpfe und Links (bei Links auf andere Websites nur deren Domain, bei E-Mail- und Telefon-Links weder Adresse
@@ -320,10 +313,10 @@
     <p><strong>Sitzungsaufzeichnung und Heatmaps:</strong> Damit wir erkennen, wo die Bedienung hakt (z. B. ob Knöpfe
         gefunden werden oder Seiten auf dem Handy richtig dargestellt sind), zeichnet Umami bei einem Teil der Besuche
         (Stichprobe) den Ablauf des Besuchs auf: Aufbau und Veränderungen der angezeigten Seite, Mausbewegungen, Klicks,
-        Scrollen und die Fenstergröße. Daraus entstehen anonyme Wiedergaben eines Besuchs sowie Heatmaps (wo auf einer
+        Scrollen und die Fenstergröße. Daraus entstehen pseudonyme Wiedergaben eines Besuchs sowie Heatmaps (wo auf einer
         Seite geklickt und wie weit gescrollt wird). <strong>Eingaben in Formularfelder werden dabei immer unkenntlich
         gemacht, unsere Kontakt- und Probestunden-Formulare werden gar nicht aufgezeichnet.</strong> Die Aufzeichnung
-        ist einem Besuch des Tages, nicht Ihrer Person zugeordnet; eine Aufzeichnung dauert höchstens zehn Minuten.
+        ist der pseudonymen Kennung, nicht Ihrem Namen zugeordnet; eine Aufzeichnung dauert höchstens zehn Minuten.
         Wir sehen sie nur selbst in unserer Umami-Instanz. Bei Widerspruch (unten), „Do Not Track“ oder „Global Privacy
         Control“ findet keine Aufzeichnung statt.</p>
     <ul class="m-elements">
@@ -407,9 +400,10 @@
             Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO).
         </li>
     </ul>
-    <p><strong>Cookies auf dieser Website: </strong>Diese Website setzt derzeit keine Cookies und speichert keine
-        Informationen auf Ihrem Endgerät; wir verwenden daher auch kein Einwilligungs-Management (Cookie-Banner). Die Karte
-        wird erst nach Ihrem Klick geladen; diese Wahl wird nicht gespeichert.</p>
+    <p><strong>Zusammengefasst: </strong>Außer dem oben genannten Cookie „theme“ (nur bei ausdrücklicher Wahl) und den
+        Einträgen im lokalen Speicher (Terminansicht, ausgeblendete Hinweise, Widerspruch gegen die Statistik) setzt
+        diese Website selbst keine Cookies. Die Karte wird erst nach Ihrem Klick geladen; diese Wahl wird nicht
+        gespeichert.</p>
 
 
     <h2 id="m104" class="mt-12 mb-2 text-section text-ink">Blogs und Publikationsmedien</h2>
@@ -473,11 +467,44 @@
             gegebenenfalls weitere Informationen, die uns mitgeteilt werden und zur angemessenen Bearbeitung
             erforderlich sind. Wir nutzen diese Daten ausschließlich für den angegebenen Zweck der Kontaktaufnahme und
             Kommunikation. Die Angaben aus dem Kontaktformular (Name, E-Mail-Adresse, optional Telefonnummer, Nachricht)
-            werden von unserem eigenen Server als E-Mail an unser Postfach des Stammes gesendet; dafür nutzen wir den
-            E-Mail-Server unseres E-Mail-Anbieters (Auftragsverarbeitung). Es wird kein externer Formulardienst
-            eingesetzt, die Angaben werden auf dem Webserver nicht gespeichert und es wird keine automatische E-Mail an die
+            übermittelt unser Webserver verschlüsselt an unser selbst betriebenes internes Verwaltungssystem; dort
+            landen sie im Postfach des Stammes und werden nur von den zuständigen Leitenden gelesen. Auf dem Webserver
+            selbst werden sie nicht gespeichert. Ist das Verwaltungssystem nicht erreichbar, sendet der Webserver die
+            Angaben stattdessen als E-Mail an unser Stammespostfach (über den E-Mail-Server unseres E-Mail-Anbieters,
+            Auftragsverarbeitung). Es wird kein externer Formulardienst eingesetzt und keine automatische E-Mail an die
             angegebene Adresse versendet; <span class=""><strong>Rechtsgrundlagen:</strong> Vertragserfüllung und vorvertragliche Anfragen (Art. 6 Abs. 1 S. 1 lit. b) DSGVO), Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO).</span>
         </li>
+        <li><strong>Anfrage einer Probestunde: </strong>Über das Formular „Probestunde anfragen“ verarbeiten wir Name
+            und Alter des Kindes, die gewünschte Gruppe sowie Name, E-Mail-Adresse und Telefonnummer der
+            Ansprechperson (in der Regel eines Elternteils) und eine optionale Nachricht. Die Angaben werden wie beim
+            Kontaktformular in unser internes Verwaltungssystem übermittelt und an die Leitung der gewählten Gruppe
+            weitergegeben, damit sie einen Termin vereinbaren kann. Bitte geben Sie nur Angaben zu Kindern ein, für die
+            Sie sorgeberechtigt sind oder deren Sorgeberechtigte einverstanden sind. Wir löschen die Angaben, sobald die
+            Probestunde abgeschlossen ist und daraus keine Mitgliedschaft entsteht; wird das Kind Mitglied, gehen die
+            nötigen Angaben in die Mitgliederverwaltung über. <strong>Rechtsgrundlagen:</strong> Vorvertragliche
+            Anfragen (Art. 6 Abs. 1 S. 1 lit. b) DSGVO), Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO).
+        </li>
+        <li><strong>Schutz vor Spam: </strong>Beide Formulare enthalten unsichtbare Felder, die nur automatische Programme
+            ausfüllen, und lassen Ihren Browser vor dem Absenden eine kleine Rechenaufgabe lösen (ohne Dienste Dritter,
+            ohne Cookies). Zum Schutz vor Missbrauch zählt der Server Absendungen je IP-Adresse; diese Zähler liegen nur
+            im Arbeitsspeicher und verfallen nach wenigen Minuten bis höchstens 24 Stunden. <strong>Rechtsgrundlage:</strong>
+            Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO).
+        </li>
+    </ul>
+
+    <h2 id="m-fotos" class="mt-12 mb-2 text-section text-ink">Fotos, Namen und Inhalte über unsere Mitglieder</h2>
+    <p>In der Galerie, im Blog, bei den Gruppen und auf der Seite „Unser Team“ zeigen wir Fotos von Fahrten, Lagern und
+        Gruppenstunden sowie Vornamen und ggf. Profilbilder von Leitenden. Fotos, auf denen Personen erkennbar sind,
+        veröffentlichen wir nur mit Einwilligung der abgebildeten Personen bzw. bei Kindern und Jugendlichen ihrer
+        Sorgeberechtigten; Leitende erscheinen nur mit ihrem eigenen Einverständnis und nur mit Vornamen.</p>
+    <ul class="m-elements">
+        <li><strong>Verarbeitete Datenarten:</strong> Bildaufnahmen, Vornamen, Funktion im Stamm.</li>
+        <li><strong>Betroffene Personen:</strong> Mitglieder, Leitende, Teilnehmende an Veranstaltungen.</li>
+        <li><strong>Zwecke der Verarbeitung:</strong> Öffentlichkeitsarbeit; Information über unsere Arbeit.</li>
+        <li><strong>Rechtsgrundlagen:</strong> Einwilligung (Art. 6 Abs. 1 S. 1 lit. a) DSGVO, § 22 KUG).</li>
+        <li><strong>Widerruf:</strong> Sie können Ihre Einwilligung jederzeit für die Zukunft widerrufen, z. B. per
+            E-Mail an datenschutz@edelweisspiraten-bremen.de. Wir entfernen das Foto bzw. den Namen dann unverzüglich
+            von der Website.</li>
     </ul>
 
 
@@ -524,15 +551,9 @@
             Meta Platforms Ireland Limited, Merrion Road, Dublin 4, D04 X2K5, Irland; <span class=""><strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO); </span><strong>Website:</strong>
             <a class="text-link break-words" href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">https://www.instagram.com</a>; <strong>Datenschutzerklärung:</strong>
             <a class="text-link break-words" href="https://privacycenter.instagram.com/policy/" target="_blank" rel="noopener noreferrer">https://privacycenter.instagram.com/policy/</a>.
-            <strong>Grundlage Drittlandtransfers:</strong> Data Privacy Framework (DPF), Data Privacy Framework (DPF).
-        </li>
-        <li><strong>YouTube: </strong>Soziales Netzwerk und Videoplattform; <strong>Dienstanbieter:</strong> Google
-            Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland; <span
-                    class=""><strong>Rechtsgrundlagen:</strong> Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO); </span><strong>Datenschutzerklärung:</strong>
-            <a class="text-link break-words" href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy</a>;
-            <strong>Grundlage Drittlandtransfers:</strong> Data Privacy Framework (DPF), Data Privacy Framework (DPF).
-            <strong>Widerspruchsmöglichkeit (Opt-Out):</strong> <a
-                    href="https://myadcenter.google.com/personalizationoff" target="_blank" rel="noopener noreferrer">https://myadcenter.google.com/personalizationoff</a>.
+            <strong>Grundlage Drittlandtransfers:</strong> Data Privacy Framework (DPF). Für die Statistik zu unserem
+            Profil (Insights) sind wir mit Meta gemeinsam verantwortlich (Art. 26 DSGVO); Meta übernimmt dabei die
+            Informationspflichten und Betroffenenrechte: <a class="text-link break-words" href="https://www.facebook.com/legal/terms/page_controller_addendum" target="_blank" rel="noopener noreferrer">https://www.facebook.com/legal/terms/page_controller_addendum</a>.
         </li>
     </ul>
 

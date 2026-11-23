@@ -7,7 +7,8 @@
     import CalendarSubscribe from '$lib/components/CalendarSubscribe.svelte';
     import Icon from '$lib/components/Icon.svelte';
     import Seo from '$lib/components/Seo.svelte';
-    import { formatMonth } from '$lib/dates';
+    import { formatMonth, todayBerlin } from '$lib/dates';
+    import { groupMeeting } from '$lib/seo';
 
     /** @type {import('$lib/server/backend').Group} */
     export let group;
@@ -32,6 +33,22 @@
     description={`${group.typeLabel} der Pfadfinder Edelweißpiraten${group.ageRange ? ` (${group.ageRange})` : ''} in Bremen-Hastedt/Hemelingen: ${group.teaser}`}
     path={group.href}
     breadcrumbs={[{ name: `${group.typeLabel} ${group.name}`, path: group.href }]}
+    jsonLd={(base) =>
+        groupMeeting({
+            base,
+            path: group.href,
+            name: group.name,
+            typeLabel: group.typeLabel,
+            description: group.description,
+            weekdayNumber: group.weekdayNumber,
+            startTime: group.startTime,
+            endTime: group.endTime,
+            ageMin: group.ageMin,
+            ageMax: group.ageMax,
+            meetingPlace: group.meetingPlace,
+            image: group.image,
+            today: todayBerlin()
+        })}
 />
 
 <div class="site-container">

@@ -4,7 +4,7 @@
 
 <Seo
     title="Impressum – Stamm Edelweißpiraten"
-    description="Impressum des Stamms Edelweißpiraten – Rechtliche Informationen und Kontaktdaten gemäß §5 TMG für unsere Pfadfinder-Website."
+    description="Impressum des Stamms Edelweißpiraten – Rechtliche Informationen und Kontaktdaten gemäß § 5 DDG für unsere Pfadfinder-Website."
     path="/impressum"
     breadcrumbs={[{ name: 'Impressum', path: '/impressum' }]}
 />
@@ -22,7 +22,7 @@
     <p class="mb-2">28207 Bremen</p>
 
     <h2 class="mt-10 mb-2 text-section text-ink" id="m56">Kontaktmöglichkeiten</h2>
-    <p class="mb-2">E-Mail-Adresse: <a class="text-link" href="mailto:info@edelweisspiaretn-bremen.de">info@edelweisspiaretn-bremen.de</a></p>
+    <p class="mb-2">E-Mail-Adresse: <a class="text-link" href="mailto:kontakt@edelweisspiraten-bremen.de">kontakt@edelweisspiraten-bremen.de</a></p>
 
     <h2 id="m172" class="mt-10 mb-2 text-section text-ink">Social Media und andere Onlinepräsenzen</h2>
     <p>Dieses Impressum gilt auch für die folgenden Social-Media-Präsenzen und Onlineprofile: </p>

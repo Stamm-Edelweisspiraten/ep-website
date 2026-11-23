@@ -41,7 +41,7 @@ export function scriptProxy(file: string): () => Promise<Response> {
 
 /**
  * POST an die Umami-Instanz weiterreichen, wenn `accept(body, websiteId)` zustimmt (nur eigene Website-ID).
- * IP geht als `X-Forwarded-For` mit (Umami speichert keine IP, nur einen täglich wechselnden Hash); Bots aus der Falle → 204.
+ * IP geht als `X-Forwarded-For` mit (Umami speichert keine IP, nur einen monatlich wechselnden Hash); Bots aus der Falle → 204.
  */
 export async function forwardPost(
 	request: Request,

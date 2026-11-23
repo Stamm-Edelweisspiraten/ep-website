@@ -67,7 +67,7 @@
                 <dl>
                     <div><dt>Alter</dt><dd>ab {minAge} Jahren</dd></div>
                     <div><dt>Probestunde</dt><dd>kostenlos</dd></div>
-                    <div><dt>Jahresbeitrag</dt><dd>47 €</dd></div>
+                    <div><dt>Jahresbeitrag</dt><dd>55 €</dd></div>
                     <div><dt>Treffpunkt</dt><dd>Drakenburger Str. 42</dd></div>
                 </dl>
             </div>

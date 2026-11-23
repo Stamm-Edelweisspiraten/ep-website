@@ -9,7 +9,7 @@ export const faqs = [
     {
         id: 'kosten',
         question: 'Was kostet das?',
-        answer: 'Der Jahresbeitrag beträgt aktuell 47€ – Schnuppern ist kostenlos.'
+        answer: 'Der Jahresbeitrag beträgt aktuell 55 € – Schnuppern ist kostenlos.'
     },
     {
         id: 'anschauen',

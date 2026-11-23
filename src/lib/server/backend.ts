@@ -379,6 +379,10 @@ export interface Group {
 	weekday: string;
 	/** „16:30–18:00 Uhr“ */
 	time: string;
+	/** Rohdaten für strukturierte Daten: Wochentag 1 = Montag … 7 = Sonntag, Zeiten `HH:MM` */
+	weekdayNumber: number | null;
+	startTime: string | null;
+	endTime: string | null;
 	meetingPlace: string;
 	/** „Larissa und Philipp“ */
 	leaders: string;
@@ -416,6 +420,12 @@ function groupImageUrls(g: BackendGroup): Pick<Group, 'image' | 'thumb'> {
 	return { image, thumb: `${image}&size=thumb` };
 }
 
+/** `16:30` bzw. `16:30:00` → `16:30`; sonst `null` */
+function hhmm(value: string | null | undefined): string | null {
+	const m = /^(\d{1,2}):(\d{2})/.exec(value ?? '');
+	return m ? `${m[1].padStart(2, '0')}:${m[2]}` : null;
+}
+
 function toGroup(g: BackendGroup): Group {
 	const typeLabel = TYPE_LABELS[g.type] ?? 'Gruppe';
 	const day = g.meetingWeekday ? WEEKDAYS[g.meetingWeekday - 1] : undefined;
@@ -440,6 +450,9 @@ function toGroup(g: BackendGroup): Group {
 		ageMax: g.ageMax ?? null,
 		weekday: day ? `${day}s` : '',
 		time,
+		weekdayNumber: day ? g.meetingWeekday : null,
+		startTime: hhmm(g.meetingTime),
+		endTime: hhmm(g.meetingEndTime),
 		meetingPlace: g.meetingPlace ?? '',
 		leaders: joinNames(g.leaders.map((l) => onlyFirstName(l.firstName)).filter(Boolean)),
 		contactEmail: g.contactEmail,

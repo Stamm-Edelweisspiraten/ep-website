@@ -18,7 +18,7 @@ getauscht** ist: statt PocketBase holt sie Termine und Galerien **serverseitig**
   und U+2028/9). Basis-URL `PUBLIC_SITE_URL` → `ORIGIN` → Anfrage (`lib/server/site-url.ts`). Standard-Vorschaubild `static/og-default.jpg` (JPEG, nicht AVIF).
 - `robots.txt` (KI-Crawler ausdrücklich erlaubt; gesperrt `/kontakt/challenge`, Falle), `sitemap.xml` (statisch + Gruppen/Termine/Galerien/Blog, fehlertolerant),
   `llms.txt` (Markdown-Kurzprofil für KI) – reine Funktionen in `lib/server/discovery.ts`.
-- Performance: `inlineStyleThreshold` 40 000 (kein render-blockierendes CSS), Leaflet-CSS lädt erst mit der Karte (`Map.svelte`), gzip dynamischer Antworten
+- Performance: `inlineStyleThreshold` 40 000 (kein render-blockierendes CSS), gzip dynamischer Antworten
   in `hooks.server.ts` (`lib/server/compress.ts`, aus mit `COMPRESS=0`, falls der Proxy schon komprimiert), Hero mit `srcset` (`pfadfinder-1280|2400.avif`),
   Gruppenkarten mit `thumb` (`/bilder/gruppe/<slug>?v=…&size=thumb`, 640 px), `logo-sm.avif` für Navigation/Fuß, `ContactGuard` holt die Aufgabe erst, wenn das
   Formular in Sicht kommt (Fokus/Klick) und wartet beim Absenden bis die Aufgabe ≥ 3,5 s alt ist.
@@ -30,6 +30,7 @@ getauscht** ist: statt PocketBase holt sie Termine und Galerien **serverseitig**
 - **Suchbegriffe (2026-11-20, Nutzerauftrag):** „Pfadfinder“, „Pfadfinder Bremen“, „Pfadfinder Hastedt“, „Pfadfinder Hemelingen“ – in Titeln/Beschreibungen
   (Start, Gruppen, Termine, Kontakt, Probestunde, FAQ, Galerie, Blog), H1 „Pfadfinder in Hastedt“, Über-uns-Text, `llms.txt` und JSON-LD (`keywords`,
   `areaServed`, `alternateName`, `memberOf` CPD/Landesmark/Gau, `geo`, `hasMap`). Hastedt gehört zum Stadtteil Hemelingen – natürlich formulieren, kein Keyword-Stuffing.
+- **Gruppenstunden als strukturierte Daten** (2026-11-23): `groupMeeting` in `lib/seo.ts` = `Event` mit `eventSchedule` (wöchentlich, `byDay`, Europe/Berlin), `startDate` = nächste Gruppenstunde, Alter als `audience`, Probestunde als `offers` (0 €); auf jeder Gruppenseite und für alle Gruppen auf der Startseite. `Group` hat dafür `weekdayNumber`/`startTime`/`endTime`. Ohne Wochentag/Uhrzeit kein Eintrag.
 - Karte/Route/„In Google Maps öffnen“ zielen auf den Google-Eintrag `GOOGLE_PLACE_QUERY` = „Stamm Edelweißpiraten, Drakenburger Str. 42, 28207 Hemelingen“ (`lib/seo.ts`).
 - Tests `tests/unit/website-seo.test.ts`, `website-bot-trap.test.ts`, `website-contact.test.ts`.
 
@@ -71,7 +72,7 @@ getauscht** ist: statt PocketBase holt sie Termine und Galerien **serverseitig**
 - **Layout**: Hinweisleiste (`SiteBanner`, Wolke bzw. Tinte bei „wichtig“), Navigation (Wappen + Name | Gruppen▾, Termine, Galerie, Blog, Über uns▾
   (Team, CPD, FAQ, Kontakt) | Dunkel-Umschalter, Kontakt, „Probestunde“; mobil Menü-Fläche), Fuß mit „Komm zur Probestunde“, Kacheln
   (Marke/Social, Gruppen mit Zeit, Stamm-Links, Anfahrt) und Rechtliches.
-- **Startseite**: Hero mit `pfadfinder.avif` (Kornfeld), `home`-Banner als Kästen, Kurzinfo + Eckdaten (Alter, Tage aus den Gruppen, Ort, 47 €),
+- **Startseite**: Hero mit `pfadfinder.avif` (Kornfeld), `home`-Banner als Kästen, Kurzinfo + Eckdaten (Alter, Tage aus den Gruppen, Ort, 55 €),
   Gruppen-Leiste (Pfeile ab 4 Gruppen), zweite Foto-Kachel „Fahrten und Lager“ mit dem Titelbild (`web`) der neuesten Galerie (ohne Galerie entfällt sie),
   Nächste Termine, „Zuletzt unterwegs“ (Galerien + Beiträge gemischt), Über uns, FAQ (`featured`), Kontaktformular → Action von `/kontakt`.
 - Unterseiten: Seitenkopf `.phead` mit Brotkrümeln; Gruppe (Bild, Eckdaten, Text, Termine, Bilder der Gruppe, Kontakt + Karte, weitere Gruppen – Loader
@@ -185,7 +186,7 @@ cd website && npm run build && PORT=3001 node --env-file=.env build
 ## Offen
 - Kontaktformular: Anfragen per Posteingang nur mit Demo/Integrationstest geprüft; bestehender Produktiv-Key braucht den neuen Scope (neuen Key anlegen);
   SMTP-Rückfall: echter Versand ungetestet (nur Test-Server); Compose-Dateien reichen `SMTP_*`/`CONTACT_TO`/`ADDRESS_HEADER` noch nicht an den Dienst `website` durch;
-  Empfängeradresse `kontakt@` (alt: Tippfehler „kotakt@“) vom Nutzer bestätigen lassen. Datenschutztext rechtlich nicht geprüft.
+  Impressum/Kontakt-Rückfall: `kontakt@` (2026-11-23). Datenschutz überarbeitet 2026-11-23 (Posteingang, Probestunde, Spam-Schutz, Fotos, Umami monatliche Kennung); rechtlich nicht anwaltlich geprüft. Offen: Vereinsangaben im Impressum (Vertretung, Register), Verantwortlicher (Privatperson vs. Verein), V.i.S.d.P. Blog, Recorder ohne Einwilligung.
 - Caches und Rate-Limits nur im Arbeitsspeicher je Prozess (Neustart leert sie).
 - Datenschutztext pflegt sich nur im Code (Ferienhinweis und FAQ seit 2026-10-25 über das Modul `website`).
 - Serien-Rhythmus wird aus den Abständen der Vorkommen geraten (das Backend liefert die Regel nicht); ungewöhnliche Rhythmen → „regelmäßig“.

@@ -6,8 +6,8 @@
     import Icon from '$lib/components/Icon.svelte';
     import ContactGuard from '$lib/components/ContactGuard.svelte';
     import Seo from '$lib/components/Seo.svelte';
-    import { organization, website } from '$lib/seo';
-    import { formatLongDate, formatMonth } from '$lib/dates';
+    import { groupMeeting, organization, website } from '$lib/seo';
+    import { formatLongDate, formatMonth, todayBerlin } from '$lib/dates';
 
     export let data;
 
@@ -67,7 +67,28 @@
     title="Pfadfinder Bremen-Hastedt & Hemelingen – Stamm Edelweißpiraten"
     description={`Pfadfinder in Bremen: Der Stamm Edelweißpiraten (CPD) in Hastedt, Stadtteil Hemelingen – Gruppenstunden, Fahrten und Lager für Kinder und Jugendliche ab ${minAge} Jahren. Probestunde kostenlos.`}
     path="/"
-    jsonLd={(base) => [organization(base), website(base)]}
+    jsonLd={(base) => [
+        organization(base),
+        website(base),
+        // Gruppenstunden aller Website-Gruppen (wöchentliche Termine), siehe groupMeeting in lib/seo.ts
+        ...(data.groups ?? []).map((/** @type {import('$lib/server/backend').Group} */ g) =>
+            groupMeeting({
+                base,
+                path: g.href,
+                name: g.name,
+                typeLabel: g.typeLabel,
+                description: g.description,
+                weekdayNumber: g.weekdayNumber,
+                startTime: g.startTime,
+                endTime: g.endTime,
+                ageMin: g.ageMin,
+                ageMax: g.ageMax,
+                meetingPlace: g.meetingPlace,
+                image: g.image,
+                today: todayBerlin()
+            })
+        )
+    ]}
 />
 
 <section class="site-container" aria-labelledby="h-hero">
@@ -128,7 +149,7 @@
         <div class="fact"><dt><span class="ic" aria-hidden="true"><Icon name="users" /></span>Alter</dt><dd>ab {minAge} Jahren</dd></div>
         <div class="fact"><dt><span class="ic" aria-hidden="true"><Icon name="clock" /></span>Gruppenstunde, jede Woche</dt><dd>{daysText || 'einmal pro Woche'}</dd></div>
         <div class="fact"><dt><span class="ic" aria-hidden="true"><Icon name="map-pin" /></span>Ort</dt><dd>Drakenburger Str. 42</dd></div>
-        <div class="fact"><dt><span class="ic" aria-hidden="true"><Icon name="euro" /></span>Beitrag</dt><dd>47 € im Jahr</dd></div>
+        <div class="fact"><dt><span class="ic" aria-hidden="true"><Icon name="euro" /></span>Beitrag</dt><dd>55 € im Jahr</dd></div>
     </dl>
 </section>
 

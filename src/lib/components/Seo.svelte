@@ -26,7 +26,7 @@
     /**
      * Strukturierte Daten: ein Objekt, eine Liste oder eine Funktion der Basis-URL (für absolute Adressen,
      * z. B. `(base) => event({ base, … })`).
-     * @type {import('$lib/seo').JsonLd | import('$lib/seo').JsonLd[] | ((base: string) => import('$lib/seo').JsonLd | import('$lib/seo').JsonLd[]) | null}
+     * @type {import('$lib/seo').JsonLd | (import('$lib/seo').JsonLd | null)[] | ((base: string) => import('$lib/seo').JsonLd | (import('$lib/seo').JsonLd | null)[] | null) | null} – `null`-Einträge werden übersprungen
      */
     export let jsonLd = null;
     /**

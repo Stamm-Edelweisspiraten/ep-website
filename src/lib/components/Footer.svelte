@@ -65,6 +65,7 @@
                 <a href="/team">Unser Team</a>
                 <a href="/faq">Häufige Fragen</a>
                 <a href="/cpd">Unser Bund (CPD)</a>
+                <a href="https://intern.edelweisspiraten-bremen.de" target="_blank" rel="noopener noreferrer">Intern-Bereich<span class="sr-only"> (neues Fenster)</span></a>
             </nav>
             <div class="fbox kontakt">
                 <h2><Icon name="map-pin" size={18} />So findest du uns</h2>

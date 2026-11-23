@@ -31,7 +31,7 @@ services:
       # Client-IP hinter dem Proxy (Rate-Limit je Besucher*in) und Kontaktformular per SMTP (#20/#31)
       ADDRESS_HEADER: X-Forwarded-For
       XFF_DEPTH: '1'
-      CONTACT_TO: ${CONTACT_TO:-}
+      CONTACT_TO: ${CONTACT_TO:-kontakt@edelweisspiraten-bremen.de}
       SMTP_HOST: ${WEBSITE_SMTP_HOST:-}
       SMTP_PORT: ${WEBSITE_SMTP_PORT:-587}
       SMTP_SECURE: ${WEBSITE_SMTP_SECURE:-false}

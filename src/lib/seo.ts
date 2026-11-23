@@ -218,6 +218,92 @@ export function event(input: EventLdInput): JsonLd {
 	return ld;
 }
 
+const SCHEMA_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+export interface GroupMeetingInput {
+	base: string;
+	/** `/meute/<slug>` */
+	path: string;
+	name: string;
+	/** „Meute“ / „Sippe“ */
+	typeLabel: string;
+	description?: string | null;
+	/** 1 = Montag … 7 = Sonntag */
+	weekdayNumber: number | null;
+	/** `HH:MM` */
+	startTime: string | null;
+	endTime?: string | null;
+	ageMin?: number | null;
+	ageMax?: number | null;
+	/** Treffpunkt als Text; leer = Treffpunkt des Stamms */
+	meetingPlace?: string | null;
+	image?: string | null;
+	/** `YYYY-MM-DD` (Berlin), für das nächste Datum */
+	today: string;
+}
+
+/** Rein: nächster Tag (ab `today`, einschließlich) mit Wochentag 1–7 */
+export function nextWeekday(today: string, weekdayNumber: number): string {
+	const d = new Date(`${today}T12:00:00Z`);
+	const current = ((d.getUTCDay() + 6) % 7) + 1; // 1 = Montag
+	d.setUTCDate(d.getUTCDate() + ((weekdayNumber - current + 7) % 7));
+	return d.toISOString().slice(0, 10);
+}
+
+/**
+ * Wöchentliche Gruppenstunde als `Event` mit `eventSchedule` (schema.org `Schedule`, wöchentlich, Europe/Berlin).
+ * `startDate` = nächste Gruppenstunde, damit Google ein konkretes Datum hat. `null` ohne Wochentag/Uhrzeit.
+ */
+export function groupMeeting(input: GroupMeetingInput): JsonLd | null {
+	const day = input.weekdayNumber;
+	if (!day || day < 1 || day > 7 || !input.startTime || !/^\d{2}:\d{2}$/.test(input.startTime)) return null;
+	const end = input.endTime && /^\d{2}:\d{2}$/.test(input.endTime) ? input.endTime : null;
+	const next = nextWeekday(input.today, day);
+	const place = input.meetingPlace?.trim();
+	const ld: JsonLd = {
+		'@context': 'https://schema.org',
+		'@type': 'Event',
+		name: `Gruppenstunde der ${input.typeLabel} ${input.name} – Pfadfinder in Bremen-Hastedt`,
+		url: absoluteUrl(input.base, input.path),
+		startDate: scheduleDate(next, input.startTime),
+		eventStatus: 'https://schema.org/EventScheduled',
+		eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+		eventSchedule: {
+			'@type': 'Schedule',
+			repeatFrequency: 'P1W',
+			byDay: `https://schema.org/${SCHEMA_DAYS[day - 1]}`,
+			startTime: `${input.startTime}:00`,
+			...(end ? { endTime: `${end}:00` } : {}),
+			scheduleTimezone: 'Europe/Berlin'
+		},
+		location:
+			place && !place.includes(MEETING_PLACE.streetAddress)
+				? { '@type': 'Place', name: place, address: place }
+				: meetingPlace(),
+		organizer: { '@type': 'Organization', '@id': organizationId(input.base), name: SITE_NAME, url: `${cleanBase(input.base)}/` },
+		offers: {
+			'@type': 'Offer',
+			name: 'Probestunde',
+			price: 0,
+			priceCurrency: 'EUR',
+			availability: 'https://schema.org/InStock',
+			url: absoluteUrl(input.base, '/probestunde')
+		}
+	};
+	if (end) ld.endDate = scheduleDate(next, end);
+	if (input.ageMin != null || input.ageMax != null) {
+		ld.audience = {
+			'@type': 'PeopleAudience',
+			...(input.ageMin != null ? { suggestedMinAge: input.ageMin } : {}),
+			...(input.ageMax != null ? { suggestedMaxAge: input.ageMax } : {})
+		};
+	}
+	const description = plainText(input.description ?? '', 500);
+	if (description) ld.description = description;
+	if (input.image) ld.image = [absoluteUrl(input.base, input.image)];
+	return ld;
+}
+
 /** Häufige Fragen als `FAQPage` (Antworten als Klartext) */
 export function faqPage(items: { question: string; answerHtml: string }[]): JsonLd {
 	return {

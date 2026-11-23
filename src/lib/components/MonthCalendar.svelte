@@ -59,7 +59,7 @@
     function barStyle(seg: WeekSegment): string {
         const parts = [
             `top: ${HEAD + seg.lane * LANE}rem`,
-            `width: calc(${seg.span} * 100% + ${seg.span - 1}px - 6px)`
+            `width: calc(${seg.span} * 100% + ${(seg.span - 1) * 4}px - 6px)`
         ];
         if (contrastTextColor(seg.item.color)) parts.push(`--g: ${seg.item.color}`);
         return parts.join('; ');
@@ -235,8 +235,9 @@
         background: var(--color-subtle);
         min-width: 0;
     }
+    /* Tage außerhalb des Monats heller, aber nicht weiß – sonst verschwinden die weißen Balken */
     .cell.out {
-        background: transparent;
+        background: color-mix(in srgb, var(--color-subtle) 45%, transparent);
         color: var(--color-muted);
     }
     .num-row {
